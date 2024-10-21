@@ -56,3 +56,49 @@
 .customFont {
   font-family: 'Pavanam';
 }
+
+
+.css-10o2lyd-MuiStack-root>.MuiTextField-root{
+  max-width: 100% !important;
+  min-width: 100% !important;
+  
+ 
+}
+.css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 0px !important;
+}
+
+
+
+.css-jupps9-MuiInputBase-root-MuiOutlinedInput-root {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+  border: none !important;
+    /* line-height: 1.4375em; */
+    letter-spacing: 0.00938em;
+    color: rgba(0, 0, 0, 0.87);
+    box-sizing: border-box;
+    /* position: relative; */
+    cursor: text;
+    display: -webkit-inline-box;
+    display: -webkit-inline-flex;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    position: relative;
+    /* border-radius: 4px; */
+    padding-right: 10px !important;
+}
+
+.css-10o2lyd-MuiStack-root {
+  padding: 0px !important;
+
+}
+
+.css-1ll44ll-MuiOutlinedInput-notchedOutline {
+  border: none !important;
+}

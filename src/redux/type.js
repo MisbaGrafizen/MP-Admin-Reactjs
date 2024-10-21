@@ -40,6 +40,7 @@ export const ADD_PRE_PACKAGE_FOOD_ITEM = "ADD_PRE_PACKAGE_FOOD_ITEM";
 //Order Listing
 export const GET_UNPAID_ORDER_LIST = "GET_UNPAID_ORDER_LIST";
 export const GET_PAID_ORDER_LIST = "GET_PAID_ORDER_LIST";
+export const GET_ORDER_BY_ID = "GET_ORDER_BY_ID";
 
 
 

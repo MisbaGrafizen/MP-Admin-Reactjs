@@ -1,17 +1,72 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Header from '../../Components/header/Header';
 import { Modal as NextUIModal, ModalBody, ModalContent } from '@nextui-org/react';
+import { getAllPadiOrderListAction, getAllUnpadiOrderListAction } from '../../redux/action/orderListing';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 export default function OrderManagement() {
-  // State to track selected tab, selected filter, and selected order
-  const [activeTab, setActiveTab] = useState('self-serving'); // Default to 'self-serving'
-  const [selectedOrder, setSelectedOrder] = useState(0); // Default to the first order (paidOrder)
-  const [activeFilter, setActiveFilter] = useState('all'); // Default filter set to 'all'
 
-
+  const [activeTab, setActiveTab] = useState('self-serving');
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [activeFilter, setActiveFilter] = useState('all'); 
   const [isNotifictionModalOpen, setIsNotifictionModalOpen] = useState(false);
   const [isPackgingModalOpen, setPackegingModalOpen] = useState(false);
+  const [isReciptModalOpen, setReciptModalOpen] = useState(false);
 
+  const dispatch = useDispatch();
+
+  const paidOrderList = useSelector((state) => state.orderListingState?.getPaidOrderList);
+  const unpaidOrderList = useSelector((state) => state.orderListingState?.getUnpaidOrderList);
+  // const selectOrderData = useSelector((state) => state.orderListingState?.getOrderById);
+
+  // console.log('unpaidOrderList', unpaidOrderList)
+
+  useEffect(() => {
+    dispatch(getAllPadiOrderListAction());
+    dispatch(getAllUnpadiOrderListAction());
+  }, [dispatch]);
+
+  const handleSelectOrder = (orderId) => {
+    setSelectedOrder(orderId);
+  };
+
+  
+  const selectedOrderData = useMemo(() => {
+    return (
+      paidOrderList.find((order) => order._id === selectedOrder) ||
+      unpaidOrderList.find((order) => order._id === selectedOrder)
+    );
+  }, [selectedOrder, paidOrderList, unpaidOrderList]);
+
+  // console.log('selectedOrder', selectedOrder);
+  
+
+  // const orders = [
+  //   ...paidOrderList.map(order => ({ ...order, paid: true })),
+  //   ...unpaidOrderList.map(order => ({ ...order, paid: false })), 
+  // ];
+  function formatDateAndTime(dateInput) {
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) {
+      return 'Invalid Date';
+    }
+  
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+  
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+  
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+  
+    return `${day}/${month}/${year} - ${hours}:${minutes} ${ampm}`;
+  }
+  
+  
   const openNotifictionModal = () => {
     setIsNotifictionModalOpen(true);
     window.history.pushState({}, '');
@@ -20,8 +75,6 @@ export default function OrderManagement() {
     setIsNotifictionModalOpen(false);
     window.history.back();
   };
-
-
 
 
   const openPackgingnModal = () => {
@@ -36,12 +89,12 @@ export default function OrderManagement() {
 
 
   const openReciptModal = () => {
-    setPackegingModalOpen(true);
+    setReciptModalOpen(true);
     window.history.pushState({}, '');
   };
 
   const closeReciptModal = () => {
-    setPackegingModalOpen(false);
+    setReciptModalOpen(false);
     window.history.back();
   };
   const items = [
@@ -97,13 +150,15 @@ export default function OrderManagement() {
   // Update selectedOrder when the filter changes to maintain the first order in view
   useEffect(() => {
     if (activeFilter === 'all') {
-      setSelectedOrder(0); // Default to the first order (paidOrder)
+      setSelectedOrder(paidOrderList[0]?._id || unpaidOrderList[0]?._id); 
     } else if (activeFilter === 'paid') {
-      setSelectedOrder(0); // Show paid order
+      setSelectedOrder(paidOrderList[0]?._id); 
     } else if (activeFilter === 'unpaid') {
-      setSelectedOrder(1); // Show unpaid order
+      setSelectedOrder(unpaidOrderList[0]?._id);
     }
-  }, [activeFilter]);
+  }, [activeFilter, paidOrderList, unpaidOrderList]);
+
+  
 
   return (
     <>
@@ -170,19 +225,20 @@ export default function OrderManagement() {
                 </div>
 
                 {/* Paid Order */}
-                {shouldShowPaid && (
+                {shouldShowPaid && paidOrderList.map((order) => (
                   <div
+                    key={order.id}
                     className={`w-[100%] items-center justify-between rounded-[10px] border-[#00984B] text-[#00984B] flex text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
-                    onClick={() => setSelectedOrder(0)}
-                  >
+                    onClick={() => handleSelectOrder(order._id)}
+                    >
                     <div>
-                      <p>Order ID #{paidOrder.id}</p>
-                      <p>Order on - {paidOrder.date}</p>
-                      <p>Order for - {paidOrder.forDate}</p>
-                      <p>Pickup location - {paidOrder.location}</p>
+                      <p>Order ID #{order._id}</p>
+                      <p>Order on - {formatDateAndTime(order?.createdAt)}</p>
+                      <p>Order for - {formatDateAndTime(order?.orderDate?.pickupDate)}</p>
+                      <p>Pickup location - {order?.pickupLocation?.name}</p>
                     </div>
                     <div
-                      className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === 0
+                      className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
                         ? 'bg-[#00984B] text-white'
                         : 'bg-white text-[#00984B] border-[1px] border-[#00984B]'
                         }`}
@@ -190,22 +246,23 @@ export default function OrderManagement() {
                       <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                     </div>
                   </div>
-                )}
+                ))}
 
                 {/* Unpaid Order */}
-                {shouldShowUnpaid && (
+                {shouldShowUnpaid && unpaidOrderList.map((order) =>(
                   <div
+                    key={order.id}
                     className={`w-[100%] items-center justify-between rounded-[10px] border-[#FF0606] text-[#FF0606] flex text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
-                    onClick={() => setSelectedOrder(1)}
-                  >
+                    onClick={() => handleSelectOrder(order._id)}
+                    >
                     <div>
-                      <p>Order ID #{unpaidOrder.id}</p>
-                      <p>Order on - {unpaidOrder.date}</p>
-                      <p>Order for - {unpaidOrder.forDate}</p>
-                      <p>Pickup location - {unpaidOrder.location}</p>
+                      <p>Order ID #{order._id}</p>
+                      <p>Order on - {formatDateAndTime(order?.createdAt)}</p>
+                      <p>Order for - {formatDateAndTime(order.orderDate?.pickupDate)}</p>
+                      <p>Pickup location - {order.pickupLocation?.name}</p>
                     </div>
                     <div
-                      className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === 1
+                      className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
                         ? 'bg-[#FF0606] text-white'
                         : 'bg-white text-[#FF0606] border-[1px] border-[#FF0606]'
                         }`}
@@ -213,11 +270,11 @@ export default function OrderManagement() {
                       <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                     </div>
                   </div>
-                )}
+                ))}
               </div>
 
               {/* Right Order Details */}
-              {selectedOrder !== null && (
+              {selectedOrderData && (
                 <div className="w-[75%] relative no-scrollbar rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] border-[1.4px] border-[#FEAA00] overflow-y-auto">
                   <div className="flex justify-between">
                     <div className="text-[17px] font-[600]">
@@ -227,7 +284,7 @@ export default function OrderManagement() {
                       className={`w-[150px] rounded-bl-[7px] font-patua text-[#fff] relative text-[15px] top-[-50%] right-[-2%] flex justify-center py-[5px] ${selectedOrder === 0 ? 'bg-[#006198]' : 'bg-[#FF0606]'
                         }`}
                     >
-                      <p>{selectedOrder === 0 ? 'ORDER PAID' : 'ORDER UNPAID'}</p>
+                      <p>{paidOrderList.find((order) => order._id === selectedOrder) ? 'ORDER PAID' : 'ORDER UNPAID'}</p>
                     </div>
                   </div>
                   <div
@@ -236,12 +293,12 @@ export default function OrderManagement() {
                   >
                     <div className="w-[100%] flex justify-between">
                       <div className="text-[15px] font-[400]">
-                        <p>Order ID #{selectedOrder === 0 ? paidOrder.id : unpaidOrder.id}</p>
-                        <p>Order on - {selectedOrder === 0 ? paidOrder.date : unpaidOrder.date}</p>
-                        <p>Order for - {selectedOrder === 0 ? paidOrder.forDate : unpaidOrder.forDate}</p>
+                        <p>Order ID #{selectedOrderData?.orderId?._id}</p>
+                        <p>Order on - {formatDateAndTime(selectedOrderData?.createdAt)}</p>
+                        <p>Order for - {formatDateAndTime(selectedOrderData?.orderDate?.pickupDate)}</p>
                       </div>
                       <p className="font-[600] pr-[20px] items-center text-[18px]">
-                        Name - {selectedOrder === 0 ? paidOrder.name : unpaidOrder.name}
+                        Name - {selectedOrderData?.orderId?.userId?.name}
                       </p>
                     </div>
                     <div className="w-[100%] border-t-[1.7px] border-dashed"></div>
@@ -249,31 +306,31 @@ export default function OrderManagement() {
                       <div className="flex flex-col gap-[5px]">
                         <p className="font-[300]">Delivery Address :</p>
                         <p className="font-bold ">
-                          {selectedOrder === 0 ? paidOrder.address : unpaidOrder.address}
+                          {selectedOrderData?.pickupLocation?.name}
                         </p>
                       </div>
                       <div className="flex gap-[6px] pr-[20px]">
                         <i className="fa-sharp-duotone fa-solid fa-circle-check tick text-[17px]"></i>
-                        <p>{selectedOrder === 0 ? paidOrder.status : unpaidOrder.status}</p>
+                        <p>{selectedOrderData?.orderType}</p>
                       </div>
                     </div>
                     <div className="w-[100%] border-t-[1.7px] border-dashed"></div>
                     <div className="flex flex-col gap-[14px]">
-                      {(selectedOrder === 0 ? paidOrder.items : unpaidOrder.items).map((item, idx) => (
+                      {selectedOrderData?.orderId?.items?.map((item, idx) => (
                         <div key={idx} className="flex items-center justify-between px-[10px]">
                           <div className="flex gap-[10px] items-center">
                             <img
                               className="w-[80px]"
-                              src="../../../public/img/Foodsection/newBhaji.png"
+                              src={item?.foodItem?.photo || "../../../public/img/Foodsection/newBhaji.png"}
                               alt="Product"
                             />
                             <div>
-                              <p className="text-[16px]">{item.name}</p>
-                              <p className="text-[#595858]">Qty - {item.qty}</p>
+                              <p className="text-[16px]">{item?.foodItem?.name}</p>
+                              <p className="text-[#595858]">Qty - {item?.quantity}</p>
                             </div>
                           </div>
                           <div>
-                            <p className="text-[16px]">{item.price}</p>
+                            <p className="text-[16px]">{item?.totalPrice}</p>
                           </div>
                         </div>
                       ))}
@@ -281,28 +338,29 @@ export default function OrderManagement() {
                     <div className="w-[100%] border-t-[2.3px]"></div>
                     <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
                       <p>Total</p>
-                      <p>{selectedOrder === 0 ? paidOrder.total : unpaidOrder.total}</p>
+                      <p>{selectedOrderData?.orderId?.totalAmount}</p>
                     </div>
                   </div>
 
                   <div className="flex justify-between mt-[8px]">
-                    <div className="flex gap-[10px] items-center">
-                      <div
-                        className="w-[130px] rounded-[5px] active:bg-[#006198] active:text-[#fff] items-center border-[#000] cursor-pointer flex justify-center py-[6px] font-[500] border-[1.7px]"
-                        onClick={openNotifictionModal}
-                      >
-                        <p>View KOT</p>
+                    <div className="flex gap-[10px] justify-between w-[100%] items-center">
+                      <div className='flex gap-[10px] items-center'>
+                        <div
+                          className="w-[130px] rounded-[5px] active:bg-[#006198] active:text-[#fff] items-center border-[#000] cursor-pointer flex justify-center py-[6px] font-[500] border-[1.7px]"
+                          onClick={openNotifictionModal}
+                        >
+                          <p>View KOT</p>
+                        </div>
+                        <div
+                          className="w-[130px] cursor-pointer active:bg-[#006198] active:text-[#fff] rounded-[5px] items-center flex justify-center py-[6px] font-[500] border-[1.7px] border-[#006198] text-[#006198]"
+                          onClick={openPackgingnModal}
+                        >
+                          <p>View POT</p>
+                        </div>
                       </div>
-                      <div
-                        className="w-[130px] cursor-pointer active:bg-[#006198] active:text-[#fff] rounded-[5px] items-center flex justify-center py-[6px] font-[500] border-[1.7px] border-[#006198] text-[#006198]"
-                        onClick={openPackgingnModal}
-                      >
-                        <p>View POT</p>
-                      </div>
-
                       {selectedOrder === 0 && (
                         <div
-                          className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#006198] font-[500] border-[1.7px] border-[#006198]"
+                          className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
                           onClick={openReciptModal}
                         >
                           <p>View Receipt</p>
@@ -479,7 +537,7 @@ export default function OrderManagement() {
       </NextUIModal>
       <NextUIModal
         className='md:max-w-[490px] max-w-[563px] overflow-hidden relative  flex justify-center  rounded-[20px] !py-0 mx-auto md:h-[68%] h-[350px]'
-        isOpen={isPackgingModalOpen}
+        isOpen={isReciptModalOpen}
         backdrop={"blur"}
         onOpenChange={closeReciptModal}
       >
@@ -543,10 +601,10 @@ export default function OrderManagement() {
                   <p>Total</p>
                   <p>{selectedOrder === 0 ? paidOrder.total : unpaidOrder.total}</p>
                 </div>
-              </div> 
+              </div>
               <div className='bg-[#00984B] absolute bottom-0 w-[100%] left-0 py-[9px] flex justify-center text-[30px] text-[#fff]'>
-                  <i class="fa-solid fa-print"></i>
-                </div>
+                <i class="fa-solid fa-print"></i>
+              </div>
             </div>
 
 

@@ -7,7 +7,7 @@ import {
     ApiPostNoAuth,
     ApiPut,
 } from '../../helper/axios';
-import { GET_PAID_ORDER_LIST, GET_UNPAID_ORDER_LIST } from '../type';
+import { GET_PAID_ORDER_LIST, GET_UNPAID_ORDER_LIST, GET_ORDER_BY_ID } from '../type';
 
 export const getAllUnpadiOrderListAction = () => {
   return (dispatch) => {
@@ -50,3 +50,24 @@ export const getAllPadiOrderListAction = () => {
       });
   };
   };
+
+//   export const getOrderByIdAction = (orderId) => {
+//     return (dispatch) => {
+//         return ApiGet(`/api/admin/get-order/${orderId}`)
+//         .then((res) => {
+//             if(res.status === 'success') {
+//                 dispatch({
+//                     type: GET_ORDER_BY_ID,
+//                     payload: res?.data,
+//                 });
+//                 return res?.data;
+//             }
+//         })
+//         .catch((error) => {
+//             dispatch({
+//                 type: GET_ORDER_BY_ID,
+//                 payload: error,
+//             });
+//         });
+//     }
+// };

@@ -8,6 +8,8 @@ import CreateUser from './pages/createUser/CreateUser'
 import PremvatiMangment from './pages/premvatiManegment/PremvatiMangment'
 import ProductMangement from './pages/ProductManagement/ProductMangement'
 import OrderManagement from './pages/OrderPage/Order'
+import TransectionHistory from './pages/TransectionHistory/TransectionHistory'
+import Login from './pages/login/Login'
 
 
 
@@ -19,14 +21,16 @@ function App() {
 
       <Routes >
 
-
-        <Route path='/' element={<SplashScreen />} />
+      <Route path='/' element={<Login />} />
+        <Route path='/spalsh' element={<SplashScreen />} />
         <Route path='/master' element={<MasterManege />} />
         <Route path='/user' element={<CreateUser />} />
         <Route path='/premvati' element={<PremvatiMangment />} />
         <Route path='/product' element={<ProductMangement />} />
         <Route path='/order' element={<OrderManagement />} />
+        <Route path='/transection' element={<TransectionHistory />} />
       </Routes>
+      
 
 
     </>

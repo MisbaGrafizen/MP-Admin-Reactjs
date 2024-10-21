@@ -1,8 +1,9 @@
-import { GET_UNPAID_ORDER_LIST, GET_PAID_ORDER_LIST, RESET_GLOBAL_STATE } from '../type';
+import { GET_UNPAID_ORDER_LIST, GET_PAID_ORDER_LIST, GET_ORDER_BY_ID, RESET_GLOBAL_STATE } from '../type';
 
 const initialState = {
     getPaidOrderList: [],
     getUnpaidOrderList: [],
+    getOrderById: [],
 };
 
 const orderListingReducer = (state = initialState, action) => {
@@ -17,8 +18,12 @@ const orderListingReducer = (state = initialState, action) => {
             return {
                 ...state,
                 getPaidOrderList: action.payload,
-            }
-
+            };
+        // case GET_ORDER_BY_ID:
+        //     return {
+        //         ...state,
+        //         getOrderById: action.payload,
+        //     };
         case RESET_GLOBAL_STATE:
             return initialState;
         default:
