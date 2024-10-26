@@ -199,8 +199,7 @@ export default function OrderManagement() {
 
               <div className="w-[30%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
 
-                {/* Filter Buttons */}
-                <div className="w-[100%] overflow-hidden bg-[#F3F3F3] h-[35px] rounded-[7px] items-center border-[1px] flex justify-between border-[#595454]">
+                <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[60px] py-[20px] rounded-[7px] items-center sticky top-[0px]  border-[1px] flex justify-between border-[#595454]">
                   <div
                     className={`w-[100%] h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === 'all' ? 'bg-[#00984B] text-white' : ''
                       }`}
@@ -224,7 +223,7 @@ export default function OrderManagement() {
                   </div>
                 </div>
 
-                {/* Paid Order */}
+
                 {shouldShowPaid && paidOrderList.map((order) => (
                   <div
                     key={order.id}
@@ -248,7 +247,7 @@ export default function OrderManagement() {
                   </div>
                 ))}
 
-                {/* Unpaid Order */}
+                
                 {shouldShowUnpaid && unpaidOrderList.map((order) =>(
                   <div
                     key={order.id}
@@ -273,7 +272,6 @@ export default function OrderManagement() {
                 ))}
               </div>
 
-              {/* Right Order Details */}
               {selectedOrderData && (
                 <div className="w-[75%] relative no-scrollbar rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] border-[1.4px] border-[#FEAA00] overflow-y-auto">
                   <div className="flex justify-between">
@@ -451,7 +449,7 @@ export default function OrderManagement() {
                   </p>
                 </div>
                 <div className='bg-[#006198] absolute bottom-0 w-[100%] left-0 py-[6px] flex justify-center text-[30px] text-[#fff]'>
-                  <i class="fa-solid fa-print"></i>
+                  <i className="fa-solid fa-print"></i>
                 </div>
 
               </div>
@@ -463,7 +461,7 @@ export default function OrderManagement() {
         </ModalContent>
       </NextUIModal>
       <NextUIModal
-        className='md:max-w-[390px] max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[60%] h-[350px]'
+        className='md:max-w-[390px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[60%] h-[350px]'
         isOpen={isPackgingModalOpen}
         backdrop={"blur"}
         onOpenChange={closePackgingModal}
