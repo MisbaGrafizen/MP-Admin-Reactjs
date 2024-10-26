@@ -13,9 +13,9 @@ export default function OrderManagement() {
   const [isNotifictionModalOpen, setIsNotifictionModalOpen] = useState(false);
   const [isPackgingModalOpen, setPackegingModalOpen] = useState(false);
   const [isReciptModalOpen, setReciptModalOpen] = useState(false);
-    const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
-     const [ispaymentModalOpen, setPaymentModalOpen] = useState(false);
-      const [isRejectModalOpen, setRejectModalOpen] = useState(false);
+const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
+ const [ispaymentModalOpen, setPaymentModalOpen] = useState(false);
+ const [isRejectModalOpen, setRejectModalOpen] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -83,6 +83,8 @@ export default function OrderManagement() {
     window.history.back();
   };
 
+
+
    const closeOrderModal = () => {
      setOrderReciptModalOpen(false);
      window.history.back();
@@ -102,6 +104,9 @@ export default function OrderManagement() {
     setReciptModalOpen(false);
     window.history.back();
   };
+
+
+
     const openPaymentModal = () => {
       setPaymentModalOpen(true);
       window.history.pushState({}, "");
@@ -467,7 +472,7 @@ export default function OrderManagement() {
             )}
             {activeTab === "pre-packaged" && (
               <div className=" py-[20px] px-[20px]  md150:h-[70vh]  overflow-y-auto h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  flex gap-[15px] my-justify-center items-center  border-[#000000]">
-                <div className="md150:w-[35%] w-[39%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
+                <div className="md150:w-[25%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
                   <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
                     <div
                       className={`w-[100%] h-[100%] font-bold text-center flex items-center justify-center   cursor-pointer ${
@@ -563,14 +568,20 @@ export default function OrderManagement() {
                 </div>
 
                 {selectedOrderData && (
-                  <div className="w-[75%] relative no-scrollbar rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] border-[1.4px] border-[#FEAA00] overflow-y-auto">
-                    <div className="flex justify-between">
-                      <div className="text-[17px] font-[600]">
+                  <div className="w-[75%] relative no-scrollbar rounded-[10px] justify-between  gap-[10px] flex flex-col p-[15px] h-[100%] border-[1.4px] border-[#FEAA00] overflow-y-auto">
+                    <div className="flex justify-between  pt-[3px]">
+                      <div className="text-[20px]  items-center  flex gap-[20px] font-[600]">
                         <p>ORDERS DETAILS</p>
+                        <i
+                          className="fa-solid text-[30px] cursor-pointer fa-print"
+                          onClick={openOrderModal}
+                        ></i>
                       </div>
                       <div
-                        className={`w-[150px] rounded-bl-[7px] font-patua text-[#fff] relative text-[15px] top-[-50%] right-[-2%] flex justify-center py-[5px] ${
-                          selectedOrder === 0 ? "bg-[#006198]" : "bg-[#FF0606]"
+                        className={`w-[150px] rounded-bl-[7px] font-[600]  text-[20px] flex justify-center  ${
+                          selectedOrder === 0
+                            ? "text-[#00984B]"
+                            : "text-[#FF0606]"
                         }`}
                       >
                         <p>
@@ -677,15 +688,31 @@ export default function OrderManagement() {
                       </div>
 
                       <div className="flex gap-[10px] items-center">
-                        <div className="w-[130px] rounded-[5px] flex justify-center active:bg-[#FF0606] active:text-[#fff]  cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]">
+                        <div
+                          className="w-[130px] rounded-[5px] flex justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
+                          onClick={openRejectModal}
+                        >
                           <p>Reject Order</p>
                         </div>
-                        <div
-                          className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
-                          onClick={openReciptModal}
-                        >
-                          <p>View Receipt</p>
-                        </div>
+
+                        {/* Conditional Rendering for View Receipt / View Payment */}
+                        {paidOrderList.find(
+                          (order) => order._id === selectedOrder
+                        ) ? (
+                          <div
+                            className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
+                            onClick={openReciptModal}
+                          >
+                            <p>View Receipt</p>
+                          </div>
+                        ) : (
+                          <div
+                            className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
+                            onClick={openPaymentModal}
+                          >
+                            <p>Payment Received</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -811,7 +838,7 @@ export default function OrderManagement() {
                   <p>Qty : 40</p>
                 </div>
                 <div className="bg-[#006198] absolute bottom-0 w-[100%] left-0 py-[6px] flex justify-center text-[30px] text-[#fff]">
-                  <i class="fa-solid fa-print"></i>
+                  <i className="fa-solid fa-print"></i>
                 </div>
               </div>
             </div>
