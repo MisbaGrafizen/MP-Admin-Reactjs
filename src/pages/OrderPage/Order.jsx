@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Header from '../../Components/header/Header';
-import { Modal as NextUIModal, ModalBody, ModalContent } from '@nextui-org/react';
+  import { Modal as NextUIModal, ModalBody, ModalContent } from '@nextui-org/react';
 import { getAllPadiOrderListAction, getAllUnpadiOrderListAction } from '../../redux/action/orderListing';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -391,7 +391,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                           >
                             <div className="flex gap-[10px] items-center">
                               <img
-                                className="w-[80px]"
+                                className="w-[80px] rounded-[8px]"
                                 src={
                                   item?.foodItem?.photo ||
                                   "../../../public/img/Foodsection/newBhaji.png"
@@ -942,7 +942,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
         </ModalContent>
       </NextUIModal>
       <NextUIModal
-        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[40%] h-[350px]"
+        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[43%] h-[350px]"
         isOpen={isOrderReciptModalOpen}
         backdrop={"blur"}
         onOpenChange={closeOrderModal}
@@ -962,7 +962,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
               <div className=" flex flex-col gap-[28px] w-[100%]">
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Cashier name :</p>
-                  <p className=" border-b-[1.5px] w-[50%] border-[#000]"></p>
+                  <p className=" border-b-[1.5px]  overflow-x-auto w-[58%] border-[#000]"></p>
                 </div>
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Receipt Number :</p>
@@ -976,21 +976,10 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
       </NextUIModal>
 
       {/* Reject order modal */}
-      <NextUIModal
-        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[40%] h-[350px]"
-        isOpen={isOrderReciptModalOpen}
-        backdrop={"blur"}
-        onOpenChange={closeOrderModal}
-      >
-        <ModalContent className="relative ">
-          <ModalBody className="!py-0">
-            <div className="w-[100%] gap-[20px] flex flex-col absolute left-0 top-1 right-0 items-center "></div>
-          </ModalBody>
-        </ModalContent>
-      </NextUIModal>
+
       {/* payment confirm order modal */}
       <NextUIModal
-        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[35%] h-[300px]"
+        className="md:max-w-[300px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[35%] h-[300px]"
         isOpen={ispaymentModalOpen}
         backdrop={"blur"}
         onOpenChange={closePaymentModal}
@@ -999,13 +988,13 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
           <ModalBody className="!py-0">
             <div className="w-[100%] gap-[20px] flex flex-col absolute left-0 top- right-0 items-center ">
               <div className="  mt-[50px]">
-                <i className="fa-sharp fa-regular text-[90px] text-[green] fa-badge-check"></i>
+                <i className="fa-sharp fa-regular text-[100px] text-[green] fa-badge-check"></i>
               </div>
               <div className=" flex font-[600] text-[20px] mx-auto">
                 <p>asdfghjdff klsdf</p>
               </div>
 
-              <div className=" w-[90%] mx-auto flex items-center  ">
+              <div className=" w-[90%] mt-[20px] mx-auto flex items-center  ">
                 <div className=" bg-[red] rounded-tl-[10px]  rounded-bl-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]">
                   {" "}
                   Cancel
@@ -1031,8 +1020,8 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
               <div className="  mt-[50px]">
                 <i className="fa-sharp text-[90px] text-[red] fa-solid fa-brake-warning"></i>
               </div>
-              <div className=" flex font-[600] text-[20px] mx-auto">
-                <p>asdfghjdff klsdf</p>
+              <div className=" flex font-[600] w-[100%] text-center text-[20px] mx-auto">
+                <p>Are you sure you want to reject the order?</p>
               </div>
 
               <div className=" w-[90%] mx-auto flex items-center  ">
