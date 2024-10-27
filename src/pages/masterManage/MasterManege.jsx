@@ -114,13 +114,6 @@ export default function MasterManage() {
                                         </div>
                                     </div>
                                 ))}
-
-
-
-
-
-
-
                             </div>
                             {/* Optional Pagination */}
                             <div className="absolute bottom-0 flex items-center w-full gap-3 end-0">
@@ -185,13 +178,6 @@ export default function MasterManage() {
                                 ) : (
                                     <p>No kshetras found</p>
                                 )}
-
-
-
-
-
-
-
 
                             </div>
 
@@ -283,12 +269,12 @@ export default function MasterManage() {
                         <i className="fa-solid fa-angle-up fa-rotate-270"></i>
                         <p> MASTER MANAGEMENT</p>
                     </div>
-                    <div className="flex absolute right-[20%] md150:top-6%] top-[6.3%] font-Poppins font-[600] text-[15px] ">
+                    <div className="flex absolute right-[20%] md150:top-6%] top-[7.5%] font-Poppins font-[600] text-[15px] ">
 
                         <div className='flex gap-[10px] mx-auto justify-center w-[100%]   z-20'>
 
                             <div
-                                className={` w-[80%] flex items-center justify-center  rounded-tr-[5px] rounded-tl-[5px] border-r-[1.5px] px-[19px]  border-l-[1.5px]  font-[600] border-t-[1.5px] border-[#000]  ${activeForm === 'PRAVRUTI' ? 'bg-[#FEAA00] text-[#fff]' : ' bg-white '} h-[40px] cursor-pointer`}
+                                className={` w-[80%] flex items-center justify-center  rounded-tr-[5px] rounded-tl-[5px] border-r-[1.5px] px-[19px]  border-l-[1.5px]  font-bold     cursor-pointer border-t-[1.5px] border-[#000]  ${activeForm === 'PRAVRUTI' ? 'bg-[#FEAA00] text-[#fff]' : ' bg-white '} h-[40px] cursor-pointer`}
                                 onClick={() => setActiveForm('PRAVRUTI')}
                             >
                                 <p>PRAVRUTI</p>
@@ -296,7 +282,7 @@ export default function MasterManage() {
 
 
                             <div
-                                className={` w-[80%] flex items-center justify-center  rounded-tr-[5px] rounded-tl-[5px] border-r-[1.5px] px-[19px] font-[600]  border-l-[1.5px]  border-t-[1.5px] border-[#000]  ${activeForm === 'KSHETRA' ? 'bg-[#FEAA00] text-[#fff]' : 'text-[#000] bg-white '} h-[40px] cursor-pointer`}
+                                className={` w-[80%] flex items-center justify-center  rounded-tr-[5px] rounded-tl-[5px] border-r-[1.5px] px-[19px] font-[]  border-l-[1.5px]  border-t-[1.5px] border-[#000]  ${activeForm === 'KSHETRA' ? 'bg-[#FEAA00] text-[#fff]' : 'text-[#000] bg-white '} h-[40px] cursor-pointer`}
                                 onClick={() => setActiveForm('KSHETRA')}
                             >
                                 <p>KSHETRA</p>

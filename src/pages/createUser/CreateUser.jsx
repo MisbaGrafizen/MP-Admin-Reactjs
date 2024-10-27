@@ -7,7 +7,7 @@ import { getDesignationAction, getKshetraAction, getPravrutiAction } from '../..
 import {
   Modal as NextUIModal,
   ModalBody,
-  ModalContent,
+  
 } from "@nextui-org/react";
 
 export default function CreateUser() {

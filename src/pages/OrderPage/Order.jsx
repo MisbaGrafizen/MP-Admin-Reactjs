@@ -3,6 +3,7 @@ import Header from '../../Components/header/Header';
   import { Modal as NextUIModal, ModalBody, ModalContent } from '@nextui-org/react';
 import { getAllPadiOrderListAction, getAllUnpadiOrderListAction } from '../../redux/action/orderListing';
 import { useDispatch, useSelector } from 'react-redux';
+import { getPaymentByIdAction } from '../../redux/action/payment';
 
 
 export default function OrderManagement() {
@@ -196,7 +197,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
             <i className="fa-solid fa-angle-up fa-rotate-270"></i>
             <p> ORDERS MANAGEMENT</p>
           </div>
-          <div className="flex absolute top-[5.9%] gap-[10px] right-[10%]">
+          <div className="flex absolute top-[7.9%] gap-[10px] right-[10%]">
             <div
               onClick={() => setActiveTab("self-serving")}
               className={`w-[130px] p-[8px]  rounded-tl-[7px] font-bold  rounded-tr-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${
@@ -223,7 +224,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
             <Header />
             {activeTab === "self-serving" && (
               <div className=" py-[20px] px-[20px]  md150:h-[70vh]  overflow-y-auto h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  flex gap-[15px] my-justify-center items-center  border-[#000000]">
-                <div className="md150:w-[25%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
+                <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
                   <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
                     <div
                       className={`w-[100%] h-[100%] font-bold text-center flex items-center justify-center   cursor-pointer ${
@@ -248,7 +249,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                     <div
                       className={`w-[100%]   font-bold h-[100%] text-center flex items-center justify-center cursor-pointer ${
                         activeFilter === "unpaid"
-                          ? "bg-[RED] text-white px= py-[70px]"
+                          ? "bg-[RED] text-white  py-[70px]"
                           : "bg-white text-[#000]"
                       }`}
                       onClick={() => setActiveFilter("unpaid")}
@@ -412,6 +413,34 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                             </div>
                           </div>
                         ))}
+                        {selectedOrderData?.orderId?.servingMethodId?.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between px-[10px]"
+                          >
+                            <div className="flex gap-[10px] items-center">
+                              <img
+                                className="w-[80px] rounded-[8px]"
+                                src={
+                                  item?.servingMethod?.photo ||
+                                  "../../../public/img/Foodsection/newBhaji.png"
+                                }
+                                alt="Product"
+                              />
+                              <div>
+                                <p className="text-[16px]">
+                                  {item?.servingMethod?.name}
+                                </p>
+                                <p className="text-[#595858]">
+                                  Qty - {item?.quantity}
+                                </p>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-[16px]">{item?.totalPrice}</p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                       <div className="w-[100%] border-t-[2.3px]"></div>
                       <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
@@ -472,7 +501,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
             )}
             {activeTab === "pre-packaged" && (
               <div className=" py-[20px] px-[20px]  md150:h-[70vh]  overflow-y-auto h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  flex gap-[15px] my-justify-center items-center  border-[#000000]">
-                <div className="md150:w-[25%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
+                <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
                   <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
                     <div
                       className={`w-[100%] h-[100%] font-bold text-center flex items-center justify-center   cursor-pointer ${
@@ -497,7 +526,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                     <div
                       className={`w-[100%]   font-bold h-[100%] text-center flex items-center justify-center cursor-pointer ${
                         activeFilter === "unpaid"
-                          ? "bg-[RED] text-white px= py-[70px]"
+                          ? "bg-[RED] text-white  py-[70px]"
                           : "bg-white text-[#000]"
                       }`}
                       onClick={() => setActiveFilter("unpaid")}
@@ -640,7 +669,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                           >
                             <div className="flex gap-[10px] items-center">
                               <img
-                                className="w-[80px]"
+                                className="w-[80px] rounded-[8px]"
                                 src={
                                   item?.foodItem?.photo ||
                                   "../../../public/img/Foodsection/newBhaji.png"
@@ -650,6 +679,34 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                               <div>
                                 <p className="text-[16px]">
                                   {item?.foodItem?.name}
+                                </p>
+                                <p className="text-[#595858]">
+                                  Qty - {item?.quantity}
+                                </p>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-[16px]">{item?.totalPrice}</p>
+                            </div>
+                          </div>
+                        ))}
+                        {selectedOrderData?.orderId?.servingMethodId?.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between px-[10px]"
+                          >
+                            <div className="flex gap-[10px] items-center">
+                              <img
+                                className="w-[80px] rounded-[8px]"
+                                src={
+                                  item?.servingMethod?.photo ||
+                                  "../../../public/img/Foodsection/newBhaji.png"
+                                }
+                                alt="Product"
+                              />
+                              <div>
+                                <p className="text-[16px]">
+                                  {item?.servingMethod?.name}
                                 </p>
                                 <p className="text-[#595858]">
                                   Qty - {item?.quantity}
@@ -678,12 +735,12 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                           >
                             <p>View KOT</p>
                           </div>
-                          <div
+                          {/* <div
                             className="w-[130px] cursor-pointer active:bg-[#006198] active:text-[#fff] rounded-[5px] items-center flex justify-center py-[6px] font-[500] border-[1.7px] border-[#006198] text-[#006198]"
                             onClick={openPackgingnModal}
                           >
                             <p>View POT</p>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
 
@@ -750,7 +807,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                   </div>
 
                   {/* Map over the items and dynamically generate the rows */}
-                  {items.map((item, index) => (
+                  {selectedOrderData?.orderId?.items?.map((item, index) => (
                     <div
                       key={index}
                       className="w-[100%] px-[20px] text-[16px] font-[500] py-[2px] flex justify-between left-0"
@@ -759,7 +816,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                         {String(index + 1).padStart(2, "0")}
                       </p>{" "}
                       {/* Generates 01, 02, 03, etc. */}
-                      <p className="w-[55%]">{item.name}</p>
+                      <p className="w-[55%]">{item.foodItem.name}</p>
                       <p className="text-right w-[30%]">{item.quantity}</p>
                     </div>
                   ))}
@@ -924,6 +981,34 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                     </div>
                   </div>
                 ))}
+                {selectedOrderData?.orderId?.servingMethodId?.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between px-[10px]"
+                          >
+                            <div className="flex gap-[10px] items-center">
+                              <img
+                                className="w-[80px] rounded-[8px]"
+                                src={
+                                  item?.servingMethod?.photo ||
+                                  "../../../public/img/Foodsection/newBhaji.png"
+                                }
+                                alt="Product"
+                              />
+                              <div>
+                                <p className="text-[16px]">
+                                  {item?.servingMethod?.name}
+                                </p>
+                                <p className="text-[#595858]">
+                                  Qty - {item?.quantity}
+                                </p>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-[16px]">{item?.totalPrice}</p>
+                            </div>
+                          </div>
+                        ))}
               </div>
               <div className="flex absolute bottom-[80px] w-[99%] left-[2px] flex-col gap-[10px]">
                 <div className="w-[100%] border-t-[2.3px]"></div>
@@ -942,7 +1027,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
         </ModalContent>
       </NextUIModal>
       <NextUIModal
-        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[43%] h-[350px]"
+        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[45%] h-[350px]"
         isOpen={isOrderReciptModalOpen}
         backdrop={"blur"}
         onOpenChange={closeOrderModal}
@@ -962,13 +1047,13 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
               <div className=" flex flex-col gap-[28px] w-[100%]">
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Cashier name :</p>
-                  <p className=" border-b-[1.5px]  overflow-x-auto w-[58%] border-[#000]"></p>
+                  <p className=" border-b-[1.5px]  overflow-x-auto w-[50%] border-[#000]"></p>
                 </div>
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Receipt Number :</p>
                   <p className=" border-b-[1.5px] w-[50%] border-[#000]"></p>
                 </div>
-                <div className=" border-[1px] rounded-[10px] border-[#00984B] h-[180px] w-[90%] mx-auto"></div>
+                <div className=" border-[1px] rounded-[10px] border-[#00984B] h-[140px] w-[90%] mx-auto"></div>
               </div>
             </div>
           </ModalBody>
@@ -979,7 +1064,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
 
       {/* payment confirm order modal */}
       <NextUIModal
-        className="md:max-w-[300px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[35%] h-[300px]"
+        className="md:max-w-[300px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[40%] h-[300px]"
         isOpen={ispaymentModalOpen}
         backdrop={"blur"}
         onOpenChange={closePaymentModal}
@@ -1009,7 +1094,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
         </ModalContent>
       </NextUIModal>
       <NextUIModal
-        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[35%] h-[300px]"
+        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[40%] h-[300px]"
         isOpen={isRejectModalOpen}
         backdrop={"blur"}
         onOpenChange={closeRejectModal}

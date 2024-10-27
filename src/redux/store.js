@@ -6,9 +6,7 @@ import mastermanagementReducer from "./reducer/masterManagementReducer";
 import userMasterReducer from "./reducer/userMasterReducer";
 import productMasterReducer from "./reducer/productMasterReducer";
 import orderListingReducer from "./reducer/orderListingReducer";
-
-
-
+import paymentReducer from "./reducer/paymentReducer";
 
 const rootReducer = combineReducers({
    splashScreenState: splashScreenReducer,
@@ -17,6 +15,7 @@ const rootReducer = combineReducers({
    userMasterState: userMasterReducer,
    productMasterState: productMasterReducer,
    orderListingState: orderListingReducer,
+   paymentState: paymentReducer,
 });
 
 const store = createStore(rootReducer,window.REDUX_DEVTOOLS_EXTENSION_COMPOSE && Window.__REDUX_DEVTOOLS_EXTENSION_(), applyMiddleware(thunk));
