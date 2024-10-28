@@ -1,20 +1,25 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Header from '../../Components/header/Header';
-  import { Modal as NextUIModal, ModalBody, ModalContent } from '@nextui-org/react';
+import { Modal as NextUIModal, ModalBody, ModalContent } from '@nextui-org/react';
 import { getAllPadiOrderListAction, getAllPrePackagePadiOrderListAction, getAllPrePackageUnpadiOrderListAction, getAllUnpadiOrderListAction } from '../../redux/action/orderListing';
 import { useDispatch, useSelector } from 'react-redux';
+import { getPaymentByIdAction, getPrePackagePaymentByIdAction } from '../../redux/action/payment';
+
 
 export default function OrderManagement() {
 
   const [activeTab, setActiveTab] = useState('self-serving');
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [activeFilter, setActiveFilter] = useState('all'); 
+  const [activeFilter, setActiveFilter] = useState('all');
   const [isNotifictionModalOpen, setIsNotifictionModalOpen] = useState(false);
   const [isPackgingModalOpen, setPackegingModalOpen] = useState(false);
   const [isReciptModalOpen, setReciptModalOpen] = useState(false);
-const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
- const [ispaymentModalOpen, setPaymentModalOpen] = useState(false);
- const [isRejectModalOpen, setRejectModalOpen] = useState(false);
+  const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
+  const [ispaymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [isRejectModalOpen, setRejectModalOpen] = useState(false);
+  const [paymentData, setPaymentData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -35,35 +40,37 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
     setSelectedOrder(orderId);
   };
 
-  
+
   const selectedOrderData = useMemo(() => {
     return (
       paidOrderList.find((order) => order._id === selectedOrder) ||
-      unpaidOrderList.find((order) => order._id === selectedOrder)
+      unpaidOrderList.find((order) => order._id === selectedOrder) ||
+      prePackagePaidOrderList.find((order) => order._id === selectedOrder) ||
+      prePackageUnpaidOrderList.find((order) => order._id === selectedOrder)
     );
-  }, [selectedOrder, paidOrderList, unpaidOrderList]);
+  }, [selectedOrder, paidOrderList, unpaidOrderList, prePackagePaidOrderList, prePackageUnpaidOrderList]);
 
   function formatDateAndTime(dateInput) {
     const date = new Date(dateInput);
     if (isNaN(date.getTime())) {
       return 'Invalid Date';
     }
-  
+
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-  
+
     let hours = date.getHours();
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const ampm = hours >= 12 ? 'PM' : 'AM';
-  
+
     hours = hours % 12;
     hours = hours ? hours : 12;
-  
+
     return `${day}/${month}/${year} - ${hours}:${minutes} ${ampm}`;
   }
-  
-  
+
+
   const openNotifictionModal = () => {
     setIsNotifictionModalOpen(true);
     window.history.pushState({}, '');
@@ -86,14 +93,14 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
 
 
 
-   const closeOrderModal = () => {
-     setOrderReciptModalOpen(false);
-     window.history.back();
-   };
-      const openOrderModal = () => {
-        setOrderReciptModalOpen(true);
-      window.history.pushState({}, "");   
-      };
+  const closeOrderModal = () => {
+    setOrderReciptModalOpen(false);
+    window.history.back();
+  };
+  // const openOrderModal = () => {
+  //   setOrderReciptModalOpen(true);
+  //   window.history.pushState({}, "");
+  // };
 
 
   const openReciptModal = () => {
@@ -106,38 +113,25 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
     window.history.back();
   };
 
+  const openPaymentModal = () => {
+    setPaymentModalOpen(true);
+    window.history.pushState({}, "");
+  };
 
+  const closePaymentModal = () => {
+    setPaymentModalOpen(false);
+    window.history.back();
+  };
+  const openRejectModal = () => {
+    setRejectModalOpen(true);
+    window.history.pushState({}, "");
+  };
 
-    const openPaymentModal = () => {
-      setPaymentModalOpen(true);
-      window.history.pushState({}, "");
-    };
+  const closeRejectModal = () => {
+    setRejectModalOpen(false);
+    window.history.back();
+  };
 
-    const closePaymentModal = () => {
-      setPaymentModalOpen(false);
-      window.history.back();
-    };
-     const openRejectModal = () => {
-       setRejectModalOpen(true);
-       window.history.pushState({}, "");
-     };
-
-     const closeRejectModal = () => {
-       setRejectModalOpen(false);
-       window.history.back();
-     };
-  const items = [
-    { name: 'BHAJI 200GMS', quantity: 10 },
-    { name: 'BHAJI 200GMS', quantity: 10 },
-    { name: 'BHAJI 200GMS', quantity: 10 },
-
-  ];
-  const items2 = [
-    { name: ' Paper plate - 4 no. silver foil', quantity: 10 },
-    { name: ' Paper plate - 4 no. silver foil', quantity: 10 },
-    { name: ' Paper plate - 4 no. silver foil', quantity: 10 },
-
-  ];
 
 
   const paidOrder = {
@@ -177,17 +171,54 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
   const shouldShowUnpaid = activeFilter === 'all' || activeFilter === 'unpaid';
 
   // Update selectedOrder when the filter changes to maintain the first order in view
-  useEffect(() => {
-    if (activeFilter === 'all') {
-      setSelectedOrder(paidOrderList[0]?._id || unpaidOrderList[0]?._id); 
-    } else if (activeFilter === 'paid') {
-      setSelectedOrder(paidOrderList[0]?._id); 
-    } else if (activeFilter === 'unpaid') {
-      setSelectedOrder(unpaidOrderList[0]?._id);
-    }
-  }, [activeFilter, paidOrderList, unpaidOrderList]);
+  // useEffect(() => {
+  //   if (activeFilter === 'all') {
+  //     setSelectedOrder(paidOrderList[0]?._id || unpaidOrderList[0]?._id); 
+  //   } else if (activeFilter === 'paid') {
+  //     setSelectedOrder(paidOrderList[0]?._id); 
+  //   } else if (activeFilter === 'unpaid') {
+  //     setSelectedOrder(unpaidOrderList[0]?._id);
+  //   }
+  // }, [activeFilter, paidOrderList, unpaidOrderList]);
 
-  
+  useEffect(() => {
+    if (activeTab === 'self-serving') {
+      if (activeFilter === 'all') {
+        setSelectedOrder(paidOrderList[0]?._id || unpaidOrderList[0]?._id);
+      } else if (activeFilter === 'paid') {
+        setSelectedOrder(paidOrderList[0]?._id);
+      } else if (activeFilter === 'unpaid') {
+        setSelectedOrder(unpaidOrderList[0]?._id);
+      }
+    } else if (activeTab === 'pre-packaged') {
+      if (activeFilter === 'all') {
+        setSelectedOrder(prePackagePaidOrderList[0]?._id || prePackageUnpaidOrderList[0]?._id);
+      } else if (activeFilter === 'paid') {
+        setSelectedOrder(prePackagePaidOrderList[0]?._id);
+      } else if (activeFilter === 'unpaid') {
+        setSelectedOrder(prePackageUnpaidOrderList[0]?._id);
+      }
+    }
+  }, [activeFilter, activeTab, paidOrderList, unpaidOrderList, prePackagePaidOrderList, prePackageUnpaidOrderList]);
+
+  const openOrderModal = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Fetch payment data with selectedOrderData._id as orderId
+      const data = await dispatch(getPrePackagePaymentByIdAction(selectedOrderData._id));
+      setPaymentData(data);
+      setOrderReciptModalOpen(true); // Open modal after successful data fetch
+      window.history.pushState({}, ""); // Update browser history state if needed
+    } catch (error) {
+      setError("Failed to fetch payment data.");
+      console.error("Error fetching payment data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
 
   return (
     <>
@@ -200,21 +231,19 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
           <div className="flex absolute md150:top-[5.9%] top-[7.3%] gap-[10px] right-[10%]">
             <div
               onClick={() => setActiveTab("self-serving")}
-              className={`w-[130px] p-[8px]  rounded-tl-[7px] font-bold  rounded-tr-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${
-                activeTab === "self-serving"
-                  ? "bg-[#FEAA00] text-[#fff]"
-                  : "border-t-[1px] border-l-[1px] border-r-[1px]"
-              }`}
+              className={`w-[130px] p-[8px]  rounded-tl-[7px] font-bold  rounded-tr-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "self-serving"
+                ? "bg-[#FEAA00] text-[#fff]"
+                : "border-t-[1px] border-l-[1px] border-r-[1px]"
+                }`}
             >
               <p>Self Serving</p>
             </div>
             <div
               onClick={() => setActiveTab("pre-packaged")}
-              className={`w-[130px] p-[8px]  rounded-tr-[7px] font-bold  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${
-                activeTab === "pre-packaged"
-                  ? "bg-[#FEAA00] text-[#fff]"
-                  : "border-t-[1px] border-l-[1px] border-r-[1px]"
-              }`}
+              className={`w-[130px] p-[8px]  rounded-tr-[7px] font-bold  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "pre-packaged"
+                ? "bg-[#FEAA00] text-[#fff]"
+                : "border-t-[1px] border-l-[1px] border-r-[1px]"
+                }`}
             >
               <p>Pre - Packaged</p>
             </div>
@@ -227,31 +256,28 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                 <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
                   <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[30px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
                     <div
-                      className={`w-[100%] h-[100%] font-bold text-center flex items-center justify-center   cursor-pointer ${
-                        activeFilter === "all"
-                          ? "bg-[#00984B] text-white py-[70px]"
-                          : "bg-white text-[#000]"
-                      }`}
+                      className={`w-[100%] h-[100%] font-bold text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
+                        ? "bg-[#00984B] text-white py-[70px]"
+                        : "bg-white text-[#000]"
+                        }`}
                       onClick={() => setActiveFilter("all")}
                     >
                       <p>All</p>
                     </div>
                     <div
-                      className={`w-[100%] h-[100%]  font-bold text-center flex items-center justify-center cursor-pointer ${
-                        activeFilter === "paid"
-                          ? "bg-[#006198] text-white py-[70px]"
-                          : "bg-white text-[#000]"
-                      }`}
+                      className={`w-[100%] h-[100%]  font-bold text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
+                        ? "bg-[#006198] text-white py-[70px]"
+                        : "bg-white text-[#000]"
+                        }`}
                       onClick={() => setActiveFilter("paid")}
                     >
                       <p>Paid</p>
                     </div>
                     <div
-                      className={`w-[100%]   font-bold h-[100%] text-center flex items-center justify-center cursor-pointer ${
-                        activeFilter === "unpaid"
-                          ? "bg-[RED] text-white  py-[70px]"
-                          : "bg-white text-[#000]"
-                      }`}
+                      className={`w-[100%]   font-bold h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
+                        ? "bg-[RED] text-white  py-[70px]"
+                        : "bg-white text-[#000]"
+                        }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
                       <p>Unpaid</p>
@@ -277,11 +303,10 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                           <p>Pickup location - {order?.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
-                            selectedOrder === order._id
-                              ? "bg-[#00984B] text-white"
-                              : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
-                          }`}
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
+                            ? "bg-[#00984B] text-white"
+                            : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
+                            }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -307,11 +332,10 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                           <p>Pickup location - {order.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
-                            selectedOrder === order._id
-                              ? "bg-[#FF0606] text-white"
-                              : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
-                          }`}
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
+                            ? "bg-[#FF0606] text-white"
+                            : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
+                            }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -330,11 +354,10 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                         ></i>
                       </div>
                       <div
-                        className={`w-[150px] rounded-bl-[7px] font-[600]  text-[20px] flex justify-center  ${
-                          selectedOrder === 0
-                            ? "text-[#00984B]"
-                            : "text-[#FF0606]"
-                        }`}
+                        className={`w-[150px] rounded-bl-[7px] font-[600]  text-[20px] flex justify-center  ${selectedOrder === 0
+                          ? "text-[#00984B]"
+                          : "text-[#FF0606]"
+                          }`}
                       >
                         <p>
                           {paidOrderList.find(
@@ -346,15 +369,14 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                       </div>
                     </div>
                     <div
-                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${
-                        selectedOrder === 0
-                          ? "border-[#00984B]"
-                          : "border-[#FF0606]"
-                      }`}
+                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${selectedOrder === 0
+                        ? "border-[#00984B]"
+                        : "border-[#FF0606]"
+                        }`}
                     >
                       <div className="w-[100%] flex justify-between">
                         <div className="text-[15px] font-[400]">
-                          <p>Order ID #{selectedOrderData?.orderId?._id}</p>
+                          <p>Order ID #{selectedOrderData?._id}</p>
                           <p>
                             Order on -{" "}
                             {formatDateAndTime(selectedOrderData?.createdAt)}
@@ -508,31 +530,28 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                 <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
                   <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
                     <div
-                      className={`w-[100%] h-[100%] font-bold text-center flex items-center justify-center   cursor-pointer ${
-                        activeFilter === "all"
-                          ? "bg-[#00984B] text-white py-[70px]"
-                          : "bg-white text-[#000]"
-                      }`}
+                      className={`w-[100%] h-[100%] font-bold text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
+                        ? "bg-[#00984B] text-white py-[70px]"
+                        : "bg-white text-[#000]"
+                        }`}
                       onClick={() => setActiveFilter("all")}
                     >
                       <p>All</p>
                     </div>
                     <div
-                      className={`w-[100%] h-[100%]  font-bold text-center flex items-center justify-center cursor-pointer ${
-                        activeFilter === "paid"
-                          ? "bg-[#006198] text-white py-[70px]"
-                          : "bg-white text-[#000]"
-                      }`}
+                      className={`w-[100%] h-[100%]  font-bold text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
+                        ? "bg-[#006198] text-white py-[70px]"
+                        : "bg-white text-[#000]"
+                        }`}
                       onClick={() => setActiveFilter("paid")}
                     >
                       <p>Paid</p>
                     </div>
                     <div
-                      className={`w-[100%]   font-bold h-[100%] text-center flex items-center justify-center cursor-pointer ${
-                        activeFilter === "unpaid"
-                          ? "bg-[RED] text-white  py-[70px]"
-                          : "bg-white text-[#000]"
-                      }`}
+                      className={`w-[100%]   font-bold h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
+                        ? "bg-[RED] text-white  py-[70px]"
+                        : "bg-white text-[#000]"
+                        }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
                       <p>Unpaid</p>
@@ -559,11 +578,10 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                           <p>Pickup location - {order?.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
-                            selectedOrder === order._id
-                              ? "bg-[#00984B] text-white"
-                              : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
-                          }`}
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
+                            ? "bg-[#00984B] text-white"
+                            : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
+                            }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -590,11 +608,10 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                           <p>Pickup location - {order.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
-                            selectedOrder === order._id
-                              ? "bg-[#FF0606] text-white"
-                              : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
-                          }`}
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
+                            ? "bg-[#FF0606] text-white"
+                            : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
+                            }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -613,14 +630,13 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                         ></i>
                       </div>
                       <div
-                        className={`w-[150px] rounded-bl-[7px] font-[600]  text-[20px] flex justify-center  ${
-                          selectedOrder === 0
-                            ? "text-[#00984B]"
-                            : "text-[#FF0606]"
-                        }`}
+                        className={`w-[150px] rounded-bl-[7px] font-[600]  text-[20px] flex justify-center  ${selectedOrder === 0
+                          ? "text-[#00984B]"
+                          : "text-[#FF0606]"
+                          }`}
                       >
                         <p>
-                          {paidOrderList.find(
+                          {prePackagePaidOrderList.find(
                             (order) => order._id === selectedOrder
                           )
                             ? "ORDER PAID"
@@ -629,15 +645,14 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                       </div>
                     </div>
                     <div
-                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${
-                        selectedOrder === 0
-                          ? "border-[#00984B]"
-                          : "border-[#FF0606]"
-                      }`}
+                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${selectedOrder === 0
+                        ? "border-[#00984B]"
+                        : "border-[#FF0606]"
+                        }`}
                     >
                       <div className="w-[100%] flex justify-between">
                         <div className="text-[15px] font-[400]">
-                          <p>Order ID #{selectedOrderData?.orderId?._id}</p>
+                          <p>Order ID #{selectedOrderData?._id}</p>
                           <p>
                             Order on -{" "}
                             {formatDateAndTime(selectedOrderData?.createdAt)}
@@ -696,38 +711,6 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                             </div>
                           </div>
                         ))}
-                        {selectedOrderData?.orderId?.servingMethodId?.map(
-                          (item, idx) => (
-                            <div
-                              key={idx}
-                              className="flex items-center justify-between px-[10px]"
-                            >
-                              <div className="flex gap-[10px] items-center">
-                                <img
-                                  className="w-[80px] rounded-[8px]"
-                                  src={
-                                    item?.servingMethod?.photo ||
-                                    "../../../public/img/Foodsection/newBhaji.png"
-                                  }
-                                  alt={item?.servingMethod?.name}
-                                />
-                                <div>
-                                  <p className="text-[16px]">
-                                    {item?.servingMethod?.name}
-                                  </p>
-                                  <p className="text-[#595858]">
-                                    Qty - {item?.quantity}
-                                  </p>
-                                </div>
-                              </div>
-                              <div>
-                                <p className="text-[16px]">
-                                  {item?.totalPrice.toFixed(2)}
-                                </p>
-                              </div>
-                            </div>
-                          )
-                        )}
                       </div>
                       <div className="w-[100%] border-t-[2.3px]"></div>
                       <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
@@ -763,7 +746,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                         </div>
 
                         {/* Conditional Rendering for View Receipt / View Payment */}
-                        {paidOrderList.find(
+                        {prePackagePaidOrderList.find(
                           (order) => order._id === selectedOrder
                         ) ? (
                           <div
@@ -823,17 +806,24 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
 
                   {/* Map over the items and dynamically generate the rows */}
                   {selectedOrderData?.orderId?.items?.map((item, index) => (
-                    <div
-                      key={index}
-                      className="w-[100%] px-[20px] text-[16px] font-[500] py-[2px] flex justify-between left-0"
-                    >
-                      <p className="w-[15%]">
-                        {String(index + 1).padStart(2, "0")}
-                      </p>{" "}
-                      {/* Generates 01, 02, 03, etc. */}
-                      <p className="w-[55%]">{item.foodItem.name}</p>
-                      <p className="text-right w-[30%]">{item.quantity}</p>
-                    </div>
+
+                    <>
+                      <div className='max-h-[200px] overflow-y-auto '>
+                        <div
+                          key={index}
+                          className="w-[100%] px-[20px] text-[16px] font-[500] py-[2px]  flex justify-between left-0"
+                        >
+                          <p className="w-[15%]">
+                            {String(index + 1).padStart(2, "0")}
+                          </p>{" "}
+                          {/* Generates 01, 02, 03, etc. */}
+                          <p className="w-[55%]">{item.foodItem?.name}</p>
+                          <p className="text-right w-[30%]">{item?.quantity}</p>
+                        </div>
+
+
+                      </div>
+                    </>
                   ))}
                   {/* <div className='flex justify-between  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed'>
                     <p>
@@ -844,7 +834,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                     </p>
                   </div> */}
                 </div>
-                <div className="flex w-[100%] left-0 justify-between absolute bottom-[60px]  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed">
+                <div className="flex w-[100%] left-0 bg-white justify-between absolute bottom-[60px]  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed">
                   <p>
                     Items : {selectedOrderData?.orderId?.items?.length || 0}
                   </p>
@@ -898,17 +888,21 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                   {/* Map over the items and dynamically generate the rows */}
                   {selectedOrderData?.orderId?.servingMethodId?.map(
                     (item, index) => (
-                      <div
-                        key={index}
-                        className="w-[100%] px-[20px] text-[16px] font-[500] py-[2px] flex justify-between left-0"
-                      >
-                        <p className="w-[15%]">
-                          {String(index + 1).padStart(2, "0")}
-                        </p>{" "}
-                        {/* Generates 01, 02, 03, etc. */}
-                        <p className="w-[55%]">{item.servingMethod?.name}</p>
-                        <p className="text-right w-[30%]">{item.quantity}</p>
-                      </div>
+                      <>
+                        <div className='max-h-[175px] overflow-y-auto'>
+                          <div
+                            key={index}
+                            className="w-[100%] px-[20px] text-[16px] font-[500] py-[2px] flex justify-between left-0"
+                          >
+                            <p className="w-[15%]">
+                              {String(index + 1).padStart(2, "0")}
+                            </p>{" "}
+                            {/* Generates 01, 02, 03, etc. */}
+                            <p className="w-[55%]">{item.servingMethod?.name}</p>
+                            <p className="text-right w-[30%]">{item.quantity}</p>
+                          </div>
+                        </div>
+                      </>
                     )
                   )}
                   {/* <div className='flex justify-between  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed'>
@@ -939,6 +933,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
               </div>
             </div>
           </ModalBody>
+
         </ModalContent>
       </NextUIModal>
       <NextUIModal
@@ -1004,12 +999,12 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                         alt={item?.foodItem?.name}
                       />
                       <div>
-                        <p className="text-[16px]">{item.foodItem.name}</p>
-                        <p className="text-[#595858]">Qty - {item.quantity}</p>
+                        <p className="text-[16px]">{item.foodItem?.name}</p>
+                        <p className="text-[#595858]">Qty - {item?.quantity}</p>
                       </div>
                     </div>
                     <div>
-                      <p className="text-[16px]">{item.price}</p>
+                      <p className="text-[16px]">{item?.price}</p>
                     </div>
                   </div>
                 ))}
@@ -1078,14 +1073,14 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
               </div>
               <div className=" flex flex-col gap-[28px] w-[100%]">
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
-                  <p className=" font-[600]">Cashier name :</p>
+                  <p className=" font-[600]">Cashier name :  {paymentData?.cashierName}</p>
                   <p className=" border-b-[1.5px]  overflow-x-auto w-[50%] border-[#000]"></p>
                 </div>
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
-                  <p className=" font-[600]">Receipt Number :</p>
+                  <p className=" font-[600]">Receipt Number : {paymentData?.recieptNo}</p>
                   <p className=" border-b-[1.5px] w-[50%] border-[#000]"></p>
                 </div>
-                <div className=" border-[1px] rounded-[10px] border-[#00984B] h-[140px] w-[90%] mx-auto"></div>
+                <div className=" border-[1px] rounded-[10px] border-[#00984B] h-[140px] w-[90%] mx-auto">{paymentData?.recieptImage}</div>
               </div>
             </div>
           </ModalBody>

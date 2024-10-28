@@ -1,7 +1,8 @@
-import { GET_PAYMENT, RESET_GLOBAL_STATE } from '../type';
+import { GET_PAYMENT, GET_PRE_PACKAGE_PAYMENT, RESET_GLOBAL_STATE } from '../type';
 
 const initialState = {
-    GetPayment: [],
+    getPayment: [],
+    getPrePackagePayment: [],
 };
 
 const paymentReducer = (state = initialState, action) => {
@@ -9,7 +10,12 @@ const paymentReducer = (state = initialState, action) => {
         case GET_PAYMENT: 
         return {
             ...state,
-            GetPayment: action.payload,
+            getPayment: action.payload,
+        };
+        case GET_PRE_PACKAGE_PAYMENT: 
+        return {
+            ...state,
+            getPrePackagePayment: action.payload,
         };
         case RESET_GLOBAL_STATE:
             return initialState;

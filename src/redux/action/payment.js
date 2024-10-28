@@ -1,13 +1,9 @@
 import { toast } from 'react-toastify';
 import Auth from '../../config/auth';
 import {
-    ApiDelete,
-    ApiGet,
-    ApiPost,
-    ApiPostNoAuth,
-    ApiPut,
+    ApiGet
 } from '../../helper/axios';
-import { GET_PAYMENT } from '../type';
+import { GET_PAYMENT, GET_PRE_PACKAGE_PAYMENT } from '../type';
 
 
 export const getPaymentByIdAction = (orderId) => {
@@ -25,6 +21,27 @@ export const getPaymentByIdAction = (orderId) => {
     .catch((error) => {
       dispatch({
         type: GET_PAYMENT,
+        payload: error,
+      });
+    });
+};
+};
+
+export const getPrePackagePaymentByIdAction = (orderId) => {
+  return (dispatch) => {
+      return ApiGet(`/api/pre-packaging/payment/${orderId}`)
+    .then((res) => {
+      if (res.status === "success") {
+        dispatch({
+          type: GET_PRE_PACKAGE_PAYMENT,
+          payload: res?.data,
+        });
+        return res?.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: GET_PRE_PACKAGE_PAYMENT,
         payload: error,
       });
     });
