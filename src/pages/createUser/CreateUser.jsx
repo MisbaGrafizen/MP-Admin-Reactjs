@@ -71,7 +71,7 @@ export default function CreateUser() {
 
     return (
       <>
-        <div className="w-[99%] h-[100%]  relative overflow-hidden  px-[40px] py-[48px] mx-auto   my-auto ">
+        <div className="w-[99%] h-[100vh]  relative overflow-hidden top-0 bottom-0  px-[40px] py-[48px] mx-auto   my-auto ">
           <div className="  mx-auto flex gap-[30px] h-[90vh] flex-col relative   rounded-[19px] border-[1px] border-[#FEAA00]">
             <div className="flex absolute left-[3%]  top-[5%]  text-[20px] font-[600]">
               <i className="fa-solid fa-angle-up fa-rotate-270"></i>
@@ -376,7 +376,7 @@ export default function CreateUser() {
             </div>
           </div>
         </div>
-        <NextUIModal
+        {/* <NextUIModal
           className="md:max-w-[300px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[35%] h-[300px]"
           isOpen={ispaymentModalOpen}
           backdrop={"blur"}
@@ -405,7 +405,7 @@ export default function CreateUser() {
               </div>
             </ModalBody>
           </ModalContent>
-        </NextUIModal>
+        </NextUIModal> */}
       </>
     );
 }

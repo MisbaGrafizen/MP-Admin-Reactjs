@@ -191,13 +191,13 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
 
   return (
     <>
-      <div className="w-[99%] h-[100%] relative overflow-hidden px-[40px] py-[48px] mx-auto my-auto">
+      <div className="w-[99%] h-[100vh]  relative overflow-hidden top-0 bottom-0  px-[40px] py-[48px] mx-auto   my-auto ">
         <div className="mx-auto flex gap-[30px] h-[90vh] flex-col relative rounded-[19px] border-[1px] border-[#FEAA00]">
           <div className="flex absolute left-[3%]  top-[5%]  text-[20px] font-[600]">
             <i className="fa-solid fa-angle-up fa-rotate-270"></i>
             <p> ORDERS MANAGEMENT</p>
           </div>
-          <div className="flex absolute top-[7.9%] gap-[10px] right-[10%]">
+          <div className="flex absolute md150:top-[5.9%] top-[7.3%] gap-[10px] right-[10%]">
             <div
               onClick={() => setActiveTab("self-serving")}
               className={`w-[130px] p-[8px]  rounded-tl-[7px] font-bold  rounded-tr-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${
@@ -413,34 +413,38 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                             </div>
                           </div>
                         ))}
-                        {selectedOrderData?.orderId?.servingMethodId?.map((item, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center justify-between px-[10px]"
-                          >
-                            <div className="flex gap-[10px] items-center">
-                              <img
-                                className="w-[80px] rounded-[8px]"
-                                src={
-                                  item?.servingMethod?.photo ||
-                                  "../../../public/img/Foodsection/newBhaji.png"
-                                }
-                                alt="Product"
-                              />
+                        {selectedOrderData?.orderId?.servingMethodId?.map(
+                          (item, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center justify-between px-[10px]"
+                            >
+                              <div className="flex gap-[10px] items-center">
+                                <img
+                                  className="w-[80px] rounded-[8px]"
+                                  src={
+                                    item?.servingMethod?.photo ||
+                                    "../../../public/img/Foodsection/newBhaji.png"
+                                  }
+                                  alt="Product"
+                                />
+                                <div>
+                                  <p className="text-[16px]">
+                                    {item?.servingMethod?.name}
+                                  </p>
+                                  <p className="text-[#595858]">
+                                    Qty - {item?.quantity}
+                                  </p>
+                                </div>
+                              </div>
                               <div>
                                 <p className="text-[16px]">
-                                  {item?.servingMethod?.name}
-                                </p>
-                                <p className="text-[#595858]">
-                                  Qty - {item?.quantity}
+                                  {item?.totalPrice}
                                 </p>
                               </div>
                             </div>
-                            <div>
-                              <p className="text-[16px]">{item?.totalPrice}</p>
-                            </div>
-                          </div>
-                        ))}
+                          )
+                        )}
                       </div>
                       <div className="w-[100%] border-t-[2.3px]"></div>
                       <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
@@ -568,7 +572,8 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
 
                   {shouldShowUnpaid &&
                     Array.isArray(prePackageUnpaidOrderList) &&
-                    prePackageUnpaidOrderList.map((order) => (                      <div
+                    prePackageUnpaidOrderList.map((order) => (
+                      <div
                         key={order.id}
                         className={`w-[100%] items-center justify-between rounded-[10px] border-[#FF0606] text-[#FF0606] flex text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
                         onClick={() => handleSelectOrder(order._id)}
@@ -691,34 +696,38 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                             </div>
                           </div>
                         ))}
-                        {selectedOrderData?.orderId?.servingMethodId?.map((item, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center justify-between px-[10px]"
-                          >
-                            <div className="flex gap-[10px] items-center">
-                              <img
-                                className="w-[80px] rounded-[8px]"
-                                src={
-                                  item?.servingMethod?.photo ||
-                                  "../../../public/img/Foodsection/newBhaji.png"
-                                }
-                                alt={item?.servingMethod?.name}
-                              />
+                        {selectedOrderData?.orderId?.servingMethodId?.map(
+                          (item, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center justify-between px-[10px]"
+                            >
+                              <div className="flex gap-[10px] items-center">
+                                <img
+                                  className="w-[80px] rounded-[8px]"
+                                  src={
+                                    item?.servingMethod?.photo ||
+                                    "../../../public/img/Foodsection/newBhaji.png"
+                                  }
+                                  alt={item?.servingMethod?.name}
+                                />
+                                <div>
+                                  <p className="text-[16px]">
+                                    {item?.servingMethod?.name}
+                                  </p>
+                                  <p className="text-[#595858]">
+                                    Qty - {item?.quantity}
+                                  </p>
+                                </div>
+                              </div>
                               <div>
                                 <p className="text-[16px]">
-                                  {item?.servingMethod?.name}
-                                </p>
-                                <p className="text-[#595858]">
-                                  Qty - {item?.quantity}
+                                  {item?.totalPrice.toFixed(2)}
                                 </p>
                               </div>
                             </div>
-                            <div>
-                              <p className="text-[16px]">{item?.totalPrice.toFixed(2)}</p>
-                            </div>
-                          </div>
-                        ))}
+                          )
+                        )}
                       </div>
                       <div className="w-[100%] border-t-[2.3px]"></div>
                       <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
@@ -798,7 +807,12 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
 
                 <div className="text-[] mt-[24%] flex flex-col text-left   justify-start py-[10px] ">
                   <p>Bill No - 481</p>
-                  <p>Order on - {formatDateAndTime(selectedOrderData?.orderDate?.pickupDate)}</p>
+                  <p>
+                    Order on -{" "}
+                    {formatDateAndTime(
+                      selectedOrderData?.orderDate?.pickupDate
+                    )}
+                  </p>
                 </div>
                 <div className="w-[100%] flex flex-col gap-[5px] absolute left-0">
                   <div className="w-[100%] px-[20px] text-[18px] text-[#fff] font-[500] py-[5px] flex justify-between bg-[#00984B]">
@@ -818,7 +832,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                       </p>{" "}
                       {/* Generates 01, 02, 03, etc. */}
                       <p className="w-[55%]">{item.foodItem.name}</p>
-                      <p className="text-right w-[30%]">{item.quantity}</p>  
+                      <p className="text-right w-[30%]">{item.quantity}</p>
                     </div>
                   ))}
                   {/* <div className='flex justify-between  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed'>
@@ -831,8 +845,16 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                   </div> */}
                 </div>
                 <div className="flex w-[100%] left-0 justify-between absolute bottom-[60px]  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed">
-                <p>Items : {selectedOrderData?.orderId?.items?.length || 0}</p>
-                <p>Qty : {selectedOrderData?.orderId?.items?.reduce((total, item) => total + item.quantity, 0) || 0}</p>
+                  <p>
+                    Items : {selectedOrderData?.orderId?.items?.length || 0}
+                  </p>
+                  <p>
+                    Qty :{" "}
+                    {selectedOrderData?.orderId?.items?.reduce(
+                      (total, item) => total + item.quantity,
+                      0
+                    ) || 0}
+                  </p>
                 </div>
                 <div className="bg-[#006198] absolute bottom-0 w-[100%] left-0 py-[6px] flex justify-center text-[30px] text-[#fff]">
                   <i className="fa-solid fa-print"></i>
@@ -859,7 +881,12 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
 
                 <div className="text-[] mt-[24%] flex flex-col text-left   justify-start py-[10px] ">
                   <p>Bill No - 481</p>
-                  <p>Order on - {formatDateAndTime(selectedOrderData?.orderDate?.pickupDate)}</p>
+                  <p>
+                    Order on -{" "}
+                    {formatDateAndTime(
+                      selectedOrderData?.orderDate?.pickupDate
+                    )}
+                  </p>
                 </div>
                 <div className="w-[100%] flex flex-col gap-[5px] absolute left-0">
                   <div className="w-[100%] px-[20px] text-[18px] text-[#fff] font-[500] py-[5px] flex justify-between bg-[#00984B]">
@@ -869,19 +896,21 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                   </div>
 
                   {/* Map over the items and dynamically generate the rows */}
-                  {selectedOrderData?.orderId?.servingMethodId?.map((item, index) => (
-                    <div
-                      key={index}
-                      className="w-[100%] px-[20px] text-[16px] font-[500] py-[2px] flex justify-between left-0"
-                    >
-                      <p className="w-[15%]">
-                        {String(index + 1).padStart(2, "0")}
-                      </p>{" "}
-                      {/* Generates 01, 02, 03, etc. */}
-                      <p className="w-[55%]">{item.servingMethod?.name}</p>
-                      <p className="text-right w-[30%]">{item.quantity}</p>
-                    </div>
-                  ))}
+                  {selectedOrderData?.orderId?.servingMethodId?.map(
+                    (item, index) => (
+                      <div
+                        key={index}
+                        className="w-[100%] px-[20px] text-[16px] font-[500] py-[2px] flex justify-between left-0"
+                      >
+                        <p className="w-[15%]">
+                          {String(index + 1).padStart(2, "0")}
+                        </p>{" "}
+                        {/* Generates 01, 02, 03, etc. */}
+                        <p className="w-[55%]">{item.servingMethod?.name}</p>
+                        <p className="text-right w-[30%]">{item.quantity}</p>
+                      </div>
+                    )
+                  )}
                   {/* <div className='flex justify-between  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed'>
                     <p>
                       Items  : 03
@@ -892,8 +921,17 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                   </div> */}
                 </div>
                 <div className="flex w-[100%] left-0 justify-between absolute bottom-[60px]  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed">
-                  <p>Items : {selectedOrderData?.orderId?.servingMethodId?.length || 0}</p>
-                  <p>Qty : {selectedOrderData?.orderId?.servingMethodId?.reduce((total, item) => total + item.quantity, 0) || 0}</p>
+                  <p>
+                    Items :{" "}
+                    {selectedOrderData?.orderId?.servingMethodId?.length || 0}
+                  </p>
+                  <p>
+                    Qty :{" "}
+                    {selectedOrderData?.orderId?.servingMethodId?.reduce(
+                      (total, item) => total + item.quantity,
+                      0
+                    ) || 0}
+                  </p>
                 </div>
                 <div className="bg-[#006198] absolute bottom-0 w-[100%] left-0 py-[6px] flex justify-center text-[30px] text-[#fff]">
                   <i className="fa-solid fa-print"></i>
@@ -917,22 +955,19 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
             >
               <div className="w-[100%] flex justify-between">
                 <div className="text-[15px] font-[400]">
+                  <p>Order ID #{selectedOrderData?.orderId?._id}</p>
                   <p>
-                    Order ID #
-                    {selectedOrderData?.orderId?._id}
-                  </p>
-                  <p>
-                    Order on -{" "}
-                    {formatDateAndTime(selectedOrderData?.createdAt)}
+                    Order on - {formatDateAndTime(selectedOrderData?.createdAt)}
                   </p>
                   <p>
                     Order for -{" "}
-                    {formatDateAndTime(selectedOrderData?.orderDate?.pickupDate)}
+                    {formatDateAndTime(
+                      selectedOrderData?.orderDate?.pickupDate
+                    )}
                   </p>
                 </div>
                 <p className="font-[600] pr-[20px] items-center text-[18px]">
-                  Name -{" "}
-                    {selectedOrderData?.orderId?.userId?.name}
+                  Name - {selectedOrderData?.orderId?.userId?.name}
                 </p>
               </div>
               <div className="w-[100%] border-t-[1.7px] border-dashed"></div>
@@ -940,7 +975,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                 <div className="flex flex-col gap-[5px]">
                   <p className="font-[300]">Delivery Address :</p>
                   <p className="font-bold ">
-                  {selectedOrderData?.pickupLocation?.name}
+                    {selectedOrderData?.pickupLocation?.name}
                   </p>
                 </div>
                 <div className="flex gap-[6px] pr-[20px]">
@@ -963,9 +998,9 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                       <img
                         className="w-[80px]"
                         src={
-                               item?.foodItem?.photo ||
-                               "../../../public/img/Foodsection/newBhaji.png"
-                            }
+                          item?.foodItem?.photo ||
+                          "../../../public/img/Foodsection/newBhaji.png"
+                        }
                         alt={item?.foodItem?.name}
                       />
                       <div>
@@ -978,42 +1013,42 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                     </div>
                   </div>
                 ))}
-                {selectedOrderData?.orderId?.servingMethodId?.map((item, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center justify-between px-[10px]"
-                          >
-                            <div className="flex gap-[10px] items-center">
-                              <img
-                                className="w-[80px] rounded-[8px]"
-                                src={
-                                  item?.servingMethod?.photo ||
-                                  "../../../public/img/Foodsection/newBhaji.png"
-                                }
-                                alt={item?.servingMethod?.name}
-                              />
-                              <div>
-                                <p className="text-[16px]">
-                                  {item?.servingMethod?.name}
-                                </p>
-                                <p className="text-[#595858]">
-                                  Qty - {item?.quantity}
-                                </p>
-                              </div>
-                            </div>
-                            <div>
-                              <p className="text-[16px]">{item?.totalPrice}</p>
-                            </div>
-                          </div>
-                        ))}
+                {selectedOrderData?.orderId?.servingMethodId?.map(
+                  (item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between px-[10px]"
+                    >
+                      <div className="flex gap-[10px] items-center">
+                        <img
+                          className="w-[80px] rounded-[8px]"
+                          src={
+                            item?.servingMethod?.photo ||
+                            "../../../public/img/Foodsection/newBhaji.png"
+                          }
+                          alt={item?.servingMethod?.name}
+                        />
+                        <div>
+                          <p className="text-[16px]">
+                            {item?.servingMethod?.name}
+                          </p>
+                          <p className="text-[#595858]">
+                            Qty - {item?.quantity}
+                          </p>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[16px]">{item?.totalPrice}</p>
+                      </div>
+                    </div>
+                  )
+                )}
               </div>
               <div className="flex absolute bottom-[80px] w-[99%] left-[2px] flex-col gap-[10px]">
                 <div className="w-[100%] border-t-[2.3px]"></div>
                 <div className="flex justify-between px-[10px] font-[500] text-[19px] font-mono">
                   <p>Total</p>
-                  <p>
-                    {selectedOrderData?.orderId?.totalAmount}
-                  </p>
+                  <p>{selectedOrderData?.orderId?.totalAmount}</p>
                 </div>
               </div>
               <div className="bg-[#00984B] absolute bottom-0 w-[100%] left-0 py-[9px] flex justify-center text-[30px] text-[#fff]">

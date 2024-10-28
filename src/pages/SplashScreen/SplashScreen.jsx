@@ -52,7 +52,7 @@ export default function Home() {
                 </div>
             </div> */}
 
-            <div className="w-[99%] h-[100%]  relative overflow-hidden  px-[40px] py-[48px] mx-auto   my-auto   ">
+            <div className="w-[99%] h-[100vh]  relative overflow-hidden  px-[40px] py-[37px] mx-auto   my-auto   ">
                 <div className="  mx-auto flex gap-[30px] h-[90vh] flex-col relative   rounded-[19px] border-[1px] border-[#FEAA00]">
 
                     <div className="flex absolute left-[3%]  top-[5%]  text-[20px] font-[600]">
