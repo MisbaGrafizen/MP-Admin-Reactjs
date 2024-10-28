@@ -7,7 +7,7 @@ import {
     ApiPostNoAuth,
     ApiPut,
 } from '../../helper/axios';
-import { GET_PAID_ORDER_LIST, GET_UNPAID_ORDER_LIST, GET_ORDER_BY_ID } from '../type';
+import { GET_PAID_ORDER_LIST, GET_UNPAID_ORDER_LIST, GET_PRE_PACKAGE_UNPAID_ORDER_LIST, GET_PRE_PACKAGE_PAID_ORDER_LIST } from '../type';
 
 export const getAllUnpadiOrderListAction = () => {
   return (dispatch) => {
@@ -32,11 +32,11 @@ export const getAllUnpadiOrderListAction = () => {
 
 export const getAllPadiOrderListAction = () => {
     return (dispatch) => {
-        return ApiGet(`/api/admin/get-order/paid`)
+        return ApiGet(`/api/admin/get-pre-package-order/paid`)
       .then((res) => {
         if (res.status === "success") {
           dispatch({
-            type: GET_PAID_ORDER_LIST,
+            type: GET_PRE_PACKAGE_PAID_ORDER_LIST,
             payload: res?.data,
           });
           return res?.data;
@@ -44,30 +44,51 @@ export const getAllPadiOrderListAction = () => {
       })
       .catch((error) => {
         dispatch({
-          type: GET_PAID_ORDER_LIST,
+          type: GET_PRE_PACKAGE_PAID_ORDER_LIST,
           payload: error,
         });
       });
   };
   };
 
-//   export const getOrderByIdAction = (orderId) => {
-//     return (dispatch) => {
-//         return ApiGet(`/api/admin/get-order/${orderId}`)
-//         .then((res) => {
-//             if(res.status === 'success') {
-//                 dispatch({
-//                     type: GET_ORDER_BY_ID,
-//                     payload: res?.data,
-//                 });
-//                 return res?.data;
-//             }
-//         })
-//         .catch((error) => {
-//             dispatch({
-//                 type: GET_ORDER_BY_ID,
-//                 payload: error,
-//             });
-//         });
-//     }
-// };
+  export const getAllPrePackageUnpadiOrderListAction = () => {
+    return (dispatch) => {
+        return ApiGet(`/api/admin/get-pre-package-order/unpaid`)
+      .then((res) => {
+        if (res.status === "success") {
+          dispatch({
+            type: GET_PRE_PACKAGE_UNPAID_ORDER_LIST,
+            payload: res?.data,
+          });
+          return res?.data;
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: GET_PRE_PACKAGE_UNPAID_ORDER_LIST,
+          payload: error,
+        });
+      });
+  };
+  };
+  
+  export const getAllPrePackagePadiOrderListAction = () => {
+      return (dispatch) => {
+          return ApiGet(`/api/admin/get-order/paid`)
+        .then((res) => {
+          if (res.status === "success") {
+            dispatch({
+              type: GET_PAID_ORDER_LIST,
+              payload: res?.data,
+            });
+            return res?.data;
+          }
+        })
+        .catch((error) => {
+          dispatch({
+            type: GET_PAID_ORDER_LIST,
+            payload: error,
+          });
+        });
+    };
+    };

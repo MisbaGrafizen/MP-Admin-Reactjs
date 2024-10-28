@@ -1,13 +1,13 @@
-import { GET_UNPAID_ORDER_LIST, GET_PAID_ORDER_LIST, GET_ORDER_BY_ID, RESET_GLOBAL_STATE } from '../type';
+import { GET_UNPAID_ORDER_LIST, GET_PAID_ORDER_LIST, GET_PRE_PACKAGE_PAID_ORDER_LIST, GET_PRE_PACKAGE_UNPAID_ORDER_LIST, RESET_GLOBAL_STATE } from '../type';
 
 const initialState = {
     getPaidOrderList: [],
     getUnpaidOrderList: [],
-    getOrderById: [],
+    getPrePackagePaidOrderList: [],
+    getPrePackageUnpaidOrderList: [],
 };
 
 const orderListingReducer = (state = initialState, action) => {
-    // console.log('action.payload', action?.payload);
     switch(action.type) {
         case GET_UNPAID_ORDER_LIST: 
         return {
@@ -19,11 +19,16 @@ const orderListingReducer = (state = initialState, action) => {
                 ...state,
                 getPaidOrderList: action.payload,
             };
-        // case GET_ORDER_BY_ID:
-        //     return {
-        //         ...state,
-        //         getOrderById: action.payload,
-        //     };
+        case GET_PRE_PACKAGE_PAID_ORDER_LIST: 
+        return {
+            ...state,
+            getPrePackagePaidOrderList: action.payload,
+        };
+        case GET_PRE_PACKAGE_UNPAID_ORDER_LIST: 
+        return {
+            ...state,
+            getPrePackageUnpaidOrderList: action.payload,
+        };
         case RESET_GLOBAL_STATE:
             return initialState;
         default:

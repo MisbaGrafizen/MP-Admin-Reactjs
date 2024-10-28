@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Header from '../../Components/header/Header';
   import { Modal as NextUIModal, ModalBody, ModalContent } from '@nextui-org/react';
-import { getAllPadiOrderListAction, getAllUnpadiOrderListAction } from '../../redux/action/orderListing';
+import { getAllPadiOrderListAction, getAllPrePackagePadiOrderListAction, getAllPrePackageUnpadiOrderListAction, getAllUnpadiOrderListAction } from '../../redux/action/orderListing';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPaymentByIdAction } from '../../redux/action/payment';
-
 
 export default function OrderManagement() {
 
@@ -22,13 +20,15 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
 
   const paidOrderList = useSelector((state) => state.orderListingState?.getPaidOrderList);
   const unpaidOrderList = useSelector((state) => state.orderListingState?.getUnpaidOrderList);
-  // const selectOrderData = useSelector((state) => state.orderListingState?.getOrderById);
-
+  const prePackagePaidOrderList = useSelector((state) => state.orderListingState?.getPrePackagePaidOrderList);
+  const prePackageUnpaidOrderList = useSelector((state) => state.orderListingState?.getPrePackageUnpaidOrderList);
   // console.log('unpaidOrderList', unpaidOrderList)
 
   useEffect(() => {
     dispatch(getAllPadiOrderListAction());
     dispatch(getAllUnpadiOrderListAction());
+    dispatch(getAllPrePackagePadiOrderListAction());
+    dispatch(getAllPrePackageUnpadiOrderListAction());
   }, [dispatch]);
 
   const handleSelectOrder = (orderId) => {
@@ -225,7 +225,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
             {activeTab === "self-serving" && (
               <div className=" py-[20px] px-[20px]  md150:h-[70vh]  overflow-y-auto h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  flex gap-[15px] my-justify-center items-center  border-[#000000]">
                 <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
-                  <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
+                  <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[30px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
                     <div
                       className={`w-[100%] h-[100%] font-bold text-center flex items-center justify-center   cursor-pointer ${
                         activeFilter === "all"
@@ -536,7 +536,8 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                   </div>
 
                   {shouldShowPaid &&
-                    paidOrderList.map((order) => (
+                    Array.isArray(prePackagePaidOrderList) &&
+                    prePackagePaidOrderList.map((order) => (
                       <div
                         key={order.id}
                         className={`w-[100%] items-center justify-between rounded-[10px] border-[#00984B] text-[#00984B] flex text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
@@ -566,8 +567,8 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                     ))}
 
                   {shouldShowUnpaid &&
-                    unpaidOrderList.map((order) => (
-                      <div
+                    Array.isArray(prePackageUnpaidOrderList) &&
+                    prePackageUnpaidOrderList.map((order) => (                      <div
                         key={order.id}
                         className={`w-[100%] items-center justify-between rounded-[10px] border-[#FF0606] text-[#FF0606] flex text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
                         onClick={() => handleSelectOrder(order._id)}
@@ -674,7 +675,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                                   item?.foodItem?.photo ||
                                   "../../../public/img/Foodsection/newBhaji.png"
                                 }
-                                alt="Product"
+                                alt={item?.foodItem?.name}
                               />
                               <div>
                                 <p className="text-[16px]">
@@ -702,7 +703,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                                   item?.servingMethod?.photo ||
                                   "../../../public/img/Foodsection/newBhaji.png"
                                 }
-                                alt="Product"
+                                alt={item?.servingMethod?.name}
                               />
                               <div>
                                 <p className="text-[16px]">
@@ -714,7 +715,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                               </div>
                             </div>
                             <div>
-                              <p className="text-[16px]">{item?.totalPrice}</p>
+                              <p className="text-[16px]">{item?.totalPrice.toFixed(2)}</p>
                             </div>
                           </div>
                         ))}
@@ -797,7 +798,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
 
                 <div className="text-[] mt-[24%] flex flex-col text-left   justify-start py-[10px] ">
                   <p>Bill No - 481</p>
-                  <p>Order on - 21/08/2024 - 09:20 PM</p>
+                  <p>Order on - {formatDateAndTime(selectedOrderData?.orderDate?.pickupDate)}</p>
                 </div>
                 <div className="w-[100%] flex flex-col gap-[5px] absolute left-0">
                   <div className="w-[100%] px-[20px] text-[18px] text-[#fff] font-[500] py-[5px] flex justify-between bg-[#00984B]">
@@ -817,7 +818,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                       </p>{" "}
                       {/* Generates 01, 02, 03, etc. */}
                       <p className="w-[55%]">{item.foodItem.name}</p>
-                      <p className="text-right w-[30%]">{item.quantity}</p>
+                      <p className="text-right w-[30%]">{item.quantity}</p>  
                     </div>
                   ))}
                   {/* <div className='flex justify-between  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed'>
@@ -830,8 +831,8 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                   </div> */}
                 </div>
                 <div className="flex w-[100%] left-0 justify-between absolute bottom-[60px]  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed">
-                  <p>Items : 03</p>
-                  <p>Qty : 40</p>
+                <p>Items : {selectedOrderData?.orderId?.items?.length || 0}</p>
+                <p>Qty : {selectedOrderData?.orderId?.items?.reduce((total, item) => total + item.quantity, 0) || 0}</p>
                 </div>
                 <div className="bg-[#006198] absolute bottom-0 w-[100%] left-0 py-[6px] flex justify-center text-[30px] text-[#fff]">
                   <i className="fa-solid fa-print"></i>
@@ -858,7 +859,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
 
                 <div className="text-[] mt-[24%] flex flex-col text-left   justify-start py-[10px] ">
                   <p>Bill No - 481</p>
-                  <p>Order on - 21/08/2024 - 09:20 PM</p>
+                  <p>Order on - {formatDateAndTime(selectedOrderData?.orderDate?.pickupDate)}</p>
                 </div>
                 <div className="w-[100%] flex flex-col gap-[5px] absolute left-0">
                   <div className="w-[100%] px-[20px] text-[18px] text-[#fff] font-[500] py-[5px] flex justify-between bg-[#00984B]">
@@ -868,7 +869,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                   </div>
 
                   {/* Map over the items and dynamically generate the rows */}
-                  {items2.map((item, index) => (
+                  {selectedOrderData?.orderId?.servingMethodId?.map((item, index) => (
                     <div
                       key={index}
                       className="w-[100%] px-[20px] text-[16px] font-[500] py-[2px] flex justify-between left-0"
@@ -877,7 +878,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                         {String(index + 1).padStart(2, "0")}
                       </p>{" "}
                       {/* Generates 01, 02, 03, etc. */}
-                      <p className="w-[55%]">{item.name}</p>
+                      <p className="w-[55%]">{item.servingMethod?.name}</p>
                       <p className="text-right w-[30%]">{item.quantity}</p>
                     </div>
                   ))}
@@ -891,8 +892,8 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                   </div> */}
                 </div>
                 <div className="flex w-[100%] left-0 justify-between absolute bottom-[60px]  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed">
-                  <p>Items : 03</p>
-                  <p>Qty : 40</p>
+                  <p>Items : {selectedOrderData?.orderId?.servingMethodId?.length || 0}</p>
+                  <p>Qty : {selectedOrderData?.orderId?.servingMethodId?.reduce((total, item) => total + item.quantity, 0) || 0}</p>
                 </div>
                 <div className="bg-[#006198] absolute bottom-0 w-[100%] left-0 py-[6px] flex justify-center text-[30px] text-[#fff]">
                   <i className="fa-solid fa-print"></i>
@@ -918,22 +919,20 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                 <div className="text-[15px] font-[400]">
                   <p>
                     Order ID #
-                    {selectedOrder === 0 ? paidOrder.id : unpaidOrder.id}
+                    {selectedOrderData?.orderId?._id}
                   </p>
                   <p>
                     Order on -{" "}
-                    {selectedOrder === 0 ? paidOrder.date : unpaidOrder.date}
+                    {formatDateAndTime(selectedOrderData?.createdAt)}
                   </p>
                   <p>
                     Order for -{" "}
-                    {selectedOrder === 0
-                      ? paidOrder.forDate
-                      : unpaidOrder.forDate}
+                    {formatDateAndTime(selectedOrderData?.orderDate?.pickupDate)}
                   </p>
                 </div>
                 <p className="font-[600] pr-[20px] items-center text-[18px]">
                   Name -{" "}
-                  {selectedOrder === 0 ? paidOrder.name : unpaidOrder.name}
+                    {selectedOrderData?.orderId?.userId?.name}
                 </p>
               </div>
               <div className="w-[100%] border-t-[1.7px] border-dashed"></div>
@@ -941,9 +940,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                 <div className="flex flex-col gap-[5px]">
                   <p className="font-[300]">Delivery Address :</p>
                   <p className="font-bold ">
-                    {selectedOrder === 0
-                      ? paidOrder.address
-                      : unpaidOrder.address}
+                  {selectedOrderData?.pickupLocation?.name}
                   </p>
                 </div>
                 <div className="flex gap-[6px] pr-[20px]">
@@ -957,10 +954,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
               </div>
               <div className="w-[100%] border-t-[1.7px] border-dashed"></div>
               <div className="flex flex-col gap-[14px]">
-                {(selectedOrder === 0
-                  ? paidOrder.items
-                  : unpaidOrder.items
-                ).map((item, idx) => (
+                {selectedOrderData?.orderId?.items?.map((item, idx) => (
                   <div
                     key={idx}
                     className="flex items-center justify-between px-[10px]"
@@ -968,12 +962,15 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                     <div className="flex gap-[10px] items-center">
                       <img
                         className="w-[80px]"
-                        src="../../../public/img/Foodsection/newBhaji.png"
-                        alt="Product"
+                        src={
+                               item?.foodItem?.photo ||
+                               "../../../public/img/Foodsection/newBhaji.png"
+                            }
+                        alt={item?.foodItem?.name}
                       />
                       <div>
-                        <p className="text-[16px]">{item.name}</p>
-                        <p className="text-[#595858]">Qty - {item.qty}</p>
+                        <p className="text-[16px]">{item.foodItem.name}</p>
+                        <p className="text-[#595858]">Qty - {item.quantity}</p>
                       </div>
                     </div>
                     <div>
@@ -993,7 +990,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                                   item?.servingMethod?.photo ||
                                   "../../../public/img/Foodsection/newBhaji.png"
                                 }
-                                alt="Product"
+                                alt={item?.servingMethod?.name}
                               />
                               <div>
                                 <p className="text-[16px]">
@@ -1015,7 +1012,7 @@ const [isOrderReciptModalOpen, setOrderReciptModalOpen] = useState(false);
                 <div className="flex justify-between px-[10px] font-[500] text-[19px] font-mono">
                   <p>Total</p>
                   <p>
-                    {selectedOrder === 0 ? paidOrder.total : unpaidOrder.total}
+                    {selectedOrderData?.orderId?.totalAmount}
                   </p>
                 </div>
               </div>
