@@ -7,14 +7,16 @@ import { GET_PAYMENT, GET_PRE_PACKAGE_PAYMENT } from '../type';
 
 
 export const getPaymentByIdAction = (orderId) => {
+  console.log('payment api is called');
   return (dispatch) => {
       return ApiGet(`/api/self-service/payment/${orderId}`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
           type: GET_PAYMENT,
-          payload: res?.data,
+          payload: res?.payment,
         });
+        console.log('res', res);
         return res?.data;
       }
     })
@@ -34,9 +36,9 @@ export const getPrePackagePaymentByIdAction = (orderId) => {
       if (res.status === "success") {
         dispatch({
           type: GET_PRE_PACKAGE_PAYMENT,
-          payload: res?.data,
+          payload: res?.payment,
         });
-        return res?.data;
+        return res?.payment;
       }
     })
     .catch((error) => {

@@ -12,7 +12,7 @@ import { ADD_PREMVATI, GET_PREMVATI } from '../type';
 
 export const addPremvatiAction = (imageData) => {
     return (dispatch) => {
-        return ApiPost(`/api/admin/premvatiListing`, imageData)
+        return ApiPost(`/api/admin/premvati`, imageData)
       .then((res) => {
         if (res.status === "success") {
           dispatch({
@@ -33,7 +33,7 @@ export const addPremvatiAction = (imageData) => {
 
 export const getPremvatiAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/premvatiListings`)
+      return ApiGet(`/api/admin/premvati`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
