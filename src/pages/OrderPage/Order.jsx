@@ -27,6 +27,8 @@ export default function OrderManagement() {
   const unpaidOrderList = useSelector((state) => state.orderListingState?.getUnpaidOrderList);
   const prePackagePaidOrderList = useSelector((state) => state.orderListingState?.getPrePackagePaidOrderList);
   const prePackageUnpaidOrderList = useSelector((state) => state.orderListingState?.getPrePackageUnpaidOrderList);
+  const prePayment = useSelector((state) => state.paymentState?.getPrePackagePayment);
+  const payment = useSelector((state) => state.paymentState?.getPayment);
   // console.log('unpaidOrderList', unpaidOrderList)
 
   useEffect(() => {
@@ -205,12 +207,17 @@ export default function OrderManagement() {
     setLoading(true);
     setError(null);
     try {
-      // Fetch payment data with selectedOrderData._id as orderId
-      const data = await dispatch(getPrePackagePaymentByIdAction(selectedOrderData._id));
+      let data;
+      if (activeTab === "self-serving") {
+          data = await dispatch(getPaymentByIdAction(selectedOrderData._id));
+      } else if (activeTab === "pre-packaged") {
+          data = await dispatch(getPrePackagePaymentByIdAction(selectedOrderData._id));
+      }
+
       setPaymentData(data);
-      setOrderReciptModalOpen(true); // Open modal after successful data fetch
-      window.history.pushState({}, ""); // Update browser history state if needed
-    } catch (error) {
+      setOrderReciptModalOpen(true); 
+      window.history.pushState({}, ""); 
+  } catch (error) {
       setError("Failed to fetch payment data.");
       console.error("Error fetching payment data:", error);
     } finally {
@@ -1073,12 +1080,12 @@ export default function OrderManagement() {
               </div>
               <div className=" flex flex-col gap-[28px] w-[100%]">
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
-                  <p className=" font-[600]">Cashier name :  {paymentData?.cashierName}</p>
-                  <p className=" border-b-[1.5px]  overflow-x-auto w-[50%] border-[#000]"></p>
+                  <p className=" font-[600]">Cashier name :</p>
+                  <p className=" border-b-[1.5px]  overflow-x-auto w-[50%] border-[#000]">{paymentData?.cashierName}</p>
                 </div>
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
-                  <p className=" font-[600]">Receipt Number : {paymentData?.recieptNo}</p>
-                  <p className=" border-b-[1.5px] w-[50%] border-[#000]"></p>
+                  <p className=" font-[600]">Receipt Number :</p>
+                  <p className=" border-b-[1.5px] w-[50%] border-[#000]">{paymentData?.recieptNo}</p>
                 </div>
                 <div className=" border-[1px] rounded-[10px] border-[#00984B] h-[140px] w-[90%] mx-auto">{paymentData?.recieptImage}</div>
               </div>
