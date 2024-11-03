@@ -17,12 +17,12 @@ function App() {
     
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/spalsh" element={<SplashScreen />} />
-        <Route path="/master" element={<MasterManege />} />
-        <Route path="/user" element={<CreateUser />} />
-        <Route path="/premvati" element={<PremvatiMangment />} />
-        <Route path="/product" element={<ProductMangement />} />
-        <Route path="/order" element={<OrderManagement />} />
+        <Route path="/splash-screen" element={<SplashScreen />} />
+        <Route path="/master-management" element={<MasterManege />} />
+        <Route path="/users-management" element={<CreateUser />} />
+        <Route path="/premvati-management" element={<PremvatiMangment />} />
+        <Route path="/product-management" element={<ProductMangement />} />
+        <Route path="/orders-management" element={<OrderManagement />} />
         <Route path="/transection" element={<TransectionHistory />} />
       </Routes>
     </>

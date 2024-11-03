@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export default function ServingMethod() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
     const [showInput, setShowInput] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [selectedServingCategory, setSelectedServingCategory] = useState("");
@@ -14,13 +13,13 @@ export default function ServingMethod() {
     const [servingMethodInput, setServingMethodInput] = useState({ name: '', price: '', description: '', photo: '' });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
-
-
+    const [editingCategoryId, setEditingCategoryId] = useState(null);
+    const [popupVisible, setPopupVisible] = useState(false);
+    const [selectedServingMethod, setSelectedServingMethod] = useState(null);
+    const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
     const dispatch = useDispatch();
-
     const servingCategories = useSelector((state) => state?.productMasterState?.getServingCategory);
     const servingMethods = useSelector((state) => state?.productMasterState?.getServingMethod);
-
 
     useEffect(() => {
         dispatch(getAllServingCategoryAction())
@@ -37,16 +36,10 @@ export default function ServingMethod() {
         setSelectedButton(index);
     };
 
-
     const inputRef = useRef(null);
-
-
     const handlePlusClick = () => {
         setShowInput(true);
     };
-
-
-
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
     };
@@ -67,12 +60,11 @@ export default function ServingMethod() {
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        setImageFile(file); // Save file for submission
+        setImageFile(file); 
 
-        // Image preview
         const reader = new FileReader();
         reader.onloadend = () => {
-            setImagePreview(reader.result); // Set preview URL
+            setImagePreview(reader.result);
         };
         if (file) {
             reader.readAsDataURL(file);
@@ -94,11 +86,7 @@ export default function ServingMethod() {
         });
     };
 
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter' && inputValue) {
-            handleCategorySubmit();
-        }
-    };
+
 
     const [textareaValue, setTextareaValue] = useState(() => {
         return Array.from({ length: 1 }, (_, i) => `${i + 1}. `).join('\n');
@@ -161,15 +149,76 @@ export default function ServingMethod() {
             });
     };
 
+    const handleCategoryEditSubmit = (categoryId) => {
+        if (inputValue) {
+            dispatch(addServingCategoryAction({ _id: categoryId, name: inputValue }))
+                .then(() => {
+                    setEditingCategoryId(null);
+                    setInputValue('');
+                    dispatch(getAllServingCategoryAction()); 
+                })
+                .catch(error => console.error('Error updating category:', error));
+        }
+    };
+
+    const handleCategoryDoubleClick = (category) => {
+        setEditingCategoryId(category._id);
+        setInputValue(category.name);
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && inputValue) {
+            if (editingCategoryId) {
+                handleCategoryEditSubmit(editingCategoryId);
+            } else {
+                handleCategorySubmit();
+            }
+        }
+    };
+
+    const handleServingMethodDoubleClick = (method, event) => {
+        setSelectedServingMethod(method);
+        setPopupVisible(true);
+
+
+        const rect = event.currentTarget.getBoundingClientRect();
+        setPopupPosition({
+            top: rect.top + window.scrollY + rect.height / 2 - 30, 
+            left: rect.left + window.scrollX + rect.width / 2 - 70 
+        });
+    };
+
+    const handlePopupClose = () => {
+        setPopupVisible(false);
+        setSelectedServingMethod(null);
+    };
+
+    const handleEditServingMethod = () => {
+        if (selectedServingMethod) {
+            onOpen();
+            setPopupVisible(false);
+        }
+    };
+    const [isDelOpen, setIsDelOpen] = useState(false);
+
+    const handleDelete = () => {
+        setIsDelOpen(true);
+    };
+
+    const closeDeleteModal = () => {
+        setIsDelOpen(false);
+    };
+
+
     return (
         <>
             <div className="w-[100%] p-[5px]">
-                <div className="w-[100%] flex flex-col gap-[30px]">
-                    <div className="flex gap-[10px] flex-wrap" ref={inputRef}>
+                <div className="w-[100%] flex flex-col md150:gap-[30px] md11:gap-[20px]">
+                    <div className="flex gap-[15px] flex-wrap" ref={inputRef}>
                         <div className="flex">
                             {!showInput ? (
                                 <div
-                                    className="border-[1px] border-dashed border-[#000] w-[120px] h-[40px] flex justify-center items-center rounded-[8px] cursor-pointer"
+                                    className="border-[1px] border-dashed border-[#000] md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px]  flex justify-center items-center rounded-[8px] cursor-pointer"
                                     onClick={handlePlusClick}
                                 >
                                     <i className="text-[20px] font-[800] text-[#000000] fa-solid fa-plus"></i>
@@ -177,7 +226,7 @@ export default function ServingMethod() {
                             ) : (
                                 <input
                                     type="text"
-                                    className="border-[1px] border-[#000] border-dashed outline-none w-[120px] h-[40px] rounded-[8px] pl-[10px]"
+                                    className="border-[0.5px] border-[#4d4b4b] border-dashed outline-none md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px]  rounded-[8px] pl-[10px]"
                                     placeholder="Enter text"
                                     value={inputValue}
                                     onChange={handleInputChange}
@@ -189,11 +238,23 @@ export default function ServingMethod() {
 
                         {servingCategories.map((category, index) => (
                             <div
-                                key={index}
-                                className={`border-[1px] border-[#000] font-[600] text-[18px] w-[120px] h-[40px] flex justify-center items-center rounded-[8px] cursor-pointer ${selectedButton === index ? 'bg-[#feaa00] text-white' : ''}`}
+                                key={category._id}
+                                className={`border-[0.5px] border-[#000] font-[600] md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px] flex justify-center items-center rounded-[8px] cursor-pointer ${selectedButton === index ? 'bg-[#feaa00] text-white' : ''}`}
                                 onClick={() => handleCategoryClick(category, index)}
+                                onDoubleClick={() => handleCategoryDoubleClick(category)}
                             >
-                                <p>{category?.name}</p>
+                                {editingCategoryId === category._id ? (
+                                    <input
+                                        type="text"
+                                        value={inputValue}
+                                        onChange={handleInputChange}
+                                        onKeyDown={handleKeyPress}
+                                        className="text-center bg-transparent border-none outline-none"
+                                        autoFocus
+                                    />
+                                ) : (
+                                    <p>{category.name}</p>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -206,39 +267,55 @@ export default function ServingMethod() {
                                 <i className="text-[70px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
                             </div>
                             <div className="border-dashed flex gap-[20px] p-[10px] rounded-[8px] border-[#fff] bg-[#feaa00] border-t-[1.7px] w-full">
-                                <div className="font-[600] text-[15px] text-[white]">
+                                <div className="font-[600] pl-[7px] text-[15px] text-[white]">
                                     <p>Name:</p>
                                     <p>Price:</p>
                                 </div>
                             </div>
                         </div>
                         {servingMethods?.map((method, index) => (
-                            <React.Fragment key={index}>
-                                <div className="border-[1px] border-dashed border-[#feaa00] rounded-[8px]  w-[180px]">
-                                    <div className="flex justify-center w-fullitems-center  p-[10px] ">
-                                        <img className='  h-[140px] w-[100%]  rounded-tl-[8px] rounded-tr-[8px]  ' src={method?.photo} alt={method?.name || 'Serving Method Image'} />
+                            <div
+                                key={index}
+                                className="border-[1px] border-dashed border-[#feaa00] rounded-[8px] w-[180px] h-[100%] cursor-pointer"
+                                onDoubleClick={(e) => handleServingMethodDoubleClick(method, e)}
+                            >
+                                <div className="flex justify-center h-[140px] w-full p-[10px]">
+                                    <img className=" w-[100%] rounded-tl-[8px] rounded-tr-[8px]" src={method?.photo} alt={method?.name || 'Serving Method Image'} />
+                                </div>
+                                <div className="border-dashed pl-[7px] flex gap-[20px] p-[10px] rounded-[8px] border-[#fff] bg-[#feaa00] border-t-[1.7px] w-full">
+                                    <div className="font-[600] pl-[7px] text-[15px] text-[white]">
+                                        <p>Name:</p>
+                                        <p>Price:</p>
                                     </div>
-                                    <div className="border-dashed pl-[7px] flex gap-[20px] p-[10px] rounded-[8px] border-[#fff] bg-[#feaa00] border-t-[1.7px] w-full">
-                                        <div className="font-[600] text-[15px] text-[white]">
-                                            <p>Name:</p>
-                                            <p>Price:</p>
-                                        </div>
-                                        <div className="font-[600] text-[14px] text-[white]">
-                                            <p>{method?.name}</p>
-                                            <p>{method?.price}/-</p>
-                                        </div>
+                                    <div className="font-[600] text-[14px] text-[white]">
+                                        <p>{method?.name}</p>
+                                        <p>{method?.price}/-</p>
                                     </div>
                                 </div>
-                            </React.Fragment>
+                            </div>
                         ))}
+                        {popupVisible && (
+                            <div
+                                className="absolute p-2 bg-white border w-[140px] rounded shadow-lg transition-opacity duration-300 ease-in-out"
+                                style={{
+                                    top: `${popupPosition?.top - 100}px`, 
+                                    left: `${popupPosition?.left - 55}px`, 
+                                    transform: 'translate(-50%, -50%)',
+                                }}
+                                onMouseLeave={handlePopupClose}
+                            >
+                                <p className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={handleEditServingMethod}>Edit</p>
+                                <p className="text-red-500 hover:bg-red-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={handleDelete} >Delete</p>
+                            </div>
+                        )}
                     </div>
 
                 </div>
-            </div >
+            </div>
 
 
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} className='bg-[]'>
-                <ModalContent className='!max-w-[580px]  !mt-[200px] h-[480px] bg-white border-[1px] border-[#000] ' >
+                <ModalContent className='!max-w-[580px]  !mt-[100px] h-[480px] rounded-[10px] overflow-hidden bg-white border-[1px] border-[#000]  ' >
                     {(onClose) => (
                         <>
                             <div className='relative '>
@@ -253,18 +330,15 @@ export default function ServingMethod() {
                                                             className="h-[160px] w-[600px] rounded-[8px]"
                                                         />
                                                     ) : (
-                                                        // Plus button icon (visible by default)
                                                         <i className="text-[60px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
                                                     )}
-
-                                                    {/* Hidden file input */}
                                                     <input
                                                         type="file"
                                                         id="imageUpload"
                                                         name="photo"
-                                                        className="hidden" // Hide the input
+                                                        className="hidden"
                                                         onChange={handleFileChange}
-                                                        accept="image/*" // To only accept images from gallery
+                                                        accept="image/*" 
                                                     />
                                                 </label>
 
@@ -272,30 +346,30 @@ export default function ServingMethod() {
 
                                             <div className=" flex flex-col w-[100%] gap-[20px]">
                                                 <div className="flex w-[100%] gap-[20px]">
-                                                    <div className=" flex gap-[5px] w-[37%]  text-[14px] items-center border-b-[1.9px] px-[5px] border-[#000]">
+                                                    <div className=" flex gap-[5px] w-[41%]  text-[14px] items-center border-b-[1.9px] px-[5px] border-[#000]">
                                                         <p className='font-[700]'>Name:</p>
                                                         <input className='outline-none'
                                                             type="text"
                                                             name="name"
-                                                            value={foodItemInput?.name}
-                                                            onChange={handleFoodItemInputChange}
+                                                            value={servingMethodInput?.name}
+                                                            onChange={handleServingMethodInputChange}
                                                         />
                                                     </div>
-                                                    <div className="  w-[37%] flex gap-[5px] items-center border-b-[1.9px] px-[5px] border-[#000]">
+                                                    <div className="  w-[41%] flex gap-[5px] items-center border-b-[1.9px] px-[5px] border-[#000]">
                                                         <p className='font-[700] text-[14px] '>Price:</p>
                                                         <input className='outline-none'
                                                             type="text"
                                                             name="price"
-                                                            value={foodItemInput?.price}
-                                                            onChange={handleFoodItemInputChange}
+                                                            value={servingMethodInput?.price}
+                                                            onChange={handleServingMethodInputChange}
                                                         />
                                                     </div>
 
 
                                                 </div>
-                                                <div className="flex">
-
-                                                    <textarea name="" className="font-[500] w-[79%] p-[10px] border-[#000] outline-none border-[1.9px] rounded-[8px] h-[120px] text-[15px]" id="">Self note : </textarea>
+                                                <div className="flex  gap-[2px] w-[88%] p-[10px] border-[#000] outline-none border-[1.9px] rounded-[8px] h-[120px] text-[15px">
+                                                    <p>Self note : </p>
+                                                    <textarea name="" className="font-[500] w-[78%] outline-none" id=""> </textarea>
 
                                                 </div>
 
@@ -303,11 +377,12 @@ export default function ServingMethod() {
 
                                         </div>
                                         <div className="textarea-container border-[1.9px] rounded-[8px] border-[#000]" >
+
                                             <textarea
                                                 id="numbered-textarea"
                                                 className="w-[100%] p-[10px] outline-none  rounded-[8px] h-[180px] text-[15px] font-[500]"
                                                 style={{ fontFamiy: "monospace" }}
-                                                value={foodItemInput?.description}
+                                                value={servingMethodInput?.description}
                                                 onChange={handleTextareaInput}
                                             />
                                         </div>
@@ -316,17 +391,51 @@ export default function ServingMethod() {
 
                                 </div>
 
-
-                                <div className=" w-full  text-white cursor-pointer items-center font-[600] flex justify-center mt-[16px]   h-[40px] bg-[#00984b] text-[20px]" onClick={handleAddFoodItemSubmit}>
-                                    <p>Click here to save</p>
-                                </div>
                             </div>
-
+                            <div className="  w-[100%]  text-white absolute bottom-0 cursor-pointer items-center font-[600] flex justify-center h-[47px] rounded-b-[5px] bg-[#00984b] text-[20px]" onClick={handleAddServingMethodSubmit}>
+                                <p>Click here to save</p>
+                            </div>
 
                         </>
                     )}
                 </ModalContent>
             </Modal>
+            <Modal isOpen={isDelOpen} onOpenChange={setIsDelOpen}>
+                <ModalContent className="md:max-w-[350px] max-w-[333px] relative  flex justify-center !py-0 mx-auto  h-[300px] shadow-delete ">
+                    {(ondelClose) => (
+                        <>
+                            <div className="relative w-[100%] h-[100%] ">
+                                <div className="relative  w-[100%] h-[100%]">
+                                    <div className='w-[100%] flex gap-7 flex-col'>
+                                        <div className='w-[100%] mt-[30px] p-[10px] mx-auto flex justify-center s'>
+                                            <i className=" text-[80px] text-[red] shadow-delete-icon rounded-full fa-solid fa-circle-xmark"></i>
+                                        </div>
+                                        <div className=' mx-auto justify-center flex text-[28px] font-[500] font-Poppins'>
+                                            <p>Are you sure ?</p>
+
+                                        </div>
+                                        <div className='absolute bottom-0 flex w-[100%]'>
+                                            <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={closeDeleteModal}>
+                                                <p>
+                                                    Delete
+                                                </p>
+                                            </div>
+                                            <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[#26b955] rounded-br-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={closeDeleteModal}>
+                                                <p>
+                                                    Cancel
+                                                </p>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+
         </>
     );
 }

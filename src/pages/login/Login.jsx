@@ -78,8 +78,6 @@ export default function Login() {
             <div
               className="text-white cursor-pointer text-[23px] font-bold bg-[#FEAA00] flex justify-center items-center py-[8px] rounded-[10px] transition duration-300 ease-in-out transform hover:bg-[#e69900] hover:scale-20 active:scale-105"
               onClick={() => {
-                // Add your onClick action here
-                console.log("Button clicked!");
               }}
             >
               <p>LOGIN</p>

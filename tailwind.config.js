@@ -20,7 +20,8 @@ export default {
         'Tanseek Modern': ['"Tanseek Modern Arabic"', 'Tanseek Modern Arabic Bold'],
         'AwanZaman Heavy': ['"AwanZaman Heavy"', 'AwanZaman Heavy'],
         'Poppins': ['"Poppins"', 'sans-serif'],
-        'Outfit': ['"Outfit", sans-serif']
+        'Outfit': ['"Outfit", sans-serif'],
+        'Potua':['Potua']
       },
       screens: {
         'md150': '1650px',

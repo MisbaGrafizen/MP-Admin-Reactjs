@@ -58,6 +58,10 @@
 }
 
 
+.font-patua{
+  font-family: 'Patua One';
+}
+
 .css-10o2lyd-MuiStack-root>.MuiTextField-root{
   max-width: 100% !important;
   min-width: 100% !important;
@@ -101,4 +105,15 @@
 
 .css-1ll44ll-MuiOutlinedInput-notchedOutline {
   border: none !important;
+}
+
+.shadow-delete {
+  box-shadow: 1px 5px 19px rgb(197, 191, 191) !important;
+}
+/* .shadow-delete-icon {
+  box-shadow: 5px 5px 0px red ,5px 5px 20px red !important;
+} */
+
+.rounded-large {
+  border-radius: 15px 15px 5px 5px !important;
 }

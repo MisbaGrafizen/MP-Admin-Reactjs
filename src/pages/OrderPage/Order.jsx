@@ -4,6 +4,7 @@ import { Modal as NextUIModal, ModalBody, ModalContent } from '@nextui-org/react
 import { getAllPadiOrderListAction, getAllPrePackagePadiOrderListAction, getAllPrePackageUnpadiOrderListAction, getAllUnpadiOrderListAction } from '../../redux/action/orderListing';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPaymentByIdAction, getPrePackagePaymentByIdAction } from '../../redux/action/payment';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function OrderManagement() {
@@ -20,16 +21,17 @@ export default function OrderManagement() {
   const [paymentData, setPaymentData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate()
   const dispatch = useDispatch();
-
   const paidOrderList = useSelector((state) => state.orderListingState?.getPaidOrderList);
   const unpaidOrderList = useSelector((state) => state.orderListingState?.getUnpaidOrderList);
   const prePackagePaidOrderList = useSelector((state) => state.orderListingState?.getPrePackagePaidOrderList);
   const prePackageUnpaidOrderList = useSelector((state) => state.orderListingState?.getPrePackageUnpaidOrderList);
   const prePayment = useSelector((state) => state.paymentState?.getPrePackagePayment);
   const payment = useSelector((state) => state.paymentState?.getPayment);
-  // console.log('unpaidOrderList', unpaidOrderList)
+  const handleBack = () => {
+    navigate(-1);
+  }
 
   useEffect(() => {
     dispatch(getAllPadiOrderListAction());
@@ -57,7 +59,6 @@ export default function OrderManagement() {
     if (isNaN(date.getTime())) {
       return 'Invalid Date';
     }
-
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
@@ -65,10 +66,8 @@ export default function OrderManagement() {
     let hours = date.getHours();
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const ampm = hours >= 12 ? 'PM' : 'AM';
-
     hours = hours % 12;
     hours = hours ? hours : 12;
-
     return `${day}/${month}/${year} - ${hours}:${minutes} ${ampm}`;
   }
 
@@ -99,11 +98,11 @@ export default function OrderManagement() {
     setOrderReciptModalOpen(false);
     window.history.back();
   };
-  // const openOrderModal = () => {
-  //   setOrderReciptModalOpen(true);
-  //   window.history.pushState({}, "");
-  // };
 
+
+  const paidOrderCount = activeTab === 'self-serving' ? paidOrderList?.length : prePackagePaidOrderList?.length;
+  const unpaidOrderCount = activeTab === 'self-serving' ? unpaidOrderList?.length : prePackageUnpaidOrderList?.length;
+  const allOrderCount = paidOrderCount + unpaidOrderCount;
 
   const openReciptModal = () => {
     setReciptModalOpen(true);
@@ -149,7 +148,7 @@ export default function OrderManagement() {
     ],
     status: 'Order successful',
     address: 'Shraddhapark',
-    paid: true, // Mark as paid
+    paid: true,
   };
 
   const unpaidOrder = {
@@ -165,23 +164,12 @@ export default function OrderManagement() {
     ],
     status: 'Order successful',
     address: 'Shraddhapark',
-    paid: false, // Mark as unpaid
+    paid: false, 
   };
 
-  // Filter orders based on active filter
   const shouldShowPaid = activeFilter === 'all' || activeFilter === 'paid';
   const shouldShowUnpaid = activeFilter === 'all' || activeFilter === 'unpaid';
 
-  // Update selectedOrder when the filter changes to maintain the first order in view
-  // useEffect(() => {
-  //   if (activeFilter === 'all') {
-  //     setSelectedOrder(paidOrderList[0]?._id || unpaidOrderList[0]?._id); 
-  //   } else if (activeFilter === 'paid') {
-  //     setSelectedOrder(paidOrderList[0]?._id); 
-  //   } else if (activeFilter === 'unpaid') {
-  //     setSelectedOrder(unpaidOrderList[0]?._id);
-  //   }
-  // }, [activeFilter, paidOrderList, unpaidOrderList]);
 
   useEffect(() => {
     if (activeTab === 'self-serving') {
@@ -209,15 +197,15 @@ export default function OrderManagement() {
     try {
       let data;
       if (activeTab === "self-serving") {
-          data = await dispatch(getPaymentByIdAction(selectedOrderData._id));
+        data = await dispatch(getPaymentByIdAction(selectedOrderData._id));
       } else if (activeTab === "pre-packaged") {
-          data = await dispatch(getPrePackagePaymentByIdAction(selectedOrderData._id));
+        data = await dispatch(getPrePackagePaymentByIdAction(selectedOrderData._id));
       }
 
       setPaymentData(data);
-      setOrderReciptModalOpen(true); 
-      window.history.pushState({}, ""); 
-  } catch (error) {
+      setOrderReciptModalOpen(true);
+      window.history.pushState({}, "");
+    } catch (error) {
       setError("Failed to fetch payment data.");
       console.error("Error fetching payment data:", error);
     } finally {
@@ -229,16 +217,25 @@ export default function OrderManagement() {
 
   return (
     <>
-      <div className="w-[99%] h-[100vh]  relative overflow-hidden top-0 bottom-0  px-[40px] py-[48px] mx-auto   my-auto ">
-        <div className="mx-auto flex gap-[30px] h-[90vh] flex-col relative rounded-[19px] border-[1px] border-[#FEAA00]">
-          <div className="flex absolute left-[3%]  top-[5%]  text-[20px] font-[600]">
-            <i className="fa-solid fa-angle-up fa-rotate-270"></i>
-            <p> ORDERS MANAGEMENT</p>
+      <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto ">
+        <div className=" mx-auto flex gap-[30px] w-[100%] md11:h-[92vh] md150:h-[90vh] flex-col relative    rounded-[19px] border-[1px] border-[#FEAA00]">
+
+          <div className="flex absolute gap-[10px] left-[3%]  md11:top-[4.1%]  md150:top-[5%] items-center    md11:text-[18px] md150:text-[20px] font-[600]">
+            <i className="fa-solid fa-angle-up fa-rotate-270" onClick={handleBack}></i>
+
+            <div className=' font-Potua  flex items-center gap-[10px] cursor-pointer' onClick={handleBack}>
+              <p>
+                ORDERS
+              </p>
+              <p>
+                MANAGEMENT
+              </p>
+            </div>
           </div>
-          <div className="flex absolute md150:top-[5.9%] top-[7.3%] gap-[10px] right-[10%]">
+          <div className="flex absolute md150:top-[5.9%] top-[5%] gap-[10px]  right-[7%] ">
             <div
               onClick={() => setActiveTab("self-serving")}
-              className={`w-[130px] p-[8px]  rounded-tl-[7px] font-bold  rounded-tr-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "self-serving"
+              className={`w-[130px] p-[8px]  rounded-tl-[7px] font-[500]  rounded-tr-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "self-serving"
                 ? "bg-[#FEAA00] text-[#fff]"
                 : "border-t-[1px] border-l-[1px] border-r-[1px]"
                 }`}
@@ -247,7 +244,7 @@ export default function OrderManagement() {
             </div>
             <div
               onClick={() => setActiveTab("pre-packaged")}
-              className={`w-[130px] p-[8px]  rounded-tr-[7px] font-bold  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "pre-packaged"
+              className={`w-[130px] p-[8px]  rounded-tr-[7px] font-[500]  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "pre-packaged"
                 ? "bg-[#FEAA00] text-[#fff]"
                 : "border-t-[1px] border-l-[1px] border-r-[1px]"
                 }`}
@@ -256,38 +253,41 @@ export default function OrderManagement() {
             </div>
           </div>
 
-          <div className="py-[90px] flex w-[97%]  gap-[20px]">
+          <div className="md11:py-[69px] md150:py-[90px] flex md11:w-[98%] md150:w-[97%] md11:gap-[15px] font-Poppins  md150:gap-[20px]">
             <Header />
             {activeTab === "self-serving" && (
-              <div className=" py-[20px] px-[20px]  md150:h-[70vh]  overflow-y-auto h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  flex gap-[15px] my-justify-center items-center  border-[#000000]">
+              <div className="md150:py-[20px] md150:px-[20px] md11:px-[15px] md11:py-[15px] flex gap-[10px] md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
                 <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
-                  <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[30px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
+                  <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[30px] md11:text-[14px] md150:text-[16px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
                     <div
-                      className={`w-[100%] h-[100%] font-bold text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
+                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
                         ? "bg-[#00984B] text-white py-[70px]"
                         : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("all")}
                     >
                       <p>All</p>
+                      <p className='md11:text-[10px] md150:text-[14px]'>({allOrderCount})</p>
                     </div>
                     <div
-                      className={`w-[100%] h-[100%]  font-bold text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
+                      className={`w-[100%] h-[100%] gap-[5px] font-[500] text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
                         ? "bg-[#006198] text-white py-[70px]"
                         : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("paid")}
                     >
                       <p>Paid</p>
+                      <p className='md11:text-[10px] md150:text-[14px]'>({paidOrderCount})</p>
                     </div>
                     <div
-                      className={`w-[100%]   font-bold h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
+                      className={`w-[100%] gap-[5px]   font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
                         ? "bg-[RED] text-white  py-[70px]"
                         : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
-                      <p>Unpaid</p>
+                      <p>Unpaid </p>
+                      <p className='md11:text-[10px] md150:text-[14px]'>({unpaidOrderCount})</p>
                     </div>
                   </div>
 
@@ -295,7 +295,7 @@ export default function OrderManagement() {
                     paidOrderList.map((order) => (
                       <div
                         key={order.id}
-                        className={`w-[100%] items-center justify-between rounded-[10px] border-[#00984B] text-[#00984B] flex text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
+                        className={`w-[100%] items-center justify-between rounded-[10px] border-[#00984B] text-[#00984B] flex md150:text-[13px] md11:text-[10px] border-[1.4px] p-[9px] cursor-pointer`}
                         onClick={() => handleSelectOrder(order._id)}
                       >
                         <div>
@@ -324,7 +324,7 @@ export default function OrderManagement() {
                     unpaidOrderList.map((order) => (
                       <div
                         key={order.id}
-                        className={`w-[100%] items-center justify-between rounded-[10px] border-[#FF0606] text-[#FF0606] flex text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
+                        className={`w-[100%] items-center justify-between rounded-[10px] border-[#FF0606] text-[#FF0606] flex md150:text-[13px] md11:text-[10px]  border-[1.4px] p-[9px] cursor-pointer`}
                         onClick={() => handleSelectOrder(order._id)}
                       >
                         <div>
@@ -353,15 +353,15 @@ export default function OrderManagement() {
                 {selectedOrderData && (
                   <div className="w-[75%] relative no-scrollbar rounded-[10px] justify-between  gap-[10px] flex flex-col p-[15px] h-[100%] border-[1.4px] border-[#FEAA00] overflow-y-auto">
                     <div className="flex justify-between  pt-[3px]">
-                      <div className="text-[20px]  items-center  flex gap-[20px] font-[600]">
+                      <div className="md150:text-[18px] md11:text-[16px]  items-center  flex gap-[20px] font-[500]">
                         <p>ORDERS DETAILS</p>
                         <i
-                          className="fa-solid text-[30px] cursor-pointer fa-print"
+                          className=" text-[25px] cursor-pointer fa-regular fa-print"
                           onClick={openOrderModal}
                         ></i>
                       </div>
                       <div
-                        className={`w-[150px] rounded-bl-[7px] font-[600]  text-[20px] flex justify-center  ${selectedOrder === 0
+                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center  ${selectedOrder === 0
                           ? "text-[#00984B]"
                           : "text-[#FF0606]"
                           }`}
@@ -382,7 +382,7 @@ export default function OrderManagement() {
                         }`}
                     >
                       <div className="w-[100%] flex justify-between">
-                        <div className="text-[15px] font-[400]">
+                        <div className="md150:text-[14px] md11:text-[13px] font-[400]">
                           <p>Order ID #{selectedOrderData?._id}</p>
                           <p>
                             Order on -{" "}
@@ -395,7 +395,7 @@ export default function OrderManagement() {
                             )}
                           </p>
                         </div>
-                        <p className="font-[600] pr-[20px] items-center text-[18px]">
+                        <p className="font-[400] pr-[20px] items-center text-[15px]">
                           Name - {selectedOrderData?.orderId?.userId?.name}
                         </p>
                       </div>
@@ -403,7 +403,7 @@ export default function OrderManagement() {
                       <div className="flex px-[10px] items-center justify-between">
                         <div className="flex flex-col gap-[5px]">
                           <p className="font-[300]">Delivery Address :</p>
-                          <p className="font-bold ">
+                          <p className="font-[400] ">
                             {selectedOrderData?.pickupLocation?.name}
                           </p>
                         </div>
@@ -429,7 +429,7 @@ export default function OrderManagement() {
                                 alt="Product"
                               />
                               <div>
-                                <p className="text-[16px]">
+                                <p className="text-[14px]">
                                   {item?.foodItem?.name}
                                 </p>
                                 <p className="text-[#595858]">
@@ -458,7 +458,7 @@ export default function OrderManagement() {
                                   alt="Product"
                                 />
                                 <div>
-                                  <p className="text-[16px]">
+                                  <p className="text-[14px]">
                                     {item?.servingMethod?.name}
                                   </p>
                                   <p className="text-[#595858]">
@@ -508,7 +508,7 @@ export default function OrderManagement() {
                           <p>Reject Order</p>
                         </div>
 
-                        {/* Conditional Rendering for View Receipt / View Payment */}
+
                         {paidOrderList.find(
                           (order) => order._id === selectedOrder
                         ) ? (
@@ -523,7 +523,7 @@ export default function OrderManagement() {
                             className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
                             onClick={openPaymentModal}
                           >
-                            <p>Payment Received</p>
+                            <p>Accept Order</p>
                           </div>
                         )}
                       </div>
@@ -533,35 +533,38 @@ export default function OrderManagement() {
               </div>
             )}
             {activeTab === "pre-packaged" && (
-              <div className=" py-[20px] px-[20px]  md150:h-[70vh]  overflow-y-auto h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  flex gap-[15px] my-justify-center items-center  border-[#000000]">
+              <div className="md150:py-[20px] md150:px-[20px] md11:px-[15px] md11:py-[15px] flex gap-[10px] md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
                 <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
-                  <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
+                  <div className="w-[100%] md11:text-[14px] md150:text-[16px] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] text-[14px] flex justify-between border-[#595454]">
                     <div
-                      className={`w-[100%] h-[100%] font-bold text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
+                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
                         ? "bg-[#00984B] text-white py-[70px]"
                         : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("all")}
                     >
                       <p>All</p>
+                      <p className='md11:text-[10px] md150:text-[14px]'> ({allOrderCount})</p>
                     </div>
                     <div
-                      className={`w-[100%] h-[100%]  font-bold text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
+                      className={`w-[100%] h-[100%] gap-[5px]  font-[500] text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
                         ? "bg-[#006198] text-white py-[70px]"
                         : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("paid")}
                     >
                       <p>Paid</p>
+                      <p className='md11:text-[10px] md150:text-[14px]'>({paidOrderCount})</p>
                     </div>
                     <div
-                      className={`w-[100%]   font-bold h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
+                      className={`w-[100%]  gap-[5px] font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
                         ? "bg-[RED] text-white  py-[70px]"
                         : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
                       <p>Unpaid</p>
+                      <p className='md11:text-[10px] md150:text-[14px]'>({unpaidOrderCount})</p>
                     </div>
                   </div>
 
@@ -570,7 +573,7 @@ export default function OrderManagement() {
                     prePackagePaidOrderList.map((order) => (
                       <div
                         key={order.id}
-                        className={`w-[100%] items-center justify-between rounded-[10px] border-[#00984B] text-[#00984B] flex text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
+                        className={`w-[100%] items-center justify-between rounded-[10px] border-[#00984B] text-[#00984B] flex md11:text-[10px] md150:text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
                         onClick={() => handleSelectOrder(order._id)}
                       >
                         <div>
@@ -600,7 +603,7 @@ export default function OrderManagement() {
                     prePackageUnpaidOrderList.map((order) => (
                       <div
                         key={order.id}
-                        className={`w-[100%] items-center justify-between rounded-[10px] border-[#FF0606] text-[#FF0606] flex text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
+                        className={`w-[100%] items-center justify-between rounded-[10px] border-[#FF0606] text-[#FF0606] flex md11:text-[10px] md150:text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
                         onClick={() => handleSelectOrder(order._id)}
                       >
                         <div>
@@ -629,23 +632,22 @@ export default function OrderManagement() {
                 {selectedOrderData && (
                   <div className="w-[75%] relative no-scrollbar rounded-[10px] justify-between  gap-[10px] flex flex-col p-[15px] h-[100%] border-[1.4px] border-[#FEAA00] overflow-y-auto">
                     <div className="flex justify-between  pt-[3px]">
-                      <div className="text-[20px]  items-center  flex gap-[20px] font-[600]">
+                      <div className="md150:text-[18px] md11:text-[16px]  items-center  flex gap-[20px] font-[500]">
                         <p>ORDERS DETAILS</p>
                         <i
-                          className="fa-solid text-[30px] cursor-pointer fa-print"
+                          className=" text-[25px] cursor-pointer fa-regular fa-print"
                           onClick={openOrderModal}
                         ></i>
+
                       </div>
                       <div
-                        className={`w-[150px] rounded-bl-[7px] font-[600]  text-[20px] flex justify-center  ${selectedOrder === 0
-                          ? "text-[#00984B]"
-                          : "text-[#FF0606]"
+                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center ${prePackagePaidOrderList.find((order) => order._id === selectedOrder)
+                            ? "text-[#00984B]"
+                            : "text-[#FF0606]" 
                           }`}
                       >
                         <p>
-                          {prePackagePaidOrderList.find(
-                            (order) => order._id === selectedOrder
-                          )
+                          {prePackagePaidOrderList.find((order) => order._id === selectedOrder)
                             ? "ORDER PAID"
                             : "ORDER UNPAID"}
                         </p>
@@ -658,7 +660,7 @@ export default function OrderManagement() {
                         }`}
                     >
                       <div className="w-[100%] flex justify-between">
-                        <div className="text-[15px] font-[400]">
+                        <div className="md150:text-[14px] md11:text-[13px] font-[400]">
                           <p>Order ID #{selectedOrderData?._id}</p>
                           <p>
                             Order on -{" "}
@@ -671,7 +673,7 @@ export default function OrderManagement() {
                             )}
                           </p>
                         </div>
-                        <p className="font-[600] pr-[20px] items-center text-[18px]">
+                        <p className="font-[500] pr-[20px] items-center text-[15px]">
                           Name - {selectedOrderData?.orderId?.userId?.name}
                         </p>
                       </div>
@@ -679,7 +681,7 @@ export default function OrderManagement() {
                       <div className="flex px-[10px] items-center justify-between">
                         <div className="flex flex-col gap-[5px]">
                           <p className="font-[300]">Delivery Address :</p>
-                          <p className="font-bold ">
+                          <p className="font-[500] ">
                             {selectedOrderData?.pickupLocation?.name}
                           </p>
                         </div>
@@ -705,7 +707,7 @@ export default function OrderManagement() {
                                 alt={item?.foodItem?.name}
                               />
                               <div>
-                                <p className="text-[16px]">
+                                <p className="text-[14px]">
                                   {item?.foodItem?.name}
                                 </p>
                                 <p className="text-[#595858]">
@@ -714,7 +716,7 @@ export default function OrderManagement() {
                               </div>
                             </div>
                             <div>
-                              <p className="text-[16px]">{item?.totalPrice}</p>
+                              <p className="text-[13px]">{item?.totalPrice}</p>
                             </div>
                           </div>
                         ))}
@@ -735,15 +737,10 @@ export default function OrderManagement() {
                           >
                             <p>View KOT</p>
                           </div>
-                          {/* <div
-                            className="w-[130px] cursor-pointer active:bg-[#006198] active:text-[#fff] rounded-[5px] items-center flex justify-center py-[6px] font-[500] border-[1.7px] border-[#006198] text-[#006198]"
-                            onClick={openPackgingnModal}
-                          >
-                            <p>View POT</p>
-                          </div> */}
+
                         </div>
                       </div>
-
+                      
                       <div className="flex gap-[10px] items-center">
                         <div
                           className="w-[130px] rounded-[5px] flex justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
@@ -751,8 +748,6 @@ export default function OrderManagement() {
                         >
                           <p>Reject Order</p>
                         </div>
-
-                        {/* Conditional Rendering for View Receipt / View Payment */}
                         {prePackagePaidOrderList.find(
                           (order) => order._id === selectedOrder
                         ) ? (
@@ -767,7 +762,7 @@ export default function OrderManagement() {
                             className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
                             onClick={openPaymentModal}
                           >
-                            <p>Payment Received</p>
+                            <p>Accept Order</p>
                           </div>
                         )}
                       </div>
@@ -811,7 +806,7 @@ export default function OrderManagement() {
                     <p className="text-right w-[30%]">Quantity</p>
                   </div>
 
-                  {/* Map over the items and dynamically generate the rows */}
+
                   {selectedOrderData?.orderId?.items?.map((item, index) => (
 
                     <>
@@ -823,7 +818,7 @@ export default function OrderManagement() {
                           <p className="w-[15%]">
                             {String(index + 1).padStart(2, "0")}
                           </p>{" "}
-                          {/* Generates 01, 02, 03, etc. */}
+
                           <p className="w-[55%]">{item.foodItem?.name}</p>
                           <p className="text-right w-[30%]">{item?.quantity}</p>
                         </div>
@@ -832,14 +827,7 @@ export default function OrderManagement() {
                       </div>
                     </>
                   ))}
-                  {/* <div className='flex justify-between  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed'>
-                    <p>
-                      Items  : 03
-                    </p>
-                    <p>
-                      Qty : 40
-                    </p>
-                  </div> */}
+
                 </div>
                 <div className="flex w-[100%] left-0 bg-white justify-between absolute bottom-[60px]  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed">
                   <p>
@@ -892,7 +880,7 @@ export default function OrderManagement() {
                     <p className="text-right w-[30%]">Quantity</p>
                   </div>
 
-                  {/* Map over the items and dynamically generate the rows */}
+
                   {selectedOrderData?.orderId?.servingMethodId?.map(
                     (item, index) => (
                       <>
@@ -904,7 +892,7 @@ export default function OrderManagement() {
                             <p className="w-[15%]">
                               {String(index + 1).padStart(2, "0")}
                             </p>{" "}
-                            {/* Generates 01, 02, 03, etc. */}
+                        
                             <p className="w-[55%]">{item.servingMethod?.name}</p>
                             <p className="text-right w-[30%]">{item.quantity}</p>
                           </div>
@@ -912,14 +900,8 @@ export default function OrderManagement() {
                       </>
                     )
                   )}
-                  {/* <div className='flex justify-between  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed'>
-                    <p>
-                      Items  : 03
-                    </p>
-                    <p>
-                      Qty : 40
-                    </p>
-                  </div> */}
+         
+        
                 </div>
                 <div className="flex w-[100%] left-0 justify-between absolute bottom-[60px]  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed">
                   <p>
@@ -976,7 +958,7 @@ export default function OrderManagement() {
               <div className="flex px-[10px] items-center justify-between">
                 <div className="flex flex-col gap-[5px]">
                   <p className="font-[300]">Delivery Address :</p>
-                  <p className="font-bold ">
+                  <p className="font-[500] ">
                     {selectedOrderData?.pickupLocation?.name}
                   </p>
                 </div>
@@ -1098,31 +1080,22 @@ export default function OrderManagement() {
 
       {/* payment confirm order modal */}
       <NextUIModal
-        className="md:max-w-[300px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[40%] h-[300px]"
+        className="md:max-w-[300px]  max-w-[333px] relative  flex justify-center rounded-[10px] !py-0 mx-auto  h-[300px]"
         isOpen={ispaymentModalOpen}
         backdrop={"blur"}
         onOpenChange={closePaymentModal}
       >
         <ModalContent className="relative ">
           <ModalBody className="!py-0">
-            <div className="w-[100%] gap-[20px] flex flex-col absolute left-0 top- right-0 items-center ">
-              <div className="  mt-[50px]">
+            <div className="w-[100%] gap-[20px] my-auto flex flex-col absolute left-0 top- right-0 items-center ">
+              <div className="  mt-[70px]">
                 <i className="fa-sharp fa-regular text-[100px] text-[green] fa-badge-check"></i>
               </div>
-              <div className=" flex font-[600] text-[20px] mx-auto">
-                <p>asdfghjdff klsdf</p>
+              <div className=" flex font-[500] font-Poppins text-[green]  text-[28px] mx-auto">
+                <p>Order Accept</p>
               </div>
 
-              <div className=" w-[90%] mt-[20px] mx-auto flex items-center  ">
-                <div className=" bg-[red] rounded-tl-[10px]  rounded-bl-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]">
-                  {" "}
-                  Cancel
-                </div>
-                <div className=" bg-[#00984B] rounded-tr-[10px]  rounded-br-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]">
-                  {" "}
-                  Confirm
-                </div>
-              </div>
+
             </div>
           </ModalBody>
         </ModalContent>
@@ -1144,11 +1117,11 @@ export default function OrderManagement() {
               </div>
 
               <div className=" w-[90%] mx-auto flex items-center  ">
-                <div className=" bg-[#34aff7] rounded-tl-[10px]  rounded-bl-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]">
+                <div className=" bg-[#34aff7] rounded-tl-[10px] cursor-pointer  rounded-bl-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]" onClick={closeRejectModal}>
                   {" "}
                   Cancel
                 </div>
-                <div className=" bg-[Red] rounded-tr-[10px]  rounded-br-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]">
+                <div className=" bg-[Red] rounded-tr-[10px] cursor-pointer   rounded-br-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]" onClick={closeRejectModal}>
                   {" "}
                   Confirm
                 </div>
