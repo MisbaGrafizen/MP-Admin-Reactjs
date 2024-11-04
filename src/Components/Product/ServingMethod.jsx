@@ -267,6 +267,24 @@ export default function ServingMethod() {
     const closeDeleteModal = () => {
         setIsDelOpen(false);
     };
+
+    const handelConfirmDelete = () =>{
+        console.log("ssdsdssd",deleteData)
+if(deleteData){
+    dispatch(deleteServingSingleMethodByIdAction(deleteData._id,))
+    .then(response => {          
+   
+    setFoodItems(prev => 
+        prev.filter(item => item._id !== response._id)
+    )
+    setDeleteData(null)
+    setIsDelOpen(false);
+    })
+    .catch(error => {
+      console.error('Error updating item:', error);
+    });
+}
+    }
     return (
         <>
             <div className="w-[100%] p-[5px]">

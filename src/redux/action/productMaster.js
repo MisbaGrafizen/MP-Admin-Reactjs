@@ -151,6 +151,22 @@ export const UpdatePrePackageCategoryNameAction = (id,data) => {
     });
 };
 };
+
+export const UpdateServingCategoryAction = (id,data) => {
+  console.log("id,data",id,data)
+  return (dispatch) => {
+      return ApiPut(`/api/admin/servingCategory/${id}`, data)
+    .then((res) => {
+      if (res.status === "success") {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+     console.log(error)
+    });
+};
+};
+
 export const UpdateSelfServicesCategoryNameAction = (id,data) => {
   console.log("id,data",id,data)
   return (dispatch) => {
@@ -246,7 +262,7 @@ export const deleteServingMethodByIdAction = (categoryId) => {
 };
 export const deleteServingSingleMethodByIdAction = (categoryId) => {
   return () => {
-      return ApiDelete(`/api/admin/servingCategory/${categoryId}`)
+      return ApiDelete(`/api/admin/serving-methods/${categoryId}`)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -271,6 +287,21 @@ export const deletePrePackageMethodByIdAction = (categoryId) => {
     });
 };
 };
+
+// export const deleteSelfServingMethodByIdAction = (categoryId) => {
+//   return () => {
+//       return ApiDelete(`/api/admin/serving-methods/${categoryId}`)
+//     .then((res) => {
+//       if (res.data) {
+//         return res.data;
+//       }
+//     })
+//     .catch((error) => {
+//       console.log("Error",error)
+//     });
+// };
+// };
+
 
 
 export const addFoodItemAction = (formData) => {
@@ -308,7 +339,7 @@ export const EditSelfFoodItemAction = (id,formData) => {
 };
 export const EditServingMethodItemAction = (id,formData) => {
   return () => {
-      return ApiPostData(`/api/admin/serving-methods/${id}`, formData)
+      return ApiPut(`/api/admin/serving-methods/${id}`, formData)
     .then((res) => {
       if (res.data) {
         return res.data;

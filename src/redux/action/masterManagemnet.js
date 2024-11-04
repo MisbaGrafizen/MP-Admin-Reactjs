@@ -160,7 +160,7 @@ export const updatePravrutiAction = (updatePravrutiData) => {
 
 export const updateKshetraAction = (updateKshetraData) => {
     return (dispatch) => {
-        return ApiPost(`/api/admin/edit_kshetra/${updateKshetraData._id}`, updateKshetraData)
+        return ApiPut(`/api/admin/edit_kshetra/${updateKshetraData._id}`, updateKshetraData)
       .then((res) => {
         if (res.status === "success") {
           dispatch({
@@ -181,7 +181,7 @@ export const updateKshetraAction = (updateKshetraData) => {
 
 export const updateDesignationAction = (updateDesignationData) => {
     return (dispatch) => {
-        return ApiPost(`/api/admin/edit_designation/${updateDesignationData._id}`, updateDesignationData)
+        return ApiPut(`/api/admin/edit_designation/${updateDesignationData._id}`, updateDesignationData)
       .then((res) => {
         if (res.status === "success") {
           dispatch({

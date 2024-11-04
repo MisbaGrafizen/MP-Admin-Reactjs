@@ -118,30 +118,30 @@ export default function SelfServingManage({methodType}) {
         formData.append('description', foodItemInput.description);
         formData.append('photo', imageFile);
         formData.append('foodId', selectedFoodCategory?._id);
-        //    if(isUpdateData)
-        //     {
-        //      dispatch(EditSelfFoodItemAction(foodItemInput._id,formData))
-        //     .then(response => {
-        //         console.log('Item added successfully:', response);
-        //         setFoodItems(prev =>[...prev,response])
-        //         setFoodItemInput({ name: '', price: '', description: '', photo: null });
-        //         setImagePreview(null); 
-        //         onOpenChange(false);
-        //     })
-        //     .catch(error => {
-        //         console.error('Error adding item:', error);
-        //     });}
-        // else { dispatch(addFoodItemAction(formData))
-        //     .then(response => {
-        //         console.log('Item added successfully:', response);
-        //         setFoodItems(prev =>[...prev,response])
-        //         setFoodItemInput({ name: '', price: '', description: '', photo: null });
-        //         setImagePreview(null); 
-        //         onOpenChange(false);
-        //     })
-        //     .catch(error => {
-        //         console.error('Error adding item:', error);
-        //     });}
+           if(isUpdateData)
+            {
+             dispatch(EditSelfFoodItemAction(foodItemInput._id,formData))
+            .then(response => {
+                console.log('Item added successfully:', response);
+                setFoodItems(prev =>[...prev,response])
+                setFoodItemInput({ name: '', price: '', description: '', photo: null });
+                setImagePreview(null); 
+                onOpenChange(false);
+            })
+            .catch(error => {
+                console.error('Error adding item:', error);
+            });}
+        else { dispatch(addFoodItemAction(formData))
+            .then(response => {
+                console.log('Item added successfully:', response);
+                setFoodItems(prev =>[...prev,response])
+                setFoodItemInput({ name: '', price: '', description: '', photo: null });
+                setImagePreview(null); 
+                onOpenChange(false);
+            })
+            .catch(error => {
+                console.error('Error adding item:', error);
+            });}
         
         if (isUpdateData) {
             dispatch(EditSelfFoodItemAction(foodItemInput._id, foodItemInput))

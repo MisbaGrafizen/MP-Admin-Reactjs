@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Header from '../../Components/header/Header';
-import { addDesignationAction, addKshetraAction, addPravrutiAction, DeletePravrutiAction, getDesignationAction, getKshetraAction, getPravrutiAction, updatePravrutiAction } from '../../redux/action/masterManagemnet';
+import { addDesignationAction, addKshetraAction, addPravrutiAction, DeletePravrutiAction, getDesignationAction, getKshetraAction, getPravrutiAction, updateDesignationAction, updateKshetraAction, updatePravrutiAction } from '../../redux/action/masterManagemnet';
 import { useDispatch, useSelector } from 'react-redux';
 import Editpng from '../../../public/img/Foodsection/edit.png'
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
@@ -34,6 +34,8 @@ export default function MasterManage() {
     const paginatedKhestras = kshetras.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const paginatedDesignation = kshetras.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const [deleteInfo, setDeleteInfo] = useState({});
+
+    console.log('destinations', designations);
     const handleBack = () => {
         navigate(-1)
     }
@@ -91,7 +93,7 @@ export default function MasterManage() {
         if (kshetraName.trim() !== "") {
             if (editIndexKshetra !== null) {
                 const updatedKshetra = { ...kshetras[editIndexKshetra], name: kshetraName };
-                dispatch(addKshetraAction(updatedKshetra)).then(() => {
+                dispatch(updateKshetraAction(updatedKshetra)).then(() => {
                     setEditIndexKshetra(null);
                     setKshetraName("");
                 });
@@ -109,13 +111,13 @@ export default function MasterManage() {
         if (designationName.trim() !== "") {
             if (editIndexDesignation !== null) {
                 const updatedDesignation = { ...designations[editIndexDesignation], name: designationName };
-                dispatch(addDesignationAction(updatedDesignation)).then(() => {
+                dispatch(updateDesignationAction(updatedDesignation)).then(() => {
                     setEditIndexDesignation(null);
                     setDesignationName("");
                 });
             } else {
                 dispatch(addDesignationAction({ name: designationName })).then(() => {
-                    setDesignationName("");
+                    setDesignationName("");             
                 });
             }
         } else {
