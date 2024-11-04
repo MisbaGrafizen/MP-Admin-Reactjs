@@ -13,26 +13,34 @@ export default function ProductMangement() {
     const handleBack = () => {
         navigate(-1);
     }
+
+    const handleActiveFormChange = (formType) => {
+        console.log("formTypes",formType)
+        setActiveForm(formType);
+       
+      }
     const renderForm = () => {
-        switch (activeForm) {
-            case 'SELF':
-                return <div className="flex justify-between w-full gap-[20px]">
-                    <SelfServingManage />
-                </div>;
-
-            case 'SERVING':
-                return <div className="flex justify-between w-full gap-[20px]">
+        if (activeForm === 'SELF' ) {
+            return (
+                <div className="flex justify-between w-full gap-[20px]">
+                    <SelfServingManage methodType={"SELF"} />
+                </div>
+            );
+        } else if (activeForm === 'SERVING') {
+            return (
+                <div className="flex justify-between w-full gap-[20px]">
                     <ServingMethod />
-                </div>;
-
-            case 'PRE-PACKGED':
-                return <div className="flex justify-between w-full gap-[20px]">
-                    <PrePackged />
-                </div>;
-
+                </div>
+            );
+        } else if(activeForm === 'PRE-PACKGED'){
+            return (
+                <div className="flex justify-between w-full gap-[20px]">
+                    <PrePackged methodType={"PRE-PACKGED"} />
+                </div>
+            );
         }
     };
-
+    
     return (
         <>
             <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto ">
@@ -51,11 +59,11 @@ export default function ProductMangement() {
                             </p>
                         </div>
                     </div>
-                    <div className='flex gap-[10px] mx-auto justify-center absolute  right-[7%]  z-20 md11:top-[5%] md150:top-[5.6%]'>
+                    <div className='flex gap-[10px] mx-auto justify-center absolute  right-[7%]  z-0 md11:top-[5.3%] md150:top-[5.9%]'>
 
                         <div
                             className={`md150:w-[160px] md11:w-[130px] flex items-center md150:text-[18px] text-[16px] justify-center  rounded-tr-[10px]  rounded-tl-[10px]  border-r-[1px]  border-l-[1px]  font-[600] border-t-[1px] border-[#FEAA00]  ${activeForm === 'SELF' ? 'bg-[#FEAA00] text-[#fff]' : ' text-[#FEAA00] bg-white '} md150:h-[40px] md11:h-[35px] cursor-pointer`}
-                            onClick={() => setActiveForm('SELF')}
+                            onClick={() => handleActiveFormChange('SELF')}
                         >
                             <p>Self Serving</p>
                         </div>
@@ -63,14 +71,14 @@ export default function ProductMangement() {
 
                         <div
                             className={`md150:w-[160px] md11:w-[130px] flex items-center md150:text-[18px] text-[16px] justify-center  rounded-tr-[10px] rounded-tl-[10px]  border-r-[1px] font-[600]  border-l-[1px]  border-t-[1px]  ${activeForm === 'SERVING' ? 'bg-[#00984b] text-[#fff] border-[#00984b]' : 'text-[#FEAA00] border-[#FEAA00]  bg-white '} md150:h-[40px] md11:h-[35px] cursor-pointer`}
-                            onClick={() => setActiveForm('SERVING')}
+                            onClick={() => handleActiveFormChange('SERVING')}
                         >
                             <p>Serving Method</p>
                         </div>
 
                         <div
                             className={`md150:w-[160px] md11:w-[130px] flex items-center md150:text-[18px] text-[16px] justify-center  rounded-tr-[10px]  rounded-tl-[10px]  border-r-[1px] font-[600] border-l-[1px]  border-t-[1px] border-[#FEAA00]  ${activeForm === 'PRE-PACKGED' ? 'bg-[#FEAA00] text-[#fff]' : 'text-[#FEAA00]  bg-white '} md150:h-[40px] md11:h-[35px] cursor-pointer`}
-                            onClick={() => setActiveForm('PRE-PACKGED')}
+                            onClick={() => handleActiveFormChange('PRE-PACKGED')}
                         >
                             <p>Pre - Packaged</p>
                         </div>

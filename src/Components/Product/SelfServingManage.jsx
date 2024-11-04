@@ -1,45 +1,77 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
-import { addFoodCategoryAction, addFoodItemAction, getAllFoodCategoryAction, getFoodItemByCategoryIdAction } from '../../redux/action/productMaster';
+import { addFoodCategoryAction, addFoodItemAction, addPrePackageFoodCategoryAction, addPrePackageFoodItemAction, deleteServingMethodByIdAction, EditSelfFoodItemAction, getAllFoodCategoryAction, getAllPrePackageFoodCategoryAction, getFoodItemByCategoryIdAction, getPrePackageFoodItemByCategoryIdAction, UpdateSelfServicesCategoryNameAction } from '../../redux/action/productMaster';
 import { useDispatch, useSelector } from 'react-redux';
 
-export default function SelfServingManage() {
+export default function SelfServingManage({methodType}) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [showInput, setShowInput] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [buttons, setButtons] = useState([]);
     const [selectedFoodCategory, setSelectedFoodCategory] = useState("");
     const [isDelOpen, setIsDelOpen] = useState(false);
+    const [deleteData,setDeleteData] = useState("")
     const [selectedButton, setSelectedButton] = useState(0);
-    const [foodItemInput, setFoodItemInput] = useState({ name: '', price: '', description: '', photo: '' });
+    const [foodItemInput, setFoodItemInput] = useState({ name: '', price: '', description: '', photo: '',_id:"" });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [editingCategory, setEditingCategory] = useState(null);
     const [popupVisible, setPopupVisible] = useState(false);
+    const [isUpdateData,setIsUpdateData] = useState(false)
     const [selectedFoodItem, setSelectedFoodItem] = useState(null);
     const [popupPosition, setPopupPosition] = useState();
     const inputRef = useRef(null);
-
+    const [foodCategories, setFoodCategories] = useState([]);
+    const [foodItems,setFoodItems] = useState([])
     const dispatch = useDispatch();
 
-    const foodCategories = useSelector((state) => state?.productMasterState?.getAllFoodCategory);
-    const foodItems = useSelector((state) => state?.productMasterState?.getFoodItemByFoodCategory);
-
     useEffect(() => {
-        dispatch(getAllFoodCategoryAction());
-    }, [dispatch]);
-
+        const fetchCategories = async () => {
+            if (methodType === "PRE-PACKGED") {
+                const categories = await dispatch(getAllPrePackageFoodCategoryAction());
+                setFoodCategories(categories);
+            } else {
+                const categories = await dispatch(getAllFoodCategoryAction());
+                setFoodCategories(categories);
+            }
+        };
+        
+        fetchCategories();
+    }, [dispatch, methodType]);
+  
     useEffect(() => {
-        if (selectedFoodCategory) {
-            dispatch(getFoodItemByCategoryIdAction(selectedFoodCategory?._id));
+        if (selectedFoodCategory && selectedFoodCategory?._id) {
+            if(methodType === "PRE-PACKGED"){
+                dispatch(getPrePackageFoodItemByCategoryIdAction(selectedFoodCategory?._id))
+                .then((response)=>{
+                    setFoodItems(response)});
+            }else {
+                dispatch(getFoodItemByCategoryIdAction(selectedFoodCategory?._id)).then((response)=>{
+                    setFoodItems(response)});
+            }
+        }else if(foodCategories ) {
+            const categoriesSingle = foodCategories[0];
+            setSelectedFoodCategory(categoriesSingle)
+            if(categoriesSingle){
+             if(methodType === "PRE-PACKGED"){
+                dispatch(getPrePackageFoodItemByCategoryIdAction(categoriesSingle?._id))
+                .then((response)=>{
+                    console.log("ifpar",response)
+                    setFoodItems(response)});
+            }else {
+                dispatch(getFoodItemByCategoryIdAction(categoriesSingle?._id)).then((response)=>{
+                    console.log("elsePar",response)
+                    setFoodItems(response)});
+            }}
         }
-    }, [dispatch, selectedFoodCategory]);
-
+        console.log("datacosdsmes",selectedFoodCategory)
+    }, [dispatch,foodCategories, selectedFoodCategory,methodType]);
     const handleCategoryClick = (category, index) => {
         setSelectedFoodCategory(category);
         setSelectedButton(index);
     };
-
+   
+      
     const handlePlusClick = () => {
         setShowInput(true);
     };
@@ -50,7 +82,15 @@ export default function SelfServingManage() {
     };
     const handleCategorySubmit = () => {
         if (inputValue) {
-            dispatch(addFoodCategoryAction({ name: inputValue }));
+            if(methodType === "PRE-PACKGED"){
+                dispatch(addPrePackageFoodCategoryAction({ name: inputValue })).then((response)=>{
+                    setFoodCategories(prevCategories => [...prevCategories, response]);
+                })
+            }else { 
+                dispatch(addFoodCategoryAction({ name: inputValue })).then((response)=>{
+                    setFoodCategories(prevCategories => [...prevCategories, response]);
+                })
+            }
             setInputValue('');
             setShowInput(false);
         }
@@ -71,23 +111,70 @@ export default function SelfServingManage() {
             alert('Please fill in all required fields and upload an image.');
             return;
         }
+        console.log("foodItemInputsd",foodItemInput)
         const formData = new FormData();
         formData.append('name', foodItemInput.name);
         formData.append('price', foodItemInput.price);
         formData.append('description', foodItemInput.description);
         formData.append('photo', imageFile);
         formData.append('foodId', selectedFoodCategory?._id);
-
-        dispatch(addFoodItemAction(formData))
-            .then(response => {
-                console.log('Item added successfully:', response);
+        //    if(isUpdateData)
+        //     {
+        //      dispatch(EditSelfFoodItemAction(foodItemInput._id,formData))
+        //     .then(response => {
+        //         console.log('Item added successfully:', response);
+        //         setFoodItems(prev =>[...prev,response])
+        //         setFoodItemInput({ name: '', price: '', description: '', photo: null });
+        //         setImagePreview(null); 
+        //         onOpenChange(false);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error adding item:', error);
+        //     });}
+        // else { dispatch(addFoodItemAction(formData))
+        //     .then(response => {
+        //         console.log('Item added successfully:', response);
+        //         setFoodItems(prev =>[...prev,response])
+        //         setFoodItemInput({ name: '', price: '', description: '', photo: null });
+        //         setImagePreview(null); 
+        //         onOpenChange(false);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error adding item:', error);
+        //     });}
+        
+        if (isUpdateData) {
+            dispatch(EditSelfFoodItemAction(foodItemInput._id, foodItemInput))
+              .then(response => {          
+                setFoodItems(prev => 
+                  prev.map(item => 
+                    item._id === foodItemInput._id ? response : item
+                  )
+                );
                 setFoodItemInput({ name: '', price: '', description: '', photo: null });
                 setImagePreview(null); 
-                onOpenChange(false);
-            })
-            .catch(error => {
+                onOpenChange(false); 
+              })
+              .catch(error => {
+                console.error('Error updating item:', error);
+              });
+          } else { 
+            dispatch(addFoodItemAction(formData))
+              .then(response => {
+                console.log('Item added successfully:', response);
+          
+                setFoodItems(prev => [...prev, response]);
+          
+                setFoodItemInput({ name: '', price: '', description: '', photo: null });
+                setImagePreview(null); 
+                onOpenChange(false); 
+              })
+              .catch(error => {
                 console.error('Error adding item:', error);
-            });
+              });
+          }
+          
+           
     };
 
     const handleFileChange = (event) => {
@@ -140,7 +227,6 @@ export default function SelfServingManage() {
             }
         };
 
-
         document.addEventListener("mousedown", handleClickOutside);
 
 
@@ -151,8 +237,13 @@ export default function SelfServingManage() {
 
     const handleCategoryUpdate = () => {
         if (inputValue && editingCategory) {
-            dispatch(addFoodCategoryAction({ _id: editingCategory, name: inputValue }))
-                .then(() => {
+            dispatch(UpdateSelfServicesCategoryNameAction(editingCategory,{name: inputValue}))
+                .then((response) => {
+                    setFoodCategories(prevCategories => 
+                        prevCategories.map(category => 
+                          category._id === editingCategory ? response : category
+                        )
+                      );                   
                     setEditingCategory(null);
                     setInputValue('');
                     dispatch(getAllFoodCategoryAction());
@@ -191,21 +282,46 @@ export default function SelfServingManage() {
     };
 
 
-    const handleEditFoodItem = () => {
-        if (selectedFoodItem) {
+    const handleEditFoodItem = (item) => {
+        if (selectedFoodItem) {            
             onOpen();
             setPopupVisible(false);
+            setIsUpdateData(true)
+            setFoodItemInput({
+                name: item?.name, 
+                price: item?.price, 
+                description: item?.description, 
+                photo: null,
+                _id: item?._id
+              });
         }
     };
 
-    const handleDelete = () => {
+    const handleDelete = (deleteData) => {
         setIsDelOpen(true);
+        setDeleteData(deleteData)
     };
 
     const closeDeleteModal = () => {
         setIsDelOpen(false);
     };
-
+    const handelConfirmDelete = () =>{
+        console.log("ssdsdssd",deleteData)
+if(deleteData){
+    dispatch(deleteServingMethodByIdAction(deleteData._id,))
+    .then(response => {          
+   
+    setFoodItems(prev => 
+        prev.filter(item => item._id !== response._id)
+    )
+    setDeleteData(null)
+    setIsDelOpen(false);
+    })
+    .catch(error => {
+      console.error('Error updating item:', error);
+    });
+}
+    }
     return (
         <>
             <div className="w-[100%] py-[5px] px-[5px]">
@@ -296,8 +412,8 @@ export default function SelfServingManage() {
                                                 }}
                                                 onMouseLeave={handlePopupClose}
                                             >
-                                                <p className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={handleEditFoodItem}>Edit</p>
-                                                <p className="text-red-500 hover:bg-red-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={handleDelete}>Delete</p>
+                                                <p className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer"  onClick={() => handleEditFoodItem(selectedFoodItem)} >Edit</p>
+                                                <p className="text-red-500 hover:bg-red-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={() =>handleDelete(selectedFoodItem)}>Delete</p>
                                             </div>
                                         )}
 
@@ -413,7 +529,9 @@ export default function SelfServingManage() {
 
                                         </div>
                                         <div className='absolute bottom-0 flex w-[100%]'>
-                                            <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={closeDeleteModal}>
+                                            <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' 
+                                            onClick={handelConfirmDelete}>
+                                                
                                                 <p>
                                                     Delete
                                                 </p>

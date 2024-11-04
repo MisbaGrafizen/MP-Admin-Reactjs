@@ -1,4 +1,4 @@
-import { GET_PRAVRUTI, GET_KSHETRA, GET_DESIGNATION, ADD_PRAVRUTI, ADD_KSHETRA, ADD_DESIGNATION, UPDATE_PRAVRUTI, UPDATE_KSHETRA, UPDATE_DESIGNATION, RESET_GLOBAL_STATE } from '../type';
+import { GET_PRAVRUTI, GET_KSHETRA, GET_DESIGNATION, ADD_PRAVRUTI, ADD_KSHETRA, ADD_DESIGNATION, UPDATE_PRAVRUTI, UPDATE_KSHETRA, UPDATE_DESIGNATION, RESET_GLOBAL_STATE, DELETE_PRAVRUTI } from '../type';
 
 const initialState = {
     addPravruti: [],
@@ -44,11 +44,23 @@ const mastermanagementReducer = (state = initialState, action) => {
                 ...state,
                 addDesignation: action.payload,
             };
-        case UPDATE_PRAVRUTI:
+        case UPDATE_PRAVRUTI: {
+            const updatedPravruti = action.payload; 
             return {
                 ...state,
-                updatePravruti: action.payload,
+                getPravruti: state.getPravruti.map((pravruti) =>
+                    pravruti._id === updatedPravruti._id ? updatedPravruti : pravruti
+                ),
             };
+          }
+        case DELETE_PRAVRUTI: {
+            const idToDelete = action.payload; 
+            return {
+                ...state,
+                getPravruti: state.getPravruti.filter((pravruti) => pravruti._id !== idToDelete),
+            };
+          }
+          
         case UPDATE_KSHETRA:
             return {
                 ...state,

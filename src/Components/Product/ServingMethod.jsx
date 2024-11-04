@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
-import { addServingCategoryAction, addServingMethodAction, getAllServingCategoryAction, getServingMethodByCategoryIdAction } from '../../redux/action/productMaster';
+import { addServingCategoryAction, addServingMethodAction, deleteServingSingleMethodByIdAction, EditServingMethodItemAction, getAllServingCategoryAction, getServingMethodByCategoryIdAction } from '../../redux/action/productMaster';
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function ServingMethod() {
@@ -10,26 +10,55 @@ export default function ServingMethod() {
     const [selectedServingCategory, setSelectedServingCategory] = useState("");
     const [buttons, setButtons] = useState(['Dishes', 'Bowl', 'Dinner Plates']);
     const [selectedButton, setSelectedButton] = useState(0);
-    const [servingMethodInput, setServingMethodInput] = useState({ name: '', price: '', description: '', photo: '' });
+    const [servingMethodInput, setServingMethodInput] = useState({ name: '', price: '', description: '', photo: '' ,_id:""});
     const [imageFile, setImageFile] = useState(null);
+    const [deleteData,setDeleteData] = useState("")
     const [imagePreview, setImagePreview] = useState(null);
     const [editingCategoryId, setEditingCategoryId] = useState(null);
     const [popupVisible, setPopupVisible] = useState(false);
     const [selectedServingMethod, setSelectedServingMethod] = useState(null);
     const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
     const dispatch = useDispatch();
-    const servingCategories = useSelector((state) => state?.productMasterState?.getServingCategory);
-    const servingMethods = useSelector((state) => state?.productMasterState?.getServingMethod);
+    const [isUpdateData,setIsUpdateData] = useState(false)
+    const [servingCategories,setServingCategories] = useState([])
+    const [servingMethods,setServingMethods] = useState([])
+    // const servingCategories = useSelector((state) => state?.productMasterState?.getServingCategory);
+    // const servingMethods = useSelector((state) => state?.productMasterState?.getServingMethod);
 
     useEffect(() => {
-        dispatch(getAllServingCategoryAction())
+        const fetchCategories = async () => {
+                const response  =await dispatch(getAllServingCategoryAction())
+                setServingCategories(response)  
+        };
+        
+        fetchCategories();
     }, [dispatch]);
 
     useEffect(() => {
-        if (selectedServingCategory) {
-            dispatch(getServingMethodByCategoryIdAction(selectedServingCategory?._id));
+        const getData = async() =>{
+        await dispatch(getServingMethodByCategoryIdAction(selectedServingCategory?._id))
+        .then((response) =>
+        setServingMethods(response)
+        
+    )
+    }
+    const getDataNotSelectCat = async () =>{
+        const categoriesSingle = servingCategories[0];
+        if(categoriesSingle){
+            setSelectedServingCategory(categoriesSingle);
+            await dispatch(getServingMethodByCategoryIdAction(categoriesSingle?._id))
+            .then((response) =>
+            setServingMethods(response)
+        )
         }
-    }, [dispatch, selectedServingCategory]);
+    }
+    if(selectedServingCategory){
+        getData();
+    }else if(servingCategories)  {
+        getDataNotSelectCat()
+       
+    }
+    }, [dispatch, selectedServingCategory,servingCategories]);
 
     const handleCategoryClick = (category, index) => {
         setSelectedServingCategory(category);
@@ -45,7 +74,9 @@ export default function ServingMethod() {
     };
     const handleCategorySubmit = () => {
         if (inputValue) {
-            dispatch(addServingCategoryAction({ name: inputValue }));
+            dispatch(addServingCategoryAction({ name: inputValue })).then((response) =>{
+                setServingCategories((prev) =>[...prev,response])
+            })
             setInputValue('');
             setShowInput(false);
         }
@@ -136,10 +167,28 @@ export default function ServingMethod() {
         formData.append('description', servingMethodInput.description);
         formData.append('photo', imageFile);
         formData.append('categoryId', selectedServingCategory?._id);
-
-        dispatch(addServingMethodAction(formData))
+        if (isUpdateData) {
+            dispatch(EditServingMethodItemAction(servingMethodInput._id, servingMethodInput))
+              .then(response => {          
+                setServingMethods(prev => 
+                  prev.map(item => 
+                    item._id === servingMethodInput._id ? response : item
+                  )
+                );
+                setServingMethodInput({ name: '', price: '', description: '', photo: null });
+                setImagePreview(null); 
+                onOpenChange(false); 
+              })
+              .catch(error => {
+                console.error('Error updating item:', error);
+              });
+          }
+          
+          else {
+            dispatch(addServingMethodAction(formData))
             .then(response => {
                 console.log('Item added successfully:', response);
+                setServingMethods((prev) =>[...prev,response])
                 setServingMethodInput({ name: '', price: '', description: '', photo: null });
                 setImagePreview(null);
                 onOpenChange(false);
@@ -147,6 +196,7 @@ export default function ServingMethod() {
             .catch(error => {
                 console.error('Error adding item:', error);
             });
+        }
     };
 
     const handleCategoryEditSubmit = (categoryId) => {
@@ -193,12 +243,21 @@ export default function ServingMethod() {
         setSelectedServingMethod(null);
     };
 
-    const handleEditServingMethod = () => {
+    const handleEditServingMethod = (item) => {
         if (selectedServingMethod) {
             onOpen();
             setPopupVisible(false);
-        }
-    };
+            setIsUpdateData(true)
+            setServingMethodInput({
+                name: item?.name, 
+                price: item?.price, 
+                description: item?.description, 
+                photo: null,
+                _id: item?._id
+              });
+   
+}
+    }
     const [isDelOpen, setIsDelOpen] = useState(false);
 
     const handleDelete = () => {
@@ -208,8 +267,6 @@ export default function ServingMethod() {
     const closeDeleteModal = () => {
         setIsDelOpen(false);
     };
-
-
     return (
         <>
             <div className="w-[100%] p-[5px]">
@@ -304,8 +361,8 @@ export default function ServingMethod() {
                                 }}
                                 onMouseLeave={handlePopupClose}
                             >
-                                <p className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={handleEditServingMethod}>Edit</p>
-                                <p className="text-red-500 hover:bg-red-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={handleDelete} >Delete</p>
+                                <p className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={() =>handleEditServingMethod(selectedServingMethod)}>Edit</p>
+                                <p className="text-red-500 hover:bg-red-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={() =>handleDelete(selectedServingMethod)}>Delete</p>
                             </div>
                         )}
                     </div>
@@ -415,7 +472,7 @@ export default function ServingMethod() {
 
                                         </div>
                                         <div className='absolute bottom-0 flex w-[100%]'>
-                                            <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={closeDeleteModal}>
+                                            <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={handelConfirmDelete}>
                                                 <p>
                                                     Delete
                                                 </p>

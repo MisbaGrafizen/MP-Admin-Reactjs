@@ -60,6 +60,22 @@ export const ApiPut = (type, data) => {
       });
   });
 };
+export const ApiPutWithId = (type, data) => {
+  console.log("33333333333333333333",type,data)
+  return new Promise((resolve, reject) => {
+    axios
+      .put(`${BaseURL}${type}`, data, getHttpOptions()) 
+      .then((responseJson) => {
+        resolve(responseJson.data);
+      })
+      .catch((error) => {
+        reject({
+          code: error?.response?.status,
+          error: error?.response?.data?.error,
+        });
+      });
+  });
+};
 
 export const ApiPatch = (type, data) => {
   return new Promise((resolve, reject) => {
@@ -94,8 +110,21 @@ export const ApiGetNoAuth = (type) => {
 };
 
 export const ApiPost = async (type, userData) => {
-  const res = await axios.post(BaseURL + type, userData, getHttpOptions());
+  const res = await axios.post(BaseURL + type, userData, getHttpOptions())
   return res;
+};
+
+export const ApiPostData = async (type, userData) => {
+  try {
+    const res = await axios.post(BaseURL + type, userData, getHttpOptions());
+    return res.data;
+  } catch (error) {
+    throw {
+      code: error?.response?.status || 500, 
+      error: error?.response?.data?.error || 'Unknown Error',
+      message: error?.response?.data?.message || 'An error occurred while processing the request.',
+    };
+  }
 };
 
 export const ApiPostNoAuth = (type, userData) => {

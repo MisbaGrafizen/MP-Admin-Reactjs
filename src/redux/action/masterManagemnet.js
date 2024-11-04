@@ -7,7 +7,7 @@ import {
     ApiPostNoAuth,
     ApiPut,
 } from '../../helper/axios';
-import { ADD_PRAVRUTI, UPDATE_PRAVRUTI, GET_PRAVRUTI,ADD_KSHETRA,GET_KSHETRA,UPDATE_KSHETRA, ADD_DESIGNATION, GET_DESIGNATION, UPDATE_DESIGNATION } from '../type';
+import { ADD_PRAVRUTI, UPDATE_PRAVRUTI, GET_PRAVRUTI,ADD_KSHETRA,GET_KSHETRA,UPDATE_KSHETRA, ADD_DESIGNATION, GET_DESIGNATION, UPDATE_DESIGNATION, DELETE_PRAVRUTI } from '../type';
 
 
 export const addPravrutiAction = (pravrutiData) => {
@@ -138,9 +138,10 @@ export const getKshetraAction = () => {
 
 export const updatePravrutiAction = (updatePravrutiData) => {
     return (dispatch) => {
-        return ApiPost(`/api/admin/edit_pravruti/${updatePravrutiData._id}`, updatePravrutiData)
+        return ApiPut(`/api/admin/edit_pravruti/${updatePravrutiData._id}`, updatePravrutiData)
       .then((res) => {
         if (res.status === "success") {
+          console.log("saddsadafa",res.data)
           dispatch({
             type: UPDATE_PRAVRUTI,
             payload: res.data,
@@ -197,4 +198,27 @@ export const updateDesignationAction = (updateDesignationData) => {
         });
       });
   };
+};
+
+
+export const DeletePravrutiAction = (id) => {
+  return (dispatch) => {
+      return ApiDelete(`/api/admin/delete_pravruti/${id}`)
+    .then((res) => {
+      if (res.status === 200) {
+        console.log("saddfsdfdsadafa",res)
+        dispatch({
+          type: DELETE_PRAVRUTI,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: DELETE_PRAVRUTI,
+        payload: error,
+      });
+    });
+};
 };

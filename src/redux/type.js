@@ -11,6 +11,7 @@ export const GET_PREMVATI = "GET_PREMVATI";
 export const ADD_PRAVRUTI = "ADD_PRAVRUTI";
 export const GET_PRAVRUTI = "GET_PRAVRUTI";
 export const UPDATE_PRAVRUTI = "UPDATE_PRAVRUTI";
+export const DELETE_PRAVRUTI = "DELETE_PRAVRUTI";
 export const ADD_KSHETRA = "ADD_KSHETRA";
 export const UPDATE_KSHETRA = "UPDATE_KASHETRA";
 export const GET_KSHETRA = "GET_KSHETRA";

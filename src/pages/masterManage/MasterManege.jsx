@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Header from '../../Components/header/Header';
-import { addDesignationAction, addKshetraAction, addPravrutiAction, getDesignationAction, getKshetraAction, getPravrutiAction } from '../../redux/action/masterManagemnet';
+import { addDesignationAction, addKshetraAction, addPravrutiAction, DeletePravrutiAction, getDesignationAction, getKshetraAction, getPravrutiAction, updatePravrutiAction } from '../../redux/action/masterManagemnet';
 import { useDispatch, useSelector } from 'react-redux';
 import Editpng from '../../../public/img/Foodsection/edit.png'
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
@@ -29,16 +29,17 @@ export default function MasterManage() {
     const dispatch = useDispatch();
     const [checkAll, setCheckAll] = useState(false);
     const [checkedItems, setCheckedItems] = useState([]);
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange ,onClose} = useDisclosure();
     const paginatedPravruties = pravruties.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const paginatedKhestras = kshetras.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const paginatedDesignation = kshetras.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
+    const [deleteInfo, setDeleteInfo] = useState({});
     const handleBack = () => {
         navigate(-1)
     }
 
-    const handleDelete = () => {
+    const handleDelete = (pravruti,typeofManges) => {
+        setDeleteInfo({ pravruti,  typeofManges: typeofManges?.typeofManges });
         onOpenChange(false)
     }
     const handleCheckAll = () => {
@@ -71,7 +72,7 @@ export default function MasterManage() {
         if (pravrutiName.trim() !== "") {
             if (editIndexPravruti !== null) {
                 const updatedPravruti = { ...pravruties[editIndexPravruti], name: pravrutiName };
-                dispatch(addPravrutiAction(updatedPravruti)).then(() => {
+                dispatch(updatePravrutiAction(updatedPravruti)).then(() => {
                     setEditIndexPravruti(null);
                     setPravrutiName("");
                 });
@@ -156,8 +157,17 @@ export default function MasterManage() {
         setCurrentPage(pageNumber);
         setDropdownOpen(false);
     };
-
-
+    console.log("sddfgdsd",deleteInfo?.pravruti?._id)
+    const handleDeleteRecord = async () => {
+        if (deleteInfo.typeofManges === "pravruti" && deleteInfo?.pravruti?._id) {
+                console.log("sdfdfsgdfg",deleteInfo?.pravruti?._id)
+                await dispatch(DeletePravrutiAction(deleteInfo?.pravruti?._id)).then(()=>{
+                    setDeleteInfo({}); 
+                    onClose(); 
+                })
+            
+        }
+      };
     const renderForm = () => {
         switch (activeForm) {
             case 'PRAVRUTI':
@@ -224,7 +234,7 @@ export default function MasterManage() {
                                         </div>
                                         <div className="flex justify-center items-center text-center py-3 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
                                             <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditPravruti(index)} />
-                                            <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can" onClick={handleDelete}></i>
+                                            <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can" onClick={() =>handleDelete(pravruti,{typeofManges:'pravruti'})}></i>
                                         </div>
                                     </div>
                                 ))}
@@ -493,10 +503,10 @@ export default function MasterManage() {
                     </div>
                     <div className="flex absolute right-[8%] md150:top-[5.9%] top-[7.9%] font-Poppins font-[600] text-[15px] ">
 
-                        <div className='flex gap-[10px] mx-auto justify-center w-[100%]   z-20'>
+                        <div className='flex gap-[10px] mx-auto justify-center w-[100%]   z-0'>
 
                             <div
-                                className={` w-[80%] flex items-center justify-center  rounded-tr-[5px] rounded-tl-[5px] border-r-[1.5px] px-[19px]  border-l-[1.5px]  font-bold     cursor-pointer border-t-[1.5px] border-[#000]  ${activeForm === 'PRAVRUTI' ? 'bg-[#FEAA00] text-[#fff]' : ' bg-white '} h-[40px] cursor-pointer`}
+                                className={` w-[80%] flex items-center justify-center  font-Poppins rounded-tr-[5px] rounded-tl-[5px] border-r-[1.5px] px-[19px]  border-l-[1.5px]  font-bold     cursor-pointer border-t-[1.5px] border-[#000]  ${activeForm === 'PRAVRUTI' ? 'bg-[#FEAA00] text-[#fff]' : ' bg-white '} h-[40px] cursor-pointer`}
                                 onClick={() => setActiveForm('PRAVRUTI')}
                             >
                                 <p>PRAVRUTI</p>
@@ -550,7 +560,7 @@ export default function MasterManage() {
 
                                         </div>
                                         <div className='absolute bottom-0 flex w-[100%]'>
-                                            <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={onClose}>
+                                            <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={handleDeleteRecord}>
                                                 <p>
                                                     Delete
                                                 </p>
