@@ -260,8 +260,10 @@ export default function ServingMethod() {
     }
     const [isDelOpen, setIsDelOpen] = useState(false);
 
-    const handleDelete = () => {
+    
+    const handleDelete = (deleteData) => {
         setIsDelOpen(true);
+        setDeleteData(deleteData)
     };
 
     const closeDeleteModal = () => {
@@ -274,7 +276,7 @@ if(deleteData){
     dispatch(deleteServingSingleMethodByIdAction(deleteData._id,))
     .then(response => {          
    
-    setFoodItems(prev => 
+        setServingMethods(prev => 
         prev.filter(item => item._id !== response._id)
     )
     setDeleteData(null)
@@ -293,7 +295,7 @@ if(deleteData){
                         <div className="flex">
                             {!showInput ? (
                                 <div
-                                    className="border-[1px] border-dashed border-[#000] md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px]  flex justify-center items-center rounded-[8px] cursor-pointer"
+                                    className="border-[1px] border-dashed border-[#000] overflow-y-auto md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px]  flex justify-center items-center rounded-[8px] cursor-pointer"
                                     onClick={handlePlusClick}
                                 >
                                     <i className="text-[20px] font-[800] text-[#000000] fa-solid fa-plus"></i>

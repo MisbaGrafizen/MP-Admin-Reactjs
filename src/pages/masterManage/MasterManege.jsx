@@ -25,7 +25,7 @@ export default function MasterManage() {
     const kshetras = useSelector((state) => state?.mastermanagementState?.getKshetra) || [];
     const totalPageskhestras = Math.ceil(kshetras.length / itemsPerPage);
     const designations = useSelector((state) => state?.mastermanagementState?.getDesignation) || [];
-    const totalPagesdesignation = Math.ceil(kshetras.length / itemsPerPage);
+    const totalPagesdesignation = Math.ceil(designations.length / itemsPerPage);
     const dispatch = useDispatch();
     const [checkAll, setCheckAll] = useState(false);
     const [checkedItems, setCheckedItems] = useState([]);
@@ -35,7 +35,6 @@ export default function MasterManage() {
     const paginatedDesignation = kshetras.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const [deleteInfo, setDeleteInfo] = useState({});
 
-    console.log('destinations', designations);
     const handleBack = () => {
         navigate(-1)
     }

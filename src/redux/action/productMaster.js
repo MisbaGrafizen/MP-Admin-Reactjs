@@ -288,19 +288,6 @@ export const deletePrePackageMethodByIdAction = (categoryId) => {
 };
 };
 
-// export const deleteSelfServingMethodByIdAction = (categoryId) => {
-//   return () => {
-//       return ApiDelete(`/api/admin/serving-methods/${categoryId}`)
-//     .then((res) => {
-//       if (res.data) {
-//         return res.data;
-//       }
-//     })
-//     .catch((error) => {
-//       console.log("Error",error)
-//     });
-// };
-// };
 
 
 
