@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Header from '../../Components/header/Header'
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
-import { addUserAction, getUserAction } from '../../redux/action/userMaster';
+import { addUserAction, DeleteUserMasterAction, editUserAction, getUserAction } from '../../redux/action/userMaster';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDesignationAction, getKshetraAction, getPravrutiAction } from '../../redux/action/masterManagemnet';
 import Editimg from '../../../public/img/Foodsection/edit.png'
@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function CreateUser() {
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange,onClose } = useDisclosure();
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const [checkAll, setCheckAll] = useState(false);
@@ -31,27 +31,32 @@ export default function CreateUser() {
   const itemsPerPage = 5;
   const totalPages = Math.ceil(users.length / itemsPerPage);
   const paginatedUsers = users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
+  const [deleteRecordId,setDeleteRecordId] = useState();
   const goToPage = (pageNumber) => {
     setCurrentPage(pageNumber);
     setDropdownOpen(false);
   };
   const pravrutiRef = useRef(null);
   const kshetraRef = useRef(null);
-  const designationRef = useRef(null);
+  const designationRef = useRef(null);  
 
-  console.log('pravruties', pravruties);
   const [isDelOpen, setIsDelOpen] = useState(false);
-
-  const handleDelete = () => {
+  const [isEditData,setIsEditData] = useState(false)
+  const handleDelete = (item) => {
+    setDeleteRecordId(item?._id)
     setIsDelOpen(true);
   };
-
+  const handelEdit = (item) =>{
+    setIsEditData(true)
+    setUserData(item)
+    handleSelectPravruti(item?.pravruti)
+    handleSelectKshetra(item?.kshetra)
+    handleSelectDesignation(item?.designation)
+  }
   const closeDeleteModal = () => {
     setIsDelOpen(false);
   };
-
-
+ 
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -63,19 +68,26 @@ export default function CreateUser() {
     setIsDesigDropdownOpen(!isDesigDropdownOpen);
   };
 
+
   const handleSelectPravruti = (pravruti) => {
-    setSelectedPravruti({ id: pravruti._id, name: pravruti.name });
+    setSelectedPravruti({ id: pravruti?._id, name: pravruti.name });
+    setUserData((prevData) => {
+      const newData = { ...prevData, pravruti: pravruti._id };
+      return newData;
+    });
     setIsDropdownOpen(false);
   };
-
+  
 
   const handleSelectKshetra = (kshetra) => {
-    setSelectedKshetra({ id: kshetra._id, name: kshetra.name });
+    setSelectedKshetra({ id: kshetra?._id, name: kshetra.name });
+    setUserData(prevData => ({ ...prevData, kshetra: kshetra._id })); 
     setIsKshetraDropdownOpen(false);
   };
-
-  const handleSelectDesignation = (designations) => {
-    setSelectedDesignation({ id: designations._id, name: designations.name });
+  
+  const handleSelectDesignation = (designation) => {
+    setSelectedDesignation({ id: designation?._id, name: designation?.name });
+    setUserData(prevData => ({ ...prevData, designation: designation._id })); 
     setIsDesigDropdownOpen(false);
   };
 
@@ -97,7 +109,8 @@ export default function CreateUser() {
     kshetra: '',
     designation: '',
     phoneNumber: '',
-    age: ''
+    mondalName: '',
+    password: ''
   });
 
   useEffect(() => {
@@ -114,8 +127,11 @@ export default function CreateUser() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    dispatch(addUserAction(userData));
+    if(isEditData && userData){
+      dispatch(editUserAction(userData._id,userData))
+    }else {
+      dispatch(addUserAction(userData));
+    }
 
     onOpenChange(false);
 
@@ -128,6 +144,10 @@ export default function CreateUser() {
       phoneNumber: '',
       password: ''
     });
+
+    setSelectedPravruti({ id: '', name: 'Select Pravruti' });
+    setSelectedKshetra({ id: '', name: 'Select Kshetra' });
+    setSelectedDesignation({ id: '', name: 'Select Designation' });
   };
 
 
@@ -149,6 +169,10 @@ export default function CreateUser() {
     }
   };
 
+
+
+
+
   const handleCheckboxChange = (index) => {
     setCheckedItems(prevCheckedItems => {
       if (prevCheckedItems.includes(index)) {
@@ -158,6 +182,19 @@ export default function CreateUser() {
       }
     });
   };
+
+  const handleDeleteRecord = async() =>{
+    if (deleteRecordId) {
+      await dispatch(DeleteUserMasterAction(deleteRecordId)).then((response)=>{
+          setDeleteRecordId(""); 
+         setIsDelOpen(false);
+
+      })
+  }
+  }
+  const handelAddData = async () =>{
+    setIsEditData(false)
+  }
   return (
     <>
       <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto ">
@@ -176,7 +213,14 @@ export default function CreateUser() {
           </div>
           <div
             className="border-t-[1.5px] font-[600] cursor-pointer  border-l-[1.5px] border-r-[1.5px] text-[#FEAA00] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px]  active:bg-[#feaa00] active:text-[#fff] md150:top-[5.8%] right-[8%] w-[160px] flex items-center justify-center   rounded-tl-[10px]  absolute border-[#FEAA00] rounded-tr-[10px] ro"
-            onClick={onOpen}
+            onClick={() => {
+              setIsEditData(false);
+              setUserData({});
+              setSelectedPravruti({ id: '', name: 'Select Pravruti' });
+              setSelectedKshetra({ id: '', name: 'Select Kshetra' });
+              setSelectedDesignation({ id: '', name: 'Select Designation' });
+              onOpen(); 
+            }}
           >
             <p>Create a new user</p>
           </div>
@@ -283,11 +327,14 @@ export default function CreateUser() {
                               </p>
                             </div>
                             <div className="flex justify-center items-center gap-[15px] text-center py-2 border-b  border-black min-w-[9%] max-w-[9%]">
-                              <img onClick={onOpen}
+                              <img onClick={() => {
+                                onOpen(); 
+                                handelEdit(item); 
+                              }}
                                 className="w-[20px] cursor-pointer"
                                 src={Editimg}
                               />
-                              <i className="text-[18px] mt-[1px] text-[#ff0b0b] cursor-pointer fa-solid fa-trash-can" onClick={handleDelete}></i>
+                              <i className="text-[18px] mt-[1px] text-[#ff0b0b] cursor-pointer fa-solid fa-trash-can" onClick={() => handleDelete(item)}></i>
                             </div>
                           </div>
                         ))
@@ -530,7 +577,7 @@ export default function CreateUser() {
 
       <Modal isOpen={isDelOpen} onOpenChange={setIsDelOpen}>
         <ModalContent className="md:max-w-[350px] max-w-[333px] relative  flex justify-center !py-0 mx-auto  h-[300px] shadow-delete ">
-          {(ondelClose) => (
+          {(onClose) => (
             <>
               <div className="relative w-[100%] h-[100%] ">
                 <div className="relative  w-[100%] h-[100%]">
@@ -543,7 +590,7 @@ export default function CreateUser() {
 
                     </div>
                     <div className='absolute bottom-0 flex w-[100%]'>
-                      <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={closeDeleteModal}>
+                      <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={handleDeleteRecord}>
                         <p>
                           Delete
                         </p>

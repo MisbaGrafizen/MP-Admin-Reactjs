@@ -1,24 +1,92 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Header from '../../Components/header/Header';
+import cloudinaryUpload from '../../helper/cloudinaryUpload';
+import { toast } from '../../helper';
+import { addSplashScreenImageAction, getSplashScreenImageAction } from '../../redux/action/splashScreen';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function Home() {
+    const dispatch = useDispatch();
     const [selectedImages, setSelectedImages] = useState(Array(6).fill(null));
+    const [apiImages, setApiImages] = useState(Array(6).fill(null));
     const fileInputRefs = Array.from({ length: 6 }, () => useRef(null));
-    const handleContainerClick = (index) => {
+    const [cloudUrl, setCloudUrl] = useState(Array(6).fill(null));  
+   const handleContainerClick = (index) => {
         fileInputRefs[index].current.click();
     };
-    const handleFileChange = (event, index) => {
+    useEffect(()=>{
+        const getImg = async () =>{
+            // await dispatch(getSplashScreenImageAction()).then((response) =>{
+            //     if (response && response.length > 0) {
+            //         console.log("sdffsddjuerh",response)
+            //         const images = response.map(item => item.splashImage); 
+            //         console.log("sdfsdfff",images)
+            //         setSelectedImages(images);
+            //         setApiImages(images) 
+            //       }
+            // })
+            await dispatch(getSplashScreenImageAction()).then((response) => {
+                if (response && response.length > 0) {
+                    console.log("Response:", response);
+                    
+                    const images = response.reduce((acc, item) => {
+                        if (Array.isArray(item.splashImages) && item.splashImages.length > 0) {
+                            item.splashImages.forEach(image => {
+                                if (image.imgUrl) {
+                                    acc.push(image.imgUrl);
+                                }
+                            });
+                        }
+                        return acc;
+                    }, []);
+                    
+                    console.log("Extracted Images:", images);
+                    setSelectedImages(images);
+                    setApiImages(images);
+                }
+              });
+              
+        }
+        getImg();
+    },[])
+    const handleFileChange = async (event, index) => {
         const file = event.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const newImages = [...selectedImages];
-                newImages[index] = e.target.result;
-                setSelectedImages(newImages);
-            };
-            reader.readAsDataURL(file);
+            try {
+                const imageUrl = await cloudinaryUpload(file);
+                setCloudUrl((prev) => {
+                    const newUrls = [...prev];
+                    newUrls[index] = imageUrl; 
+                    return newUrls;
+                  });    
+                  const reader = new FileReader();
+                  reader.onload = (e) => {
+                      const newImages = [...selectedImages];
+                      newImages[index] = e.target.result;
+                      setSelectedImages(newImages);
+                  };
+                  reader.readAsDataURL(file);
+            } catch (error) {
+                console.error("Error uploading file:", error);
+            }
         }
     };
+    const handelImgSubmit = async() =>{
+    // console.log("ApiImg",apiImages)
+    // console.log("upadateOrDeleteImg",selectedImages)
+    console.log("dfscloudUrl",cloudUrl)
+    const changes = cloudUrl.reduce((acc, imgUrl, index) => {
+        if (imgUrl !== null) {
+            acc.push({ index, imgUrl }); 
+        }
+        return acc;
+      }, []);
+      
+      console.log("Chsdsdanges:", changes);
+      await dispatch(addSplashScreenImageAction(changes)).then((response) =>{
+        console.log("Dataasas",response)
+    })
+    }
     return (
         <>
             <div className="w-[99%] h-[100vh]  relative overflow-hidden  px-[40px] py-[37px] mx-auto   my-auto   ">
@@ -72,7 +140,7 @@ export default function Home() {
 
                             </div>
 
-                            <div className=" border-t-[2px] bg-white active:bg-[#00984B] active:text-[#fff] border-r-[2px] border-l-[2px]  absolute mx-auto px-[15px] w-[220px] justify-center text-center  bottom-0 left-0 right-0  rounded-tl-[10px] cursor-pointer  rounded-tr-[10px] py-[10px] text-[#00984B] font-[600] custom-font text-[25px]  border-[#00984B]">
+                            <div className=" border-t-[2px] bg-white active:bg-[#00984B] active:text-[#fff] border-r-[2px] border-l-[2px]  absolute mx-auto px-[15px] w-[220px] justify-center text-center  bottom-0 left-0 right-0  rounded-tl-[10px] cursor-pointer  rounded-tr-[10px] py-[10px] text-[#00984B] font-[600] custom-font text-[25px]  border-[#00984B]" onClick={handelImgSubmit}>
 
                                 <p>Save the changes</p>
                             </div>

@@ -4,6 +4,7 @@ import {
     ApiDelete,
     ApiGet,
     ApiPost,
+    ApiPostData,
     ApiPostNoAuth,
     ApiPut,
 } from '../../helper/axios';
@@ -11,9 +12,11 @@ import { ADD_SPLASH_IMAGE, GET_SPLASH_IMAGE } from '../type';
 
 
 export const addSplashScreenImageAction = (imageData) => {
+  console.log("ssdsds",imageData)
     return (dispatch) => {
-        return ApiPost(`/api/admin/add_image`, imageData)
+        return ApiPostData(`/api/admin/add_image`, imageData)
       .then((res) => {
+        console.log("sdfsdres",res)
         if (res.status === "success") {
           dispatch({
             type: ADD_SPLASH_IMAGE,
@@ -31,16 +34,16 @@ export const addSplashScreenImageAction = (imageData) => {
   };
 };
 
-export const getSplashScreenImageAction = (imageData) => {
+export const getSplashScreenImageAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/get_all_images`, imageData)
+      return ApiGet(`/api/admin/get_all_images`)
     .then((res) => {
-      if (res.status === "success") {
+      if (res) {
         dispatch({
           type: GET_SPLASH_IMAGE,
-          payload: res.data,
+          payload: res,
         });
-        return res.data;
+        return res;
       }
     })
     .catch((error) => {

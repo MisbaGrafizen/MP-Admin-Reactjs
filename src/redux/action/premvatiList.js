@@ -7,7 +7,7 @@ import {
     ApiPostNoAuth,
     ApiPut,
 } from '../../helper/axios';
-import { ADD_PREMVATI, GET_PREMVATI } from '../type';
+import { ADD_PREMVATI, DELETE_PREMVATI, GET_PREMVATI, UPDATE_PREMVATI } from '../type';
 
 
 export const addPremvatiAction = (imageData) => {
@@ -25,6 +25,49 @@ export const addPremvatiAction = (imageData) => {
       .catch((error) => {
         dispatch({
           type: ADD_PREMVATI,
+          payload: error,
+        });
+      });
+  };
+};
+
+export const updatePremvatiAction = (id,imageData) => {
+    return (dispatch) => {
+        return ApiPut(`/api/admin/premvati/${id}`, imageData)
+      .then((res) => {
+        console.log("asdhfgjh",res)
+        if (res.status === "success") {
+          dispatch({
+            type: UPDATE_PREMVATI,
+            payload: res.data,
+          });
+          return res.data;
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: UPDATE_PREMVATI,
+          payload: error,
+        });
+      });
+  };
+};
+export const deletePremvatiAction = (id) => {
+    return (dispatch) => {
+        return ApiDelete(`/api/admin/premvati/${id}`,)
+      .then((res) => {
+        console.log("safsaf",res)
+        if (res) {
+          dispatch({
+            type: DELETE_PREMVATI,
+            payload: res.data,
+          });
+          return res.data;
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: DELETE_PREMVATI,
           payload: error,
         });
       });

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Header from '../../Components/header/Header';
-import { addDesignationAction, addKshetraAction, addPravrutiAction, DeletePravrutiAction, getDesignationAction, getKshetraAction, getPravrutiAction, updateDesignationAction, updateKshetraAction, updatePravrutiAction } from '../../redux/action/masterManagemnet';
+import { addDesignationAction, addKshetraAction, addPravrutiAction, DeleteDesignationsAction, DeleteKshetraAction, DeletePravrutiAction, getDesignationAction, getKshetraAction, getPravrutiAction, updateDesignationAction, updateKshetraAction, updatePravrutiAction } from '../../redux/action/masterManagemnet';
 import { useDispatch, useSelector } from 'react-redux';
 import Editpng from '../../../public/img/Foodsection/edit.png'
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
@@ -32,7 +32,7 @@ export default function MasterManage() {
     const { isOpen, onOpen, onOpenChange ,onClose} = useDisclosure();
     const paginatedPravruties = pravruties.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const paginatedKhestras = kshetras.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-    const paginatedDesignation = kshetras.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const paginatedDesignation = designations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const [deleteInfo, setDeleteInfo] = useState({});
 
     const handleBack = () => {
@@ -158,16 +158,33 @@ export default function MasterManage() {
         setCurrentPage(pageNumber);
         setDropdownOpen(false);
     };
-    console.log("sddfgdsd",deleteInfo?.pravruti?._id)
     const handleDeleteRecord = async () => {
+        console.log("comsdfgjfhgfd",deleteInfo.typeofManges)
+        console.log(deleteInfo?.pravruti?._id)
         if (deleteInfo.typeofManges === "pravruti" && deleteInfo?.pravruti?._id) {
                 console.log("sdfdfsgdfg",deleteInfo?.pravruti?._id)
                 await dispatch(DeletePravrutiAction(deleteInfo?.pravruti?._id)).then(()=>{
                     setDeleteInfo({}); 
                     onClose(); 
                 })
-            
+            return;
         }
+        else if (deleteInfo.typeofManges === "kshetra" && deleteInfo?.pravruti?._id) {
+                await dispatch(DeleteKshetraAction(deleteInfo?.pravruti?._id)).then(()=>{
+                    setDeleteInfo({}); 
+                    onClose(); 
+                })
+            return;
+        }
+        else if (deleteInfo.typeofManges === "designations" && deleteInfo?.pravruti?._id) {
+                console.log("comesdffghfdsfdgh",deleteInfo?.pravruti?._id)
+                await dispatch(DeleteDesignationsAction(deleteInfo?.pravruti?._id)).then(()=>{
+                    setDeleteInfo({}); 
+                    onClose(); 
+                })
+            return;
+        }
+      
       };
     const renderForm = () => {
         switch (activeForm) {
@@ -339,7 +356,9 @@ export default function MasterManage() {
                                             </div>
                                             <div className="flex justify-center items-center text-center py-3 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
                                                 <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditKshetra(index)} />
-                                                <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can" onClick={handleDelete}></i>
+                                                <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can"
+                                                 onClick={() =>handleDelete(kshetra,{typeofManges:'kshetra'})}
+                                                    ></i>
                                             </div>
                                         </div>
                                     ))
@@ -442,7 +461,7 @@ export default function MasterManage() {
                                             </div>
                                             <div className="flex justify-center items-center text-center py-3 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
                                                 <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditDesignation(index)} />
-                                                <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can" onClick={handleDelete}></i>
+                                                <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can"  onClick={() =>handleDelete(designation,{typeofManges:'designations'})}></i>
                                             </div>
                                         </div>
                                     ))
@@ -540,9 +559,6 @@ export default function MasterManage() {
                     </div>
                 </div>
             </div>
-
-
-
 
 
 

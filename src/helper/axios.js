@@ -2,8 +2,8 @@ import axios from "axios";
 import auth from "../config/auth";
 
 
-export const BaseURL = "http://localhost:4000";
-// export const BaseURL = "http://backend.premvati.in:5000";
+// export const BaseURL = "http://localhost:5000";
+export const BaseURL = "https://backend.ybgo.in/mp";
 
 
 const defaultHeaders = {

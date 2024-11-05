@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
-import { addFoodCategoryAction, addFoodItemAction, addPrePackageFoodCategoryAction, addPrePackageFoodItemAction, deleteServingMethodByIdAction, EditSelfFoodItemAction, getAllFoodCategoryAction, getAllPrePackageFoodCategoryAction, getFoodItemByCategoryIdAction, getPrePackageFoodItemByCategoryIdAction, UpdateSelfServicesCategoryNameAction } from '../../redux/action/productMaster';
+import { addFoodCategoryAction, addFoodItemAction, addPrePackageFoodCategoryAction, addPrePackageFoodItemAction, DeleteSelfServingCategoryAction, deleteServingMethodByIdAction, EditSelfFoodItemAction, getAllFoodCategoryAction, getAllPrePackageFoodCategoryAction, getFoodItemByCategoryIdAction, getPrePackageFoodItemByCategoryIdAction, UpdateSelfServicesCategoryNameAction } from '../../redux/action/productMaster';
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function SelfServingManage({methodType}) {
@@ -10,7 +10,9 @@ export default function SelfServingManage({methodType}) {
     const [buttons, setButtons] = useState([]);
     const [selectedFoodCategory, setSelectedFoodCategory] = useState("");
     const [isDelOpen, setIsDelOpen] = useState(false);
+    const [isCategoryDelete,setIsCategoryDelete] = useState("")
     const [deleteData,setDeleteData] = useState("")
+    const [categoriesDeleteId,setCategoriesDeleteId] = useState("")
     const [selectedButton, setSelectedButton] = useState(0);
     const [foodItemInput, setFoodItemInput] = useState({ name: '', price: '', description: '', photo: '',_id:"" });
     const [imageFile, setImageFile] = useState(null);
@@ -80,6 +82,7 @@ export default function SelfServingManage({methodType}) {
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
     };
+ 
     const handleCategorySubmit = () => {
         if (inputValue) {
             if(methodType === "PRE-PACKGED"){
@@ -118,34 +121,35 @@ export default function SelfServingManage({methodType}) {
         formData.append('description', foodItemInput.description);
         formData.append('photo', imageFile);
         formData.append('foodId', selectedFoodCategory?._id);
-           if(isUpdateData)
-            {
-             dispatch(EditSelfFoodItemAction(foodItemInput._id,formData))
-            .then(response => {
-                console.log('Item added successfully:', response);
-                setFoodItems(prev =>[...prev,response])
-                setFoodItemInput({ name: '', price: '', description: '', photo: null });
-                setImagePreview(null); 
-                onOpenChange(false);
-            })
-            .catch(error => {
-                console.error('Error adding item:', error);
-            });}
-        else { dispatch(addFoodItemAction(formData))
-            .then(response => {
-                console.log('Item added successfully:', response);
-                setFoodItems(prev =>[...prev,response])
-                setFoodItemInput({ name: '', price: '', description: '', photo: null });
-                setImagePreview(null); 
-                onOpenChange(false);
-            })
-            .catch(error => {
-                console.error('Error adding item:', error);
-            });}
+        //    if(isUpdateData)
+        //     {
+        //      dispatch(EditSelfFoodItemAction(foodItemInput._id,formData))
+        //     .then(response => {
+        //         console.log('Item added successfully:', response);
+        //         setFoodItems(prev =>[...prev,response])
+        //         setFoodItemInput({ name: '', price: '', description: '', photo: null });
+        //         setImagePreview(null); 
+        //         onOpenChange(false);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error adding item:', error);
+        //     });}
+        // else { dispatch(addFoodItemAction(formData))
+        //     .then(response => {
+        //         console.log('Item added successfully:', response);
+        //         setFoodItems(prev =>[...prev,response])
+        //         setFoodItemInput({ name: '', price: '', description: '', photo: null });
+        //         setImagePreview(null); 
+        //         onOpenChange(false);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error adding item:', error);
+        //     });}
         
         if (isUpdateData) {
             dispatch(EditSelfFoodItemAction(foodItemInput._id, foodItemInput))
-              .then(response => {          
+              .then(response => {    
+                console.log("sdfsdfdf",response)      
                 setFoodItems(prev => 
                   prev.map(item => 
                     item._id === foodItemInput._id ? response : item
@@ -239,6 +243,7 @@ export default function SelfServingManage({methodType}) {
         if (inputValue && editingCategory) {
             dispatch(UpdateSelfServicesCategoryNameAction(editingCategory,{name: inputValue}))
                 .then((response) => {
+                    console.log("sdfdfsresponse",response)
                     setFoodCategories(prevCategories => 
                         prevCategories.map(category => 
                           category._id === editingCategory ? response : category
@@ -300,27 +305,46 @@ export default function SelfServingManage({methodType}) {
     const handleDelete = (deleteData) => {
         setIsDelOpen(true);
         setDeleteData(deleteData)
+
     };
+
+    const handleCategoryDelete = async(data) =>{
+        setIsDelOpen(true);
+        setIsCategoryDelete(true)
+        if(data) {
+            setCategoriesDeleteId(data)
+        }
+    }
 
     const closeDeleteModal = () => {
         setIsDelOpen(false);
     };
+
     const handelConfirmDelete = () =>{
-        console.log("ssdsdssd",deleteData)
-if(deleteData){
-    dispatch(deleteServingMethodByIdAction(deleteData._id,))
-    .then(response => {          
-   
-    setFoodItems(prev => 
-        prev.filter(item => item._id !== response._id)
-    )
-    setDeleteData(null)
-    setIsDelOpen(false);
-    })
-    .catch(error => {
-      console.error('Error updating item:', error);
-    });
-}
+        if(isCategoryDelete){
+            dispatch(DeleteSelfServingCategoryAction(categoriesDeleteId)).then((response )=>{
+                console.log("sfaafa",response)
+                setFoodCategories(prev => prev.filter(item => item._id !== response._id) )
+                setCategoriesDeleteId("")
+                setIsDelOpen(false);
+            })
+        }else {
+            if(deleteData){
+                dispatch(deleteServingMethodByIdAction(deleteData._id,))
+                .then(response => {          
+               
+                setFoodItems(prev => 
+                    prev.filter(item => item._id !== response._id)
+                )
+                setDeleteData(null)
+                setIsDelOpen(false);
+                })
+                .catch(error => {
+                  console.error('Error updating item:', error);
+                });
+            }
+        }
+
     }
     return (
         <>
@@ -355,14 +379,19 @@ if(deleteData){
                                 onDoubleClick={() => handleCategoryDoubleClick(category)}
                             >
                                 {editingCategory === category._id ? (
-                                    <input
-                                        type="text"
-                                        value={inputValue}
-                                        onChange={handleInputChange}
-                                        onKeyDown={handleKeyPress}
-                                        className="text-center bg-transparent border-none outline-none"
-                                        autoFocus
-                                    />
+                                    <>
+                                 <div className="flex flex-col justify-center ">
+                                            <input
+                                                type="text"
+                                                value={inputValue}
+                                                onChange={handleInputChange}
+                                                onKeyDown={handleKeyPress}
+                                                className="text-center mt-[39px] bg-transparent border-none outline-none"
+                                                autoFocus
+                                            />
+                                            <p className="text-red-500 hover:bg-red-100 z-[200] border-[1.5px] w-[123px] flex justify-center  text-center mt-[10px] rounded-[5px] font-Poppins cursor-pointer mx-auto" onClick={() => handleCategoryDelete(editingCategory)}>Delete</p>
+                                        </div>
+                                    </>
                                 ) : (
                                     <p>{category.name}</p>
                                 )}
@@ -413,7 +442,14 @@ if(deleteData){
                                                 onMouseLeave={handlePopupClose}
                                             >
                                                 <p className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer"  onClick={() => handleEditFoodItem(selectedFoodItem)} >Edit</p>
-                                                <p className="text-red-500 hover:bg-red-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={() =>handleDelete(selectedFoodItem)}>Delete</p>
+                                                <p className="text-red-500 hover:bg-red-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer"
+                                                onClick={() => {
+                                                    setIsCategoryDelete(false);
+                                                    if (selectedFoodItem) {
+                                                      handleDelete(selectedFoodItem); 
+                                                    }
+                                                  }}
+                                                >Delete</p>
                                             </div>
                                         )}
 
@@ -460,18 +496,18 @@ if(deleteData){
 
                                             <div className=" flex flex-col w-[100%] gap-[20px]">
                                                 <div className="flex w-[100%] gap-[20px]">
-                                                    <div className=" flex gap-[5px] w-[41%]  text-[14px] items-center border-b-[1.9px] px-[5px] border-[#000]">
+                                                    <div className=" flex gap-[5px] w-[50%]  text-[14px] items-center border-b-[1.9px] px-[5px] border-[#000]">
                                                         <p className='font-[700]'>Name:</p>
-                                                        <input className='outline-none'
+                                                        <input className='outline-none  w-[100%]'
                                                             type="text"
                                                             name="name"
                                                             value={foodItemInput?.name}
                                                             onChange={handleFoodItemInputChange}
                                                         />
                                                     </div>
-                                                    <div className="  w-[41%] flex gap-[5px] items-center border-b-[1.9px] px-[5px] border-[#000]">
+                                                    <div className="  w-[50%] flex gap-[5px] items-center border-b-[1.9px] px-[5px] border-[#000]">
                                                         <p className='font-[700] text-[14px] '>Price:</p>
-                                                        <input className='outline-none'
+                                                        <input className='outline-none  w-[100%]'
                                                             type="text"
                                                             name="price"
                                                             value={foodItemInput?.price}
@@ -481,7 +517,11 @@ if(deleteData){
                                                 </div>
                                                 <div className="flex">
 
-                                                    <textarea name="" className="font-[500] w-[88%] p-[10px] border-[#000] outline-none border-[1.9px] rounded-[8px] h-[120px] text-[15px]" id="">Self note : </textarea>
+                                                <div className="flex  gap-[2px] w-[100%] p-[10px] border-[#000] outline-none border-[1.9px] rounded-[8px] h-[120px] text-[15px">
+                                                    <p>Self note : </p>
+                                                    <textarea name="" className="font-[500] w-[78%] outline-none" id=""> </textarea>
+
+                                                </div>
                                                 </div>
 
                                             </div>

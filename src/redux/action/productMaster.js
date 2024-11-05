@@ -166,6 +166,50 @@ export const UpdateServingCategoryAction = (id,data) => {
     });
 };
 };
+export const DeleteSelfServingCategoryAction = (id) => {
+  return (dispatch) => {
+      return ApiDelete(`/api/admin/food/${id}`)
+    .then((res) => {
+      console.log("sdsgdgg",res)
+      if (res.data) {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+     console.log(error)
+    });
+};
+};
+
+export const DeletePrePackageCategoryAction = (id) => {
+  return (dispatch) => {
+      return ApiDelete(`/api/admin/prePackageFood/${id}`)
+    .then((res) => {
+      console.log("sdsgdgg",res)
+      if (res.data) {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+     console.log(error)
+    });
+};
+};
+
+export const DeleteServingCategoryAction = (id) => {
+  return (dispatch) => {
+      return ApiDelete(`/api/admin/servingCategory/${id}`)
+    .then((res) => {
+      console.log("sdsgdgg",res)
+      if (res.data) {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+     console.log(error)
+    });
+};
+};
 
 export const UpdateSelfServicesCategoryNameAction = (id,data) => {
   console.log("id,data",id,data)

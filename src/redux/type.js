@@ -2,16 +2,20 @@ export const ADD_SPLASH_IMAGE = "ADD_SPLASH_IMAGE";
 export const RESET_GLOBAL_STATE = "RESET_GLOBAL_STATE";
 export const GET_SPLASH_IMAGE = "GET_SPLASH_IMAGE";
 
-
+export const LOGIN_ADMIN = "LOGIN_ADMIN"
 //Premvati Listing
 export const ADD_PREMVATI = "ADD_PREMVATI";
 export const GET_PREMVATI = "GET_PREMVATI";
+export const UPDATE_PREMVATI = "UPDATE_PREMVATI";
+export const DELETE_PREMVATI = "DELETE_PREMVATI";
 
 //Master Management
 export const ADD_PRAVRUTI = "ADD_PRAVRUTI";
 export const GET_PRAVRUTI = "GET_PRAVRUTI";
 export const UPDATE_PRAVRUTI = "UPDATE_PRAVRUTI";
 export const DELETE_PRAVRUTI = "DELETE_PRAVRUTI";
+export const DELETE_KSHETRA = "DELETE_KSHETRA";
+export const DELETE_DESIGNATION = "DELETE_DESIGNATION";
 export const ADD_KSHETRA = "ADD_KSHETRA";
 export const UPDATE_KSHETRA = "UPDATE_KASHETRA";
 export const GET_KSHETRA = "GET_KSHETRA";
@@ -22,6 +26,8 @@ export const UPDATE_DESIGNATION = "UPDATE_DESIGNATION";
 //User Master
 export const ADD_USER = "ADD_USER";
 export const GET_USER = "GET_USER";
+export const DELETE_USER = "DELETE_USER"
+export const UPDATE_USER = "UPDATE_USER"
 
 //Product Master
 export const GET_FOOD_CATEGORY = "GET_FOOD_CATEGORY";

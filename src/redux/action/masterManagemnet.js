@@ -7,19 +7,19 @@ import {
     ApiPostNoAuth,
     ApiPut,
 } from '../../helper/axios';
-import { ADD_PRAVRUTI, UPDATE_PRAVRUTI, GET_PRAVRUTI,ADD_KSHETRA,GET_KSHETRA,UPDATE_KSHETRA, ADD_DESIGNATION, GET_DESIGNATION, UPDATE_DESIGNATION, DELETE_PRAVRUTI } from '../type';
+import { ADD_PRAVRUTI, UPDATE_PRAVRUTI, GET_PRAVRUTI,ADD_KSHETRA,GET_KSHETRA,UPDATE_KSHETRA, ADD_DESIGNATION, GET_DESIGNATION, UPDATE_DESIGNATION, DELETE_PRAVRUTI, DELETE_KSHETRA, DELETE_DESIGNATION } from '../type';
 
 
 export const addPravrutiAction = (pravrutiData) => {
     return (dispatch) => {
         return ApiPost(`/api/admin/add_pravruti`, pravrutiData)
       .then((res) => {
-        if (res.status === "success") {
+        if (res.data.status === "success") {
           dispatch({
             type: ADD_PRAVRUTI,
-            payload: res.data,
+            payload: res.data.data,
           });
-          return res.data;
+          return res.data.data;
         }
       })
       .catch((error) => {
@@ -35,12 +35,12 @@ export const addKshetraAction = (kshetraData) => {
     return (dispatch) => {
         return ApiPost(`/api/admin/add_kshetra`, kshetraData)
       .then((res) => {
-        if (res.status === "success") {
+        if (res.data.status === "success") {
           dispatch({
             type: ADD_KSHETRA,
-            payload: res.data,
+            payload: res.data.data,
           });
-          return res.data;
+          return res.data.data;
         }
       })
       .catch((error) => {
@@ -56,12 +56,12 @@ export const addDesignationAction = (designationData) => {
     return (dispatch) => {
         return ApiPost(`/api/admin/add_designation`, designationData)
       .then((res) => {
-        if (res.status === "success") {
+        if (res.data.status === "success") {
           dispatch({
             type: ADD_DESIGNATION,
-            payload: res.data,
+            payload: res.data.data,
           });
-          return res.data;
+          return res.data.data;
         }
       })
       .catch((error) => {
@@ -162,6 +162,7 @@ export const updateKshetraAction = (updateKshetraData) => {
     return (dispatch) => {
         return ApiPut(`/api/admin/edit_kshetra/${updateKshetraData._id}`, updateKshetraData)
       .then((res) => {
+        console.log("sdfdsres",res)
         if (res.status === "success") {
           dispatch({
             type: UPDATE_KSHETRA,
@@ -205,7 +206,8 @@ export const DeletePravrutiAction = (id) => {
   return (dispatch) => {
       return ApiDelete(`/api/admin/delete_pravruti/${id}`)
     .then((res) => {
-      if (res.status === 200) {
+      console.log("dgsrsjdtedreh",res)
+      if (res) {
         console.log("saddfsdfdsadafa",res)
         dispatch({
           type: DELETE_PRAVRUTI,
@@ -217,6 +219,52 @@ export const DeletePravrutiAction = (id) => {
     .catch((error) => {
       dispatch({
         type: DELETE_PRAVRUTI,
+        payload: error,
+      });
+    });
+};
+};
+
+export const DeleteKshetraAction = (id) => {
+  return (dispatch) => {
+      return ApiDelete(`/api/admin/delete_kshetra/${id}`)
+    .then((res) => {
+      console.log("dgsrsjdtedreh",res)
+      if (res) {
+        console.log("saddfsdfdsadafa",res)
+        dispatch({
+          type: DELETE_KSHETRA,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: DELETE_KSHETRA,
+        payload: error,
+      });
+    });
+};
+};
+
+export const DeleteDesignationsAction = (id) => {
+  return (dispatch) => {
+      return ApiDelete(`/api/admin/delete_designation/${id}`)
+    .then((res) => {
+      console.log("dgsrsjdtedreh",res)
+      if (res) {
+        console.log("saddfsdfdsadafa",res)
+        dispatch({
+          type: DELETE_DESIGNATION,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: DELETE_DESIGNATION,
         payload: error,
       });
     });

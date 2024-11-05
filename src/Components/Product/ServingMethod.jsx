@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
-import { addServingCategoryAction, addServingMethodAction, deleteServingSingleMethodByIdAction, EditServingMethodItemAction, getAllServingCategoryAction, getServingMethodByCategoryIdAction } from '../../redux/action/productMaster';
+import { addServingCategoryAction, addServingMethodAction, DeleteServingCategoryAction, deleteServingSingleMethodByIdAction, EditServingMethodItemAction, getAllServingCategoryAction, getServingMethodByCategoryIdAction } from '../../redux/action/productMaster';
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function ServingMethod() {
@@ -22,6 +22,9 @@ export default function ServingMethod() {
     const [isUpdateData,setIsUpdateData] = useState(false)
     const [servingCategories,setServingCategories] = useState([])
     const [servingMethods,setServingMethods] = useState([])
+    const [isCategoryDelete,setIsCategoryDelete] = useState("")
+    const [categoriesDeleteId,setCategoriesDeleteId] = useState("")
+
     // const servingCategories = useSelector((state) => state?.productMasterState?.getServingCategory);
     // const servingMethods = useSelector((state) => state?.productMasterState?.getServingMethod);
 
@@ -72,6 +75,16 @@ export default function ServingMethod() {
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
     };
+
+    const handleCategoryDelete = async(data) =>{
+        setIsDelOpen(true);
+        setIsCategoryDelete(true)
+        if(data) {
+            setCategoriesDeleteId(data)
+        }
+    }
+
+
     const handleCategorySubmit = () => {
         if (inputValue) {
             dispatch(addServingCategoryAction({ name: inputValue })).then((response) =>{
@@ -271,21 +284,28 @@ export default function ServingMethod() {
     };
 
     const handelConfirmDelete = () =>{
-        console.log("ssdsdssd",deleteData)
-if(deleteData){
-    dispatch(deleteServingSingleMethodByIdAction(deleteData._id,))
-    .then(response => {          
-   
-        setServingMethods(prev => 
-        prev.filter(item => item._id !== response._id)
-    )
-    setDeleteData(null)
-    setIsDelOpen(false);
-    })
-    .catch(error => {
-      console.error('Error updating item:', error);
-    });
-}
+        if(isCategoryDelete){
+            dispatch(DeleteServingCategoryAction(categoriesDeleteId)).then((response )=>{
+                console.log("sfsdsdaafa",response)
+                setServingCategories(prev => prev.filter(item => item._id !== response._id) )
+                setCategoriesDeleteId("")
+                setIsDelOpen(false);
+            })
+        }
+        else if(deleteData){
+            dispatch(deleteServingSingleMethodByIdAction(deleteData._id,))
+            .then(response => {          
+        
+                setServingMethods(prev => 
+                prev.filter(item => item._id !== response._id)
+            )
+            setDeleteData(null)
+            setIsDelOpen(false);
+            })
+            .catch(error => {
+            console.error('Error updating item:', error);
+            });
+        }
     }
     return (
         <>
@@ -321,14 +341,19 @@ if(deleteData){
                                 onDoubleClick={() => handleCategoryDoubleClick(category)}
                             >
                                 {editingCategoryId === category._id ? (
-                                    <input
-                                        type="text"
-                                        value={inputValue}
-                                        onChange={handleInputChange}
-                                        onKeyDown={handleKeyPress}
-                                        className="text-center bg-transparent border-none outline-none"
-                                        autoFocus
-                                    />
+                                    <>
+                                       <div className="flex flex-col justify-center ">
+                                            <input
+                                                type="text"
+                                                value={inputValue}
+                                                onChange={handleInputChange}
+                                                onKeyDown={handleKeyPress}
+                                                className="text-center mt-[39px] bg-transparent border-none outline-none"
+                                                autoFocus
+                                            />
+                                            <p className="text-red-500 hover:bg-red-100 z-[200] border-[1.5px] w-[123px] flex justify-center  text-center mt-[10px] rounded-[5px] font-Poppins cursor-pointer mx-auto" onClick={() => handleCategoryDelete(editingCategory)}>Delete</p>
+                                        </div>
+                                    </>
                                 ) : (
                                     <p>{category.name}</p>
                                 )}
@@ -382,7 +407,15 @@ if(deleteData){
                                 onMouseLeave={handlePopupClose}
                             >
                                 <p className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={() =>handleEditServingMethod(selectedServingMethod)}>Edit</p>
-                                <p className="text-red-500 hover:bg-red-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={() =>handleDelete(selectedServingMethod)}>Delete</p>
+                                <p className="text-red-500 hover:bg-red-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" 
+                                //onClick={() =>handleDelete(selectedServingMethod)}
+                                     onClick={() => {
+                                        setIsCategoryDelete(false);
+                                        if (selectedServingMethod) {
+                                          handleDelete(selectedServingMethod); 
+                                        }
+                                      }}
+                                    >Delete</p>
                             </div>
                         )}
                     </div>
@@ -423,18 +456,19 @@ if(deleteData){
 
                                             <div className=" flex flex-col w-[100%] gap-[20px]">
                                                 <div className="flex w-[100%] gap-[20px]">
-                                                    <div className=" flex gap-[5px] w-[41%]  text-[14px] items-center border-b-[1.9px] px-[5px] border-[#000]">
+                                                    <div className=" flex gap-[5px] w-[50%]  text-[14px] items-center border-b-[1.9px] px-[5px] border-[#000]">
                                                         <p className='font-[700]'>Name:</p>
-                                                        <input className='outline-none'
+                                                        <input className='outline-none w-[100%]'
                                                             type="text"
                                                             name="name"
+                                                          
                                                             value={servingMethodInput?.name}
                                                             onChange={handleServingMethodInputChange}
                                                         />
                                                     </div>
-                                                    <div className="  w-[41%] flex gap-[5px] items-center border-b-[1.9px] px-[5px] border-[#000]">
+                                                    <div className="  w-[50%] flex gap-[5px] items-center border-b-[1.9px] px-[5px] border-[#000]">
                                                         <p className='font-[700] text-[14px] '>Price:</p>
-                                                        <input className='outline-none'
+                                                        <input className='outline-none  w-[100%]'
                                                             type="text"
                                                             name="price"
                                                             value={servingMethodInput?.price}
@@ -444,7 +478,7 @@ if(deleteData){
 
 
                                                 </div>
-                                                <div className="flex  gap-[2px] w-[88%] p-[10px] border-[#000] outline-none border-[1.9px] rounded-[8px] h-[120px] text-[15px">
+                                                <div className="flex  gap-[2px] w-[100%] p-[10px] border-[#000] outline-none border-[1.9px] rounded-[8px] h-[120px] text-[15px">
                                                     <p>Self note : </p>
                                                     <textarea name="" className="font-[500] w-[78%] outline-none" id=""> </textarea>
 
