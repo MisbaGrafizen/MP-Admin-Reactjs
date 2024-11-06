@@ -24,14 +24,14 @@ export default function PremvatiManagement() {
   const [previewImage, setPreviewImage] = useState("");
   const premvatis = useSelector((state) => state.premvatiListState.getPremvati);
   const [popupVisible, setPopupVisible] = useState(false);
-  const [selectPremvati,setSelectPremvati] = useState();
-    const [popupPosition, setPopupPosition] = useState();
-    const [isUpdateData,setIsUpdateData] = useState(false)
-  const [updateDataId,setUpdateDataId] = useState("");
-  const [deleteDataId,setDeleteDataId] = useState("");
+  const [selectPremvati, setSelectPremvati] = useState();
+  const [popupPosition, setPopupPosition] = useState();
+  const [isUpdateData, setIsUpdateData] = useState(false)
+  const [updateDataId, setUpdateDataId] = useState("");
+  const [deleteDataId, setDeleteDataId] = useState("");
   const [isDelOpen, setIsDelOpen] = useState(false);
   // const [image, setImage] = useState(null);
-  const [cloudImage,setCloudImage] = useState("");
+  const [cloudImage, setCloudImage] = useState("");
   console.log("premvatis", premvatis);
   const handleBack = () => {
     navigate(-1);
@@ -54,9 +54,9 @@ export default function PremvatiManagement() {
     if (image) {
       formData.append("image", cloudImage);
     }
-    if(isUpdateData){
-      
-      dispatch(updatePremvatiAction(updateDataId,formData))
+    if (isUpdateData) {
+
+      dispatch(updatePremvatiAction(updateDataId, formData))
         .then(() => {
           dispatch(getPremvatiAction());
           setUpdateDataId("");
@@ -67,22 +67,22 @@ export default function PremvatiManagement() {
         .catch((err) => {
           console.error("Error submitting premvati:", err);
         });
-    }else {
+    } else {
       dispatch(addPremvatiAction(formData))
-      .then(() => {
-        dispatch(getPremvatiAction());
-        onOpenChange(false);
-        setImage("");
+        .then(() => {
+          dispatch(getPremvatiAction());
+          onOpenChange(false);
+          setImage("");
           setCloudImage();
-      })
-      .catch((err) => {
-        console.error("Error submitting premvati:", err);
-      });
+        })
+        .catch((err) => {
+          console.error("Error submitting premvati:", err);
+        });
     }
   };
 
   const handleFoodItemDoubleClick = (item, event) => {
-    console.log("dsghfd",item)
+    console.log("dsghfd", item)
     // setSelectedFoodItem(item);
     setSelectPremvati(item)
     setPopupVisible(true);
@@ -93,62 +93,62 @@ export default function PremvatiManagement() {
 
 
     setPopupPosition({
-        top: centerY,
-        left: centerX,
+      top: centerY,
+      left: centerX,
     });
-};
+  };
 
-const handleEditFoodItem = (item) => {
-  if (selectPremvati) {            
-    onOpen();
-    setIsUpdateData(true)
-    setName(selectPremvati?.name)
-    setImage(selectPremvati?.image)
-    setUpdateDataId(selectPremvati?._id)
-    
+  const handleEditFoodItem = (item) => {
+    if (selectPremvati) {
+      onOpen();
+      setIsUpdateData(true)
+      setName(selectPremvati?.name)
+      setImage(selectPremvati?.image)
+      setUpdateDataId(selectPremvati?._id)
+
+    }
+  };
+
+  const handleDelete = (deleteData) => {
+    setIsDelOpen(true);
+    if (selectPremvati) {
+      setDeleteDataId(selectPremvati?._id)
+    }
+  };
+
+  const closeDeleteModal = () => {
+    setIsDelOpen(false);
+  };
+
+  const handlePopupClose = () => {
+    setPopupVisible(false);
+    // setSelectedFoodItem(null);
+  };
+
+  const handelConfirmDelete = () => {
+    console.log("ssdsdssd", deleteDataId)
+    if (deleteDataId) {
+      dispatch(deletePremvatiAction(deleteDataId))
+        .then((response) => {
+          setDeleteDataId(null)
+          setIsDelOpen(false);
+        })
+        .catch(error => {
+          console.error('Error Delete item:', error);
+        });
+    }
   }
-};
-
-const handleDelete = (deleteData) => {
-  setIsDelOpen(true);
-  if(selectPremvati){
-    setDeleteDataId(selectPremvati?._id)
-  }
-};
-
-const closeDeleteModal = () => {
-  setIsDelOpen(false);
-};
-
-const handlePopupClose = () => {
-  setPopupVisible(false);
-  // setSelectedFoodItem(null);
-};
-
-const handelConfirmDelete = () =>{
-  console.log("ssdsdssd",deleteDataId)
-if(deleteDataId){
-dispatch(deletePremvatiAction(deleteDataId))
-.then((response) => {          
-setDeleteDataId(null)
-setIsDelOpen(false);
-})
-.catch(error => {
-console.error('Error Delete item:', error);
-});
-}
-}
 
 
-const handleFileChange = async(event) => {
-  const file = event.target.files[0];
-  if (file) {
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
       const cloudImg = await cloudinaryUpload(file)
       setCloudImage(cloudImg)
       const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl); 
-  }
-};
+      setImage(imageUrl);
+    }
+  };
   return (
     <>
       <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto">
@@ -174,8 +174,10 @@ const handleFileChange = async(event) => {
                 <div className="flex justify-between items-center md150:h-[220px] md11:h-[180px]  md150:w-[200px] md11:w-[150px]  flex-col rounded-[10px] border-[1.5px] border-[#FEAA00] border-dashed">
                   <div
                     className="md150:h-[200px] md11:h-[190px]  md150:w-[200px] md11:w-[150px] flex justify-center items-center cursor-pointer"
-                    onClick={() =>{setIsUpdateData(false);setName("");
-                      setImage("");setCloudImage();setPreviewImage("");onOpen()}}
+                    onClick={() => {
+                      setIsUpdateData(false); setName("");
+                      setImage(""); setCloudImage(); setPreviewImage(""); onOpen()
+                    }}
                   >
                     <i
                       className="text-[60px] text-center text-[#FEAA00] fa-solid fa-plus"
@@ -184,41 +186,42 @@ const handleFileChange = async(event) => {
                   </div>
                   <div className="h-[50px] justify-center flex items-center border-t-[1.5px] font-[600] text-[#fff] rounded-[10px] border-[#fffaf5] border-dashed w-[100%] bg-[#FEAA00]"></div>
                 </div>
-               {premvatis && premvatis?.map((item) =>(
-                
-                <div className="flex justify-center md150:h-[220px] md11:h-[180px]  md150:w-[200px] md11:w-[150px]  items-center flex-col rounded-[10px] border-[1.5px] border-[#FEAA00] border-dashed"
-                onDoubleClick={(e) => handleFoodItemDoubleClick(item, e)}
-                >
-                  {console.log("dsfdsfsdfd",item)}
-                  <div
-                    className="h-[180px] w-[200px] flex justify-center items-center cursor-pointer"
+                {premvatis && premvatis?.map((item) => (
+                  <>
+                    <div className="flex justify-center md150:h-[220px] md11:h-[180px]  md150:w-[200px] md11:w-[150px]  items-center flex-col rounded-[10px] border-[1.5px] border-[#FEAA00] border-dashed"
+                      onDoubleClick={(e) => handleFoodItemDoubleClick(item, e)}
+                    >
+                      {console.log("dsfdsfsdfd", item)}
+                      <div
+                        className="h-[180px] w-[200px] flex justify-center items-center cursor-pointer"
 
-                  >
+                      >
 
-                                            <img className=' w-[100%] rounded-tl-[8px] rounded-tr-[8px]' src={item?.image} alt="" />
-                  </div>
-                  <div className="h-[50px] justify-center text-[15px] font-Poppins flex items-center border-t-[1.5px] font-[400] text-[#fff] rounded-[10px] border-[#fffaf5] border-dashed w-[100%] bg-[#FEAA00]">
-                    <p>
-                      {item?.name}  
-                    </p>
-                  </div>
-                  {popupVisible && (
-                                            <div
-                                                className="absolute p-2 bg-white border w-[140px] rounded shadow-lg transition-opacity duration-300 ease-in-out"
-                                                style={{
-                                                    top: `${popupPosition?.top - 140}px`, 
-                                                    left: `${popupPosition?.left - 125}px`,
-                                                    transform: 'translate(-50%, -50%)',
-                                                }}
-                                                onMouseLeave={handlePopupClose}
-                                            >
-                                                <p className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer"  onClick={() => handleEditFoodItem(item)} >Edit</p>
-                                                <p className="text-red-500 hover:bg-red-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={() =>handleDelete(item)}>Delete</p>
-                                            </div>
-                                        )}
-                </div>
-               )) 
-             }
+                        <img className='h-[127px] w-[140px] rounded-tl-[8px]  rounded-tr-[8px]' src={item?.image} alt="" />
+                      </div>
+                      <div className="h-[50px] justify-center text-[15px] font-Poppins flex items-center border-t-[1.5px] font-[400] text-[#fff] rounded-[10px] border-[#fffaf5] border-dashed w-[100%] bg-[#FEAA00]">
+                        <p>
+                          {item?.name}
+                        </p>
+                      </div>
+                      {popupVisible && (
+                        <div
+                          className="absolute p-2 bg-white border w-[140px] rounded shadow-lg transition-opacity duration-300 ease-in-out"
+                          style={{
+                            top: `${popupPosition?.top - 140}px`,
+                            left: `${popupPosition?.left - 125}px`,
+                            transform: 'translate(-50%, -50%)',
+                          }}
+                          onMouseLeave={handlePopupClose}
+                        >
+                          <p className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={() => handleEditFoodItem(item)} >Edit</p>
+                          <p className="text-red-500 hover:bg-red-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer" onClick={() => handleDelete(item)}>Delete</p>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ))
+                }
 
               </div>
             </div>
@@ -259,20 +262,20 @@ const handleFileChange = async(event) => {
                     </>
                   )} */}
                   <label htmlFor="imageUpload" className="cursor-pointer flex justify-center !w-[560px]">
-                                                      {image ? (
-                                                    <img src={image} alt="Selected" className="h-[160px] w-[600px] rounded-[8px]" />
-                                                ) : (
-                                                    <i className="text-[60px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
-                                                )}
-                                                <input
-                                                    type="file"
-                                                    id="imageUpload"
-                                                    name="photo"
-                                                    className="hidden"
-                                                    onChange={handleFileChange}
-                                                    accept="image/*"
-                                                />
-                                                </label>
+                    {image ? (
+                      <img src={image} alt="Selected" className="h-[160px] w-[600px] rounded-[8px]" />
+                    ) : (
+                      <i className="text-[60px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
+                    )}
+                    <input
+                      type="file"
+                      id="imageUpload"
+                      name="photo"
+                      className="hidden"
+                      onChange={handleFileChange}
+                      accept="image/*"
+                    />
+                  </label>
                 </div>
 
                 <div className=" flex w-[100%] flex-col ">
@@ -300,42 +303,42 @@ const handleFileChange = async(event) => {
       </Modal>
 
       <Modal isOpen={isDelOpen} onOpenChange={setIsDelOpen}>
-                <ModalContent className="md:max-w-[350px] max-w-[333px] relative  flex justify-center !py-0 mx-auto  h-[300px] shadow-delete ">
-                    {(ondelClose) => (
-                        <>
-                            <div className="relative w-[100%] h-[100%] ">
-                                <div className="relative  w-[100%] h-[100%]">
-                                    <div className='w-[100%] flex gap-7 flex-col'>
-                                        <div className='w-[100%] mt-[30px] p-[10px] mx-auto flex justify-center s'>
-                                            <i className=" text-[80px] text-[red] shadow-delete-icon rounded-full fa-solid fa-circle-xmark"></i>
-                                        </div>
-                                        <div className=' mx-auto justify-center flex text-[28px] font-[500] font-Poppins'>
-                                            <p>Are you sure ?</p>
+        <ModalContent className="md:max-w-[350px] max-w-[333px] relative  flex justify-center !py-0 mx-auto  h-[300px] shadow-delete ">
+          {(ondelClose) => (
+            <>
+              <div className="relative w-[100%] h-[100%] ">
+                <div className="relative  w-[100%] h-[100%]">
+                  <div className='w-[100%] flex gap-7 flex-col'>
+                    <div className='w-[100%] mt-[30px] p-[10px] mx-auto flex justify-center s'>
+                      <i className=" text-[80px] text-[red] shadow-delete-icon rounded-full fa-solid fa-circle-xmark"></i>
+                    </div>
+                    <div className=' mx-auto justify-center flex text-[28px] font-[500] font-Poppins'>
+                      <p>Are you sure ?</p>
 
-                                        </div>
-                                        <div className='absolute bottom-0 flex w-[100%]'>
-                                            <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' 
-                                            onClick={handelConfirmDelete}>
-                                                
-                                                <p>
-                                                    Delete
-                                                </p>
-                                            </div>
-                                            <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[#26b955] rounded-br-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={closeDeleteModal}>
-                                                <p>
-                                                    Cancel
-                                                </p>
-                                            </div>
-                                        </div>
+                    </div>
+                    <div className='absolute bottom-0 flex w-[100%]'>
+                      <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]'
+                        onClick={handelConfirmDelete}>
+
+                        <p>
+                          Delete
+                        </p>
+                      </div>
+                      <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[#26b955] rounded-br-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={closeDeleteModal}>
+                        <p>
+                          Cancel
+                        </p>
+                      </div>
+                    </div>
 
 
-                                    </div>
-                                </div>
-                            </div>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
     </>
   );

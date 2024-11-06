@@ -236,10 +236,10 @@ export default function MasterManage() {
                                 </div>
 
                                 <div className="flex justify-between">
-                                    <div className="flex justify-center text-center py-3 border-r border-b border-black gap-[10px] px-3 min-w-[6%] max-w-[6%]">
+                                    <div className="flex justify-center text-center     py-2 border-r border-b border-black gap-[10px] px-3 min-w-[6%] max-w-[6%]">
                                         <p className="w-fit text-[15px] font-Outfit"></p>
                                     </div>
-                                    <div className="flex justify-start text-center py-3 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
+                                    <div className="flex justify-start text-center     py-2 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
                                         <input
                                             className="w-[100%] border-none outline-none"
                                             type="text"
@@ -260,7 +260,7 @@ export default function MasterManage() {
 
                                 {pravruties?.length > 0 && paginatedPravruties.map((pravruti, index) => (
                                     <div key={index} className="flex justify-between">
-                                        <div className="flex justify-center items-center text-center py-3 border-r border-b border-black gap-[10px] px-1 min-w-[6%] max-w-[6%]">
+                                        <div className="flex justify-center items-center text-center     py-2 border-r border-b border-black gap-[10px] px-1 min-w-[6%] max-w-[6%]">
                                             <input
                                                 type="checkbox"
                                                 checked={checkedItems.includes(index)}
@@ -270,12 +270,12 @@ export default function MasterManage() {
                                             />
                                             <p className="w-fit text-[17px] mt-[2%] font-Outfit">{index + 1 + (currentPage - 1) * itemsPerPage}</p>
                                         </div>
-                                        <div className="flex justify-start text-center py-3 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
+                                        <div className="flex justify-start text-center     py-2 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
                                             <p className="text-[15px] font-Outfit">{pravruti.name}</p>
                                         </div>
-                                        <div className="flex justify-center items-center text-center py-3 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
-                                            <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditPravruti(index + 0 + (currentPage - 1) * itemsPerPage)} />
-                                            <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can" onClick={() =>handleDelete(pravruti,{typeofManges:'pravruti'})}></i>
+                                        <div className="flex justify-center items-center text-center     py-2 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
+                                            <img className='w-[20px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditPravruti(index + 0 + (currentPage - 1) * itemsPerPage)} />
+                                            <i className="text-[20px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can" onClick={() =>handleDelete(pravruti,{typeofManges:'pravruti'})}></i>
                                         </div>
                                     </div>
                                 ))}
@@ -295,7 +295,7 @@ export default function MasterManage() {
                                 </div>
                             </div>
                             {dropdownOpen && (
-                                <div className='border-[1.7px] flex flex-col bg-[#fff] min-h-[90px] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute'>
+                                <div className='border-[1.7px] flex flex-col bg-[#fff] min-h-[100%] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute'>
                                     {Array.from({ length: totalPages }, (_, i) => (
                                         <div
                                             key={i + 1}
@@ -339,11 +339,11 @@ export default function MasterManage() {
                                 </div>
 
                                 <div className="flex justify-between">
-                                    <div className="flex justify-center text-center py-3 border-r border-b border-black gap-[10px] px-3 min-w-[6%] max-w-[6%]">
+                                    <div className="flex justify-center text-center py-1 border-r border-b border-black gap-[10px] px-3 min-w-[6%] max-w-[6%]">
                                         <p className="w-fit text-[15px] font-Outfit"></p>
                                     </div>
 
-                                    <div className="flex justify-start text-center py-3 border-r border-b border-black px-3 min-w-[88%] max-w-[88%] cursor-pointer">
+                                    <div className="flex justify-start text-center py-1 border-r border-b border-black px-3 min-w-[88%] max-w-[88%] cursor-pointer">
                                         <input className='w-[100%] border-none outline-none h-[full] px-[1px]'
                                             type='text'
                                             value={kshetraName}
@@ -363,7 +363,7 @@ export default function MasterManage() {
                                 {Array.isArray(kshetras) && kshetras.length > 0 ? (
                                     paginatedKhestras.map((kshetra, index) => (
                                         <div key={index} className="flex justify-between">
-                                            <div className="flex justify-center items-center text-center py-3 border-r border-b border-black gap-[10px] px-1 min-w-[6%] max-w-[6%]">
+                                            <div className="flex justify-center items-center text-center py-2 border-r border-b border-black gap-[10px] px-1 min-w-[6%] max-w-[6%]">
                                                 <input
                                                     type="checkbox"
                                                     checked={checkedItems.includes(index)}
@@ -374,12 +374,12 @@ export default function MasterManage() {
                                                 <p className="w-fit text-[17px] mt-[2%] font-Outfit">{index + 1 + (currentPage - 1) * itemsPerPage}</p>
                                             </div>
 
-                                            <div className="flex justify-start text-center py-3 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
+                                            <div className="flex justify-start text-center py-2 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
                                                 <p className="text-[15px] font-Outfit">{kshetra.name}</p>
                                             </div>
-                                            <div className="flex justify-center items-center text-center py-3 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
-                                                <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditKshetra(index + 0 + (currentPage - 1) * itemsPerPage)} />
-                                                <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can"
+                                            <div className="flex justify-center items-center text-center py-2 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
+                                                <img className='w-[20px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditKshetra(index + 0 + (currentPage - 1) * itemsPerPage)} />
+                                                <i className="text-[19px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can"
                                                  onClick={() =>handleDelete(kshetra,{typeofManges:'kshetra'})}
                                                     ></i>
                                             </div>
@@ -404,7 +404,7 @@ export default function MasterManage() {
                                 </div>
                             </div>
                             {dropdownOpen && (
-                                <div className='border-[1.7px] flex flex-col bg-[#fff] min-h-[90px] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute'>
+                                <div className='border-[1.7px] flex flex-col bg-[#fff] min-h-[100%]    overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute'>
                                     {Array.from({ length: totalPageskhestras }, (_, i) => (
                                         <div
                                             key={i + 1}
@@ -446,11 +446,11 @@ export default function MasterManage() {
                                 </div>
 
                                 <div className="flex justify-between">
-                                    <div className="flex justify-center text-center py-3 border-r border-b border-black gap-[10px] px-3 min-w-[6%] max-w-[6%]">
+                                    <div className="flex justify-center text-center     py-2 border-r border-b border-black gap-[10px] px-3 min-w-[6%] max-w-[6%]">
                                         <p className="w-fit text-[15px] font-Outfit"></p>
                                     </div>
 
-                                    <div className="flex justify-start text-center py-3 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
+                                    <div className="flex justify-start text-center     py-2 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
                                         <input className='w-[100%] border-none outline-none h-[full] px-[1px]'
                                             type='text'
                                             value={designationName}
@@ -469,7 +469,7 @@ export default function MasterManage() {
                                 {Array.isArray(designations) && designations.length > 0 ? (
                                     paginatedDesignation.map((designation, index) => (
                                         <div className="flex justify-between" key={designation.id || index}>
-                                            <div className="flex justify-center items-center text-center py-3 border-r border-b border-black gap-[10px] px-1 min-w-[6%] max-w-[6%]">
+                                            <div className="flex justify-center items-center text-center     py-2 border-r border-b border-black gap-[10px] px-1 min-w-[6%] max-w-[6%]">
                                                 <input
                                                     type="checkbox"
                                                     checked={checkedItems.includes(index)}
@@ -479,12 +479,12 @@ export default function MasterManage() {
                                                 />
                                                 <p className="w-fit text-[17px] mt-[2%] font-Outfit">{index + 1 + (currentPage - 1) * itemsPerPage}</p>
                                             </div>
-                                            <div className="flex justify-start text-center py-3 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
+                                            <div className="flex justify-start text-center     py-2 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
                                                 <p className="text-[15px] font-Outfit">{designation.name}</p>
                                             </div>
-                                            <div className="flex justify-center items-center text-center py-3 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
-                                                <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditDesignation(index + 0 + (currentPage - 1) * itemsPerPage)} />
-                                                <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can"  onClick={() =>handleDelete(designation,{typeofManges:'designations'})}></i>
+                                            <div className="flex justify-center items-center text-center     py-2 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
+                                                <img className='w-[20px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditDesignation(index + 0 + (currentPage - 1) * itemsPerPage)} />
+                                                <i className="text-[20px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can"  onClick={() =>handleDelete(designation,{typeofManges:'designations'})}></i>
                                             </div>
                                         </div>
                                     ))
@@ -507,7 +507,7 @@ export default function MasterManage() {
                                 </div>
                             </div>
                             {dropdownOpen && (
-                                <div className='border-[1.7px] flex flex-col bg-[#fff] min-h-[90px] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute'>
+                                <div className='border-[1.7px] flex flex-col bg-[#fff] min-h-[100%] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute'>
                                     {Array.from({ length: totalPagesdesignation }, (_, i) => (
                                         <div
                                             key={i + 1}
@@ -530,11 +530,11 @@ export default function MasterManage() {
 
     return (
         <>
-            <div className="w-[99%] h-[100vh]  relative overflow-hidden top-0 bottom-0  px-[40px] py-[48px] mx-auto   my-auto   ">
-                <div className="   mx-auto flex gap-[30px] h-[90vh] flex-col relative   rounded-[19px] border-[1px] border-[#FEAA00]">
-                    <div className="flex absolute left-[3%]  top-[5%] font-Potua gap-[10px] items-center justify-center  text-[20px] font-[600]">
+            <div className="    w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0      py-[34px] md150:py-[48px]     px-[30px] md150:px-[40px]  mx-auto   my-auto ">
+                <div className="  mx-auto flex gap-[30px] w-[100%]     h-[92vh] md150:h-[90vh] flex-col relative    rounded-[19px] border-[1px] border-[#FEAA00]">
+                    <div className="flex absolute gap-[10px] left-[3%]      top-[4.1%]  md150:top-[5%] items-center        text-[18px] md150:text-[20px] font-[600]">
                         <i className="cursor-pointer fa-solid fa-angle-up fa-rotate-270" onClick={handleBack}></i>
-                        <div className='flex items-center gap-[10px] cursor-pointer' onClick={handleBack}>
+                        <div className='font-Potua  flex items-center gap-[10px] cursor-pointer' onClick={handleBack}>
                             <p>
                                 MASTER
                             </p>
@@ -544,12 +544,12 @@ export default function MasterManage() {
                         </div>
 
                     </div>
-                    <div className="flex absolute right-[8%] md150:top-[5.9%] top-[7.9%] font-Poppins font-[600] text-[15px] ">
+                    <div className="flex absolute right-[8%] md150:top-[5.9%] top-[4.5%] font-Poppins font-[600] text-[15px] ">
 
                         <div className='flex gap-[10px] mx-auto justify-center w-[100%]   z-0'>
 
                             <div
-                                className={` w-[80%] flex items-center justify-center  font-Poppins rounded-tr-[5px] rounded-tl-[5px] border-r-[1.5px] px-[19px]  border-l-[1.5px]  font-bold     cursor-pointer border-t-[1.5px] border-[#000]  ${activeForm === 'PRAVRUTI' ? 'bg-[#FEAA00] text-[#fff]' : ' bg-white '} h-[40px] cursor-pointer`}
+                                className={` w-[80%] flex items-center justify-center  !font-Poppins rounded-tr-[10px] rounded-tl-[10px] border-r-[1.5px] px-[19px]  border-l-[1.5px]  font-bold     cursor-pointer border-t-[1.5px] border-[#000]  ${activeForm === 'PRAVRUTI' ? 'bg-[#FEAA00] text-[#fff]' : ' bg-white '} h-[40px] cursor-pointer`}
                                 onClick={() => setActiveForm('PRAVRUTI')}
                             >
                                 <p>PRAVRUTI</p>
@@ -557,23 +557,23 @@ export default function MasterManage() {
 
 
                             <div
-                                className={` w-[80%] flex items-center justify-center  rounded-tr-[5px] rounded-tl-[5px] border-r-[1.5px] px-[19px] font-[]  border-l-[1.5px]  border-t-[1.5px] border-[#000]  ${activeForm === 'KSHETRA' ? 'bg-[#FEAA00] text-[#fff]' : 'text-[#000] bg-white '} h-[40px] cursor-pointer`}
+                                className={` w-[80%] flex items-center justify-center  rounded-tr-[10px] rounded-tl-[10px] border-r-[1.5px] px-[19px] font-[]  border-l-[1.5px]  border-t-[1.5px] border-[#000]  ${activeForm === 'KSHETRA' ? 'bg-[#FEAA00] text-[#fff]' : 'text-[#000] bg-white '} h-[40px] cursor-pointer`}
                                 onClick={() => setActiveForm('KSHETRA')}
                             >
                                 <p>KSHETRA</p>
                             </div>
 
                             <div
-                                className={`w-[130px] flex items-center justify-center  rounded-tr-[5px] rounded-tl-[5px] border-r-[1.5px] px-[19px] font-[600] border-l-[1.5px]  border-t-[1.5px] border-[#000]  ${activeForm === 'DESIGNATION' ? 'bg-[#FEAA00] text-[#fff]' : 'text-[#000] bg-white '} h-[40px] cursor-pointer`}
+                                className={`w-[130px] flex items-center justify-center  rounded-tr-[10px] rounded-tl-[10px] border-r-[1.5px] px-[19px] font-[600] border-l-[1.5px]  border-t-[1.5px] border-[#000]  ${activeForm === 'DESIGNATION' ? 'bg-[#FEAA00] text-[#fff]' : 'text-[#000] bg-white '} h-[40px] cursor-pointer`}
                                 onClick={() => setActiveForm('DESIGNATION')}
                             >
                                 <p>DESIGNATION</p>
                             </div>
                         </div>
                     </div>
-                    <div className="py-[90px] flex w-[97%]  gap-[20px]">
+                    <div className="    py-[69px] md150:py-[90px] flex     w-[98%] md150:w-[97%]     gap-[15px]  md150:gap-[20px]">
                         <Header />
-                        <div className="  py-[20px] px-[20px]  md150:h-[70vh]    h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]" >
+                        <div className="  md150:py-[20px] md150:px-[20px]     px-[15px]     py-[15px]  md150:h-[70vh]     h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]" >
 
 
                             {renderForm()}

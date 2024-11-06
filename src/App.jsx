@@ -1,7 +1,6 @@
 import React from "react";
 import "../src/App.css";
 import { Navigate, Route, Routes } from "react-router-dom";
-
 import MasterManege from "./pages/masterManage/MasterManege";
 import SplashScreen from "./pages/SplashScreen/SplashScreen";
 import CreateUser from "./pages/createUser/CreateUser";

@@ -14,3 +14,6 @@
     display: none !important;
 }
 
+
+@media only screen and (max-height: 600px) 
+(min-height:) {}

@@ -13,6 +13,7 @@ export default function CreateUser() {
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const [checkAll, setCheckAll] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [checkedItems, setCheckedItems] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isKshetraDropdownOpen, setIsKshetraDropdownOpen] = useState(false);
@@ -23,6 +24,12 @@ export default function CreateUser() {
   const [currentPage, setCurrentPage] = useState(1);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const kshetraDropdownRef = useRef(null);
+  const designationDropdownRef = useRef(null);
+  const paginationDropdownRef = useRef(null); 
+  const pravrutiDropdownRef = useRef(null);
+  
+ 
 
   const users = useSelector((state) => state?.userMasterState?.getUser) || [];
   const pravruties = useSelector((state) => state?.mastermanagementState?.getPravruti) || [];
@@ -36,9 +43,13 @@ export default function CreateUser() {
     setCurrentPage(pageNumber);
     setDropdownOpen(false);
   };
-  const pravrutiRef = useRef(null);
-  const kshetraRef = useRef(null);
-  const designationRef = useRef(null);  
+
+  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
+  const toggleKshetraDropdown = () => setIsKshetraDropdownOpen((prev) => !prev);
+  const toggleDesigDropdown = () => setIsDesigDropdownOpen((prev) => !prev); 
+  const togglePaginationDropdown = () => setDropdownOpen((prev) => !prev); 
+  const togglePraDropdown = () => setDropdownOpen((prev) => !prev);
+  
 
   const [isDelOpen, setIsDelOpen] = useState(false);
   const [isEditData,setIsEditData] = useState(false)
@@ -58,9 +69,9 @@ export default function CreateUser() {
   };
  
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+  // const toggleDropdown = () => {
+  //   setIsDropdownOpen(!isDropdownOpen);
+  // };
   const toggleKhestraDropdown = () => {
     setIsKshetraDropdownOpen(!isKshetraDropdownOpen);
   };
@@ -91,17 +102,31 @@ export default function CreateUser() {
     setIsDesigDropdownOpen(false);
   };
 
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
+        setIsDropdownOpen(false);
+      }
+      if (kshetraDropdownRef.current && !kshetraDropdownRef.current.contains(event.target)) { 
+        setIsKshetraDropdownOpen(false);
+      }
+      if (designationDropdownRef.current && !designationDropdownRef.current.contains(event.target)) {
+        setIsDesigDropdownOpen(false);
+      }
+      if (paginationDropdownRef.current && !paginationDropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);  // Close pagination dropdown on outside click
+      }
+      if (pravrutiDropdownRef.current && !pravrutiDropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);  // Close pagination dropdown on outside click
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dropdownRef]);
+  }, []);
 
   const [userData, setUserData] = useState({
     name: '',
@@ -151,11 +176,12 @@ export default function CreateUser() {
   };
 
 
-  const [showPassword, setShowPassword] = useState(true);
+
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+    setShowPassword((prev) => !prev); // Toggle the password visibility
   };
+  
   const handleBack = () => {
     navigate(-1)
   }
@@ -346,7 +372,7 @@ export default function CreateUser() {
 
                   </div>
                 </div>
-                <div className='flex absolute bottom-3 right-6 font-Poppins items-center gap-[10px]' ref={dropdownRef}>
+                <div className='flex absolute bottom-3 right-6 font-Poppins items-center gap-[10px]' ref={paginationDropdownRef}>
                   <div>
                     <p className='text-[15px] font-[600] text-[#2565df]'>
                       Total pages - {totalPages}
@@ -358,7 +384,7 @@ export default function CreateUser() {
                     </div>
                   </div>
                   {dropdownOpen && (
-                    <div className='border-[1.7px] flex flex-col bg-[#fff] min-h-[90px] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute'>
+                    <div className='border-[1.7px] flex flex-col bg-[#fff] min-h-[100%] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute'>
                       {Array.from({ length: totalPages }, (_, i) => (
                         <div
                           key={i + 1}
@@ -377,7 +403,7 @@ export default function CreateUser() {
 
 
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-              <ModalContent className="md150:w-[390px] md11:w-[360px]  relative md150:h-[510px] md11:h-[460px]">
+              <ModalContent className="md150:w-[390px] md11:w-[360px] rounded-[10px] relative md150:h-[510px] md11:h-[460px]">
                 {(onClose) => (
                   <>
                     <div className="relative ">
@@ -435,6 +461,7 @@ export default function CreateUser() {
 
                             <div className="flex relative   md150:mt-[4px] items-center gap-[40px]">
                               <div
+                              ref={pravrutiDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
                                 onClick={toggleDropdown}
                               >
@@ -443,7 +470,7 @@ export default function CreateUser() {
                               </div>
 
                               {isDropdownOpen && (
-                                <div className="border-[1.5px] w-[100%] md150:w-[110%] left-[-3px] z-[10] top-[29px] h-[100%] min-h-[180px] overflow-y-auto bg-white absolute rounded-[10px] py-[2px] flex flex-col">
+                                <div className="border-[1.5px] w-[100%] md150:w-[110%] left-[-3px] z-[10] top-[29px]  min-h-[100%] overflow-y-auto bg-white absolute rounded-[10px] py-[2px] flex flex-col">
                                   {pravruties?.map((pravruti) => (
                                     <div
                                       key={pravruti._id}
@@ -459,6 +486,7 @@ export default function CreateUser() {
                             </div>
                             <div className="flex relative items-center gap-[40px]">
                               <div
+                              ref={kshetraDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
                                 onClick={toggleKhestraDropdown}
                               >
@@ -483,7 +511,7 @@ export default function CreateUser() {
                             </div>
 
                             <div className="flex relative items-center gap-[40px]">
-                              <div
+                              <div ref={designationDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
                                 onClick={toggleDesgnationDropdown}
                               >
@@ -542,12 +570,12 @@ export default function CreateUser() {
                                 onChange={handleChange}
                               />
                               <i
-                                className={`fa-regular ${showPassword ? "fa-eye-slash" : "fa-eye"
+                                className={`fa-regular ${showPassword ? "fa-eye " : "fa-eye-slash"
                                   }`}
-                                onClick={togglePasswordVisibility}
+                                  onClick={togglePasswordVisibility}
                                 style={{
                                   cursor: "pointer",
-                                  color: showPassword ? "#ff8000" : "inherit",
+                                  color: showPassword ? "inherit" : "#ff8000 ",
                                 }}
                               ></i>
                             </div>

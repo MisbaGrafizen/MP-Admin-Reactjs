@@ -4,6 +4,7 @@ import cloudinaryUpload from '../../helper/cloudinaryUpload';
 import { toast } from '../../helper';
 import { addSplashScreenImageAction, getSplashScreenImageAction } from '../../redux/action/splashScreen';
 import { useDispatch, useSelector } from 'react-redux';
+import mainsplash from '../../../public/img/AdminSpalsh/Splash screen.png'
 
 export default function Home() {
     const dispatch = useDispatch();
@@ -89,13 +90,13 @@ export default function Home() {
     }
     return (
         <>
-            <div className="w-[99%] h-[100vh]  relative overflow-hidden  px-[40px] py-[37px] mx-auto   my-auto   ">
-                <div className="  mx-auto flex gap-[30px] h-[90vh] flex-col relative   rounded-[19px] border-[1px] border-[#FEAA00]">
+            <div className="w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0 py-[34px] md150:py-[48px] px-[30px] md150:px-[40px]  mx-auto   my-auto ">
+                <div className=" mx-auto flex gap-[30px] w-[100%] h-[92vh] md150:h-[90vh] flex-col relative    rounded-[19px] border-[1px] border-[#FEAA00]">
 
-                    <div className="flex absolute  gap-[10px] font-Potua left-[3%]  top-[5%]  text-[20px] font-[600]">
+                    <div className="flex absolute gap-[10px] left-[3%]    top-[4.1%]  md150:top-[5%] items-center      text-[18px] md150:text-[20px] font-[600]">
                         <i className="fa-solid fa-angle-up fa-rotate-270"></i>
 
-                        <div className='flex items-center gap-[10px]'>
+                        <div className='font-Potua  flex items-center gap-[10px] cursor-pointer'>
                             <p>
                                 SPLASH
                             </p>
@@ -108,17 +109,17 @@ export default function Home() {
 
                         </div>
                     </div>
-                    <div className="py-[90px] flex w-[97%]  gap-[20px]">
+                    <div className="  py-[69px] md150:py-[90px] flex   w-[98%] md150:w-[97%]   gap-[15px]  md150:gap-[20px]">
                         <Header />
-                        <div className=" py-[20px] px-[20px]  md150:h-[70vh]  overflow-y-auto h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]" >
+                        <div className="  md150:py-[20px] md150:px-[20px] z-[10]   px-[15px]   py-[15px]  md150:h-[70vh]   h-[73vh]  !overflow-hidden bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000] overflow-y-auto " >
                             <div className="flex flex-wrap w-100 gap-[20px]">
                                 <div className="">
-                                    <img className='w-[220px] h-[450px]' src="../../../public/img/AdminSpalsh/Splash screen.png" alt="" />
+                                    <img className='w-[157px] md150:w-[210px] md150:h-[450px]   h-[350px]' src={mainsplash} alt="" />
                                 </div>
                                 {Array.from({ length: 6 }).map((_, index) => (
                                     <div
                                         key={index}
-                                        className="w-[210px] h-[450px] rounded-[10px] border-[#FEAA00] flex justify-center items-center border-2 border-dashed cursor-pointer relative overflow-hidden"
+                                        className="w-[157px] md150:w-[210px] md150:h-[450px]   h-[350px] rounded-[10px] border-[#FEAA00] flex justify-center items-center border-2 border-dashed cursor-pointer relative overflow-hidden"
                                         onClick={() => handleContainerClick(index)}
                                         style={{
                                             backgroundImage: selectedImages[index] ? `url(${selectedImages[index]})` : "none",
@@ -140,7 +141,7 @@ export default function Home() {
 
                             </div>
 
-                            <div className=" border-t-[2px] bg-white active:bg-[#00984B] active:text-[#fff] border-r-[2px] border-l-[2px]  absolute mx-auto px-[15px] w-[220px] justify-center text-center  bottom-0 left-0 right-0  rounded-tl-[10px] cursor-pointer  rounded-tr-[10px] py-[10px] text-[#00984B] font-[600] custom-font text-[25px]  border-[#00984B]" onClick={handelImgSubmit}>
+                            <div className=" border-t-[1.5px] bg-white active:bg-[#00984B] active:text-[#fff] border-r-[1.5px] border-l-[1.5px]  fixed mx-auto px-[15px]  md150:w-[220px] justify-center text-center z-[5]   bottom-[13.1%]  left-0 right-0  rounded-tl-[10px] cursor-pointer  rounded-tr-[10px] py-[7px]  text-[#00984B] font-[600] custom-font text-[18px] w-[190px] md150:text-[25px]  border-[#00984B]" onClick={handelImgSubmit}>
 
                                 <p>Save the changes</p>
                             </div>
