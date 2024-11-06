@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import loginimg from '../../../public/img/login.png';
 import loginimgdesk from '../../../public/img/Login-Desktop.png';
 import { useDispatch } from 'react-redux';
@@ -17,6 +17,18 @@ export default function Login() {
     name: '',
     password: '',
   });
+  console.log("sadsad",isChecked)
+
+  useEffect(()=>{
+    const name = Cookies.get("Name");
+    const password = Cookies.get("Password")
+    console.log(name,password)
+    if(name !== undefined && password !== undefined){
+      setFormData({name:name,password:password})
+      setIsChecked(true)
+    }
+  },[])
+
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
@@ -34,9 +46,19 @@ export default function Login() {
       alert("Please fill in both fields.");
       return;
     }
+    if(isChecked && name && password) {
+      Cookies.set("Name",name)
+      Cookies.set("Password",password)
+    }
+  
    await dispatch(loginAdminAction(formData)).then((response) =>{
+   
     if(response.token !== undefined &&response.token !== null )
     {
+      if(!isChecked){
+        Cookies.remove("Name")
+        Cookies.remove("Password")
+      }
       Cookies.set('authToken', response.token); 
       navigate("/splash-screen")
 
@@ -84,7 +106,8 @@ export default function Login() {
                 type="checkbox"
                 id="custom-checkbox"
                 style={{ display: "none" }}
-                checked={isChecked}
+                // checked={isChecked}
+                onChange={handleCheckboxChange}
               />
 
               <span

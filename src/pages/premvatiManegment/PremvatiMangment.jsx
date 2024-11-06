@@ -13,6 +13,7 @@ import {
 } from "../../redux/action/premvatiList";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import cloudinaryUpload from "../../helper/cloudinaryUpload";
 
 export default function PremvatiManagement() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -29,7 +30,8 @@ export default function PremvatiManagement() {
   const [updateDataId,setUpdateDataId] = useState("");
   const [deleteDataId,setDeleteDataId] = useState("");
   const [isDelOpen, setIsDelOpen] = useState(false);
-
+  // const [image, setImage] = useState(null);
+  const [cloudImage,setCloudImage] = useState("");
   console.log("premvatis", premvatis);
   const handleBack = () => {
     navigate(-1);
@@ -39,25 +41,27 @@ export default function PremvatiManagement() {
     dispatch(getPremvatiAction());
   }, [dispatch]);
 
-  const handleImageChange = (e) => {
-    if (e.target.files[0]) {
-      setImage(e.target.files[0]);
-      setPreviewImage(URL.createObjectURL(e.target.files[0]));
-    }
-  };
+  // const handleImageChange = (e) => {
+  //   if (e.target.files[0]) {
+  //     setImage(e.target.files[0]);
+  //     setPreviewImage(URL.createObjectURL(e.target.files[0]));
+  //   }
+  // };
 
   const handleSubmit = () => {
     const formData = new FormData();
     formData.append("name", name);
     if (image) {
-      formData.append("image", image);
+      formData.append("image", cloudImage);
     }
     if(isUpdateData){
-
+      
       dispatch(updatePremvatiAction(updateDataId,formData))
         .then(() => {
           dispatch(getPremvatiAction());
           setUpdateDataId("");
+          setImage("");
+          setCloudImage();
           onOpenChange(false);
         })
         .catch((err) => {
@@ -68,6 +72,8 @@ export default function PremvatiManagement() {
       .then(() => {
         dispatch(getPremvatiAction());
         onOpenChange(false);
+        setImage("");
+          setCloudImage();
       })
       .catch((err) => {
         console.error("Error submitting premvati:", err);
@@ -99,6 +105,7 @@ const handleEditFoodItem = (item) => {
     setName(selectPremvati?.name)
     setImage(selectPremvati?.image)
     setUpdateDataId(selectPremvati?._id)
+    
   }
 };
 
@@ -131,6 +138,17 @@ console.error('Error Delete item:', error);
 });
 }
 }
+
+
+const handleFileChange = async(event) => {
+  const file = event.target.files[0];
+  if (file) {
+      const cloudImg = await cloudinaryUpload(file)
+      setCloudImage(cloudImg)
+      const imageUrl = URL.createObjectURL(file);
+      setImage(imageUrl); 
+  }
+};
   return (
     <>
       <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto">
@@ -157,7 +175,7 @@ console.error('Error Delete item:', error);
                   <div
                     className="md150:h-[200px] md11:h-[190px]  md150:w-[200px] md11:w-[150px] flex justify-center items-center cursor-pointer"
                     onClick={() =>{setIsUpdateData(false);setName("");
-                      setImage("");setPreviewImage("");onOpen()}}
+                      setImage("");setCloudImage();setPreviewImage("");onOpen()}}
                   >
                     <i
                       className="text-[60px] text-center text-[#FEAA00] fa-solid fa-plus"
@@ -171,11 +189,13 @@ console.error('Error Delete item:', error);
                 <div className="flex justify-center md150:h-[220px] md11:h-[180px]  md150:w-[200px] md11:w-[150px]  items-center flex-col rounded-[10px] border-[1.5px] border-[#FEAA00] border-dashed"
                 onDoubleClick={(e) => handleFoodItemDoubleClick(item, e)}
                 >
+                  {console.log("dsfdsfsdfd",item)}
                   <div
                     className="h-[180px] w-[200px] flex justify-center items-center cursor-pointer"
 
                   >
 
+                                            <img className=' w-[100%] rounded-tl-[8px] rounded-tr-[8px]' src={item?.image} alt="" />
                   </div>
                   <div className="h-[50px] justify-center text-[15px] font-Poppins flex items-center border-t-[1.5px] font-[400] text-[#fff] rounded-[10px] border-[#fffaf5] border-dashed w-[100%] bg-[#FEAA00]">
                     <p>
@@ -217,7 +237,7 @@ console.error('Error Delete item:', error);
             <>
               <div className="flex justify-between h-[100%] w-[100%] items-center flex-col  border-dashed">
                 <div className=" w-[100%] h-[100%]">
-                  {previewImage ? (
+                  {/* {previewImage ? (
                     <img
                       src={previewImage}
                       alt="Preview"
@@ -237,7 +257,22 @@ console.error('Error Delete item:', error);
                         className="hidden "
                       />
                     </>
-                  )}
+                  )} */}
+                  <label htmlFor="imageUpload" className="cursor-pointer flex justify-center !w-[560px]">
+                                                      {image ? (
+                                                    <img src={image} alt="Selected" className="h-[160px] w-[600px] rounded-[8px]" />
+                                                ) : (
+                                                    <i className="text-[60px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
+                                                )}
+                                                <input
+                                                    type="file"
+                                                    id="imageUpload"
+                                                    name="photo"
+                                                    className="hidden"
+                                                    onChange={handleFileChange}
+                                                    accept="image/*"
+                                                />
+                                                </label>
                 </div>
 
                 <div className=" flex w-[100%] flex-col ">

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 import { addServingCategoryAction, addServingMethodAction, DeleteServingCategoryAction, deleteServingSingleMethodByIdAction, EditServingMethodItemAction, getAllServingCategoryAction, getServingMethodByCategoryIdAction } from '../../redux/action/productMaster';
 import { useDispatch, useSelector } from 'react-redux';
+import cloudinaryUpload from '../../helper/cloudinaryUpload';
 
 export default function ServingMethod() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -10,7 +11,9 @@ export default function ServingMethod() {
     const [selectedServingCategory, setSelectedServingCategory] = useState("");
     const [buttons, setButtons] = useState(['Dishes', 'Bowl', 'Dinner Plates']);
     const [selectedButton, setSelectedButton] = useState(0);
-    const [servingMethodInput, setServingMethodInput] = useState({ name: '', price: '', description: '', photo: '' ,_id:""});
+    const [servingMethodInput, setServingMethodInput] = useState({ name: '', price: '', description: '', photo: '' ,_id:"",categoryId:''});
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [cloudImage,setCloudImage] = useState("");
     const [imageFile, setImageFile] = useState(null);
     const [deleteData,setDeleteData] = useState("")
     const [imagePreview, setImagePreview] = useState(null);
@@ -102,18 +105,13 @@ export default function ServingMethod() {
         });
     };
 
-    const handleFileChange = (event) => {
+    const handleFileChange = async(event) => {
         const file = event.target.files[0];
-        setImageFile(file); 
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setImagePreview(reader.result);
-        };
         if (file) {
-            reader.readAsDataURL(file);
-        } else {
-            setImagePreview(null);
+            const cloudImg = await cloudinaryUpload(file)
+            setCloudImage(cloudImg)
+            const imageUrl = URL.createObjectURL(file);
+            setSelectedImage(imageUrl); 
         }
     };
 
@@ -178,18 +176,24 @@ export default function ServingMethod() {
         formData.append('name', servingMethodInput.name);
         formData.append('price', servingMethodInput.price);
         formData.append('description', servingMethodInput.description);
-        formData.append('photo', imageFile);
+        formData.append('photo', cloudImage);
         formData.append('categoryId', selectedServingCategory?._id);
         if (isUpdateData) {
-            dispatch(EditServingMethodItemAction(servingMethodInput._id, servingMethodInput))
+            const updatedFoodItemInput = {
+                ...servingMethodInput,
+                photo: cloudImage, 
+              };
+            dispatch(EditServingMethodItemAction(servingMethodInput._id, updatedFoodItemInput))
               .then(response => {          
                 setServingMethods(prev => 
                   prev.map(item => 
                     item._id === servingMethodInput._id ? response : item
                   )
                 );
-                setServingMethodInput({ name: '', price: '', description: '', photo: null });
+                setServingMethodInput({ name: '', price: '', description: '', photo: null,categoryId:'' });
                 setImagePreview(null); 
+                setCloudImage("");
+                setSelectedImage("");
                 onOpenChange(false); 
               })
               .catch(error => {
@@ -202,6 +206,8 @@ export default function ServingMethod() {
             .then(response => {
                 console.log('Item added successfully:', response);
                 setServingMethods((prev) =>[...prev,response])
+                setCloudImage("");
+                setSelectedImage("");
                 setServingMethodInput({ name: '', price: '', description: '', photo: null });
                 setImagePreview(null);
                 onOpenChange(false);
@@ -257,7 +263,7 @@ export default function ServingMethod() {
     };
 
     const handleEditServingMethod = (item) => {
-        if (selectedServingMethod) {
+        if (selectedServingMethod && selectedServingCategory?._id) {
             onOpen();
             setPopupVisible(false);
             setIsUpdateData(true)
@@ -266,9 +272,10 @@ export default function ServingMethod() {
                 price: item?.price, 
                 description: item?.description, 
                 photo: null,
-                _id: item?._id
+                _id: item?._id,
+                categoryId:selectedServingCategory?._id
               });
-   
+              setSelectedImage(item?.photo)
 }
     }
     const [isDelOpen, setIsDelOpen] = useState(false);
@@ -351,7 +358,7 @@ export default function ServingMethod() {
                                                 className="text-center mt-[39px] bg-transparent border-none outline-none"
                                                 autoFocus
                                             />
-                                            <p className="text-red-500 hover:bg-red-100 z-[200] border-[1.5px] w-[123px] flex justify-center  text-center mt-[10px] rounded-[5px] font-Poppins cursor-pointer mx-auto" onClick={() => handleCategoryDelete(editingCategory)}>Delete</p>
+                                            <p className="text-red-500 hover:bg-red-100 z-[200] border-[1.5px] w-[123px] flex justify-center  text-center mt-[10px] rounded-[5px] font-Poppins cursor-pointer mx-auto" onClick={() => handleCategoryDelete(editingCategoryId)}>Delete</p>
                                         </div>
                                     </>
                                 ) : (
@@ -364,7 +371,7 @@ export default function ServingMethod() {
 
                     <div className="flex flex-wrap gap-[20px] ">
 
-                        <div className="border-[1px] border-dashed border-[#feaa00] rounded-[8px] h-[100%] w-[180px] cursor-pointer" onClick={onOpen}>
+                        <div className="border-[1px] border-dashed border-[#feaa00] rounded-[8px] h-[100%] w-[180px] cursor-pointer" onClick={() =>{setSelectedImage("");setCloudImage();setServingMethodInput({});onOpen()}}>
                             <div className="flex justify-center h-[140px] items-center pt-[10px]">
                                 <i className="text-[70px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
                             </div>
@@ -433,24 +440,22 @@ export default function ServingMethod() {
                                     <div className=" w-[100%] flex gap-[29px] flex-col">
                                         <div className="w-[100%] flex gap-[16px]">
                                             <div className="border-[1px] border-dashed max-h-[170px]  border-[#feaa00] rounded-[8px] flex justify-center items-center w-[167px] cursor cursor-pointer" onClick={onOpen}>
-                                                <label htmlFor="imageUpload" className="cursor-pointer flex justify-center !w-[560px]">
-                                                    {imagePreview ? (
-                                                        <img
-                                                            src={imagePreview}
-                                                            className="h-[160px] w-[600px] rounded-[8px]"
-                                                        />
-                                                    ) : (
-                                                        <i className="text-[60px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
-                                                    )}
-                                                    <input
-                                                        type="file"
-                                                        id="imageUpload"
-                                                        name="photo"
-                                                        className="hidden"
-                                                        onChange={handleFileChange}
-                                                        accept="image/*" 
-                                                    />
+                                            <label htmlFor="imageUpload" className="cursor-pointer flex justify-center !w-[560px]">
+                                                      {selectedImage ? (
+                                                    <img src={selectedImage} alt="Selected" className="h-[160px] w-[600px] rounded-[8px]" />
+                                                ) : (
+                                                    <i className="text-[60px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
+                                                )}
+                                                <input
+                                                    type="file"
+                                                    id="imageUpload"
+                                                    name="photo"
+                                                    className="hidden"
+                                                    onChange={handleFileChange}
+                                                    accept="image/*"
+                                                />
                                                 </label>
+
 
                                             </div>
 

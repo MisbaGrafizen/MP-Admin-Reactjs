@@ -35,6 +35,10 @@ export default function MasterManage() {
     const paginatedDesignation = designations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const [deleteInfo, setDeleteInfo] = useState({});
 
+    useEffect(()=>{
+        setCurrentPage(1)
+    },[activeForm])
+
     const handleBack = () => {
         navigate(-1)
     }
@@ -127,6 +131,7 @@ export default function MasterManage() {
 
     const handleEditPravruti = (index) => {
         setEditIndexPravruti(index);
+        console.log("pravruties[index]sd",pravruties[index])
         setPravrutiName(pravruties[index].name);
     };
 
@@ -152,15 +157,33 @@ export default function MasterManage() {
         };
     }, [dropdownRef]);
 
+    useEffect(() => {
+        if (currentPage > totalPages && totalPages > 0) {
+          setCurrentPage(currentPage - 1);
+        }
+      }, [pravruties,totalPages]); 
+    
+    useEffect(() => {
+        if (currentPage > totalPageskhestras && totalPageskhestras > 0) {
+          setCurrentPage(currentPage - 1);
+        }
+      }, [kshetras,totalPageskhestras]); 
 
+    useEffect(() => {
+        if (currentPage > totalPagesdesignation && totalPagesdesignation > 0) {
+          setCurrentPage(currentPage - 1);
+        }
+      }, [designations,totalPagesdesignation]); 
+    
 
     const goToPage = (pageNumber) => {
         setCurrentPage(pageNumber);
         setDropdownOpen(false);
     };
     const handleDeleteRecord = async () => {
-        console.log("comsdfgjfhgfd",deleteInfo.typeofManges)
-        console.log(deleteInfo?.pravruti?._id)
+        console.log("sdsdsdsds",pravruties.length)
+        console.log("data",currentPage)
+        
         if (deleteInfo.typeofManges === "pravruti" && deleteInfo?.pravruti?._id) {
                 console.log("sdfdfsgdfg",deleteInfo?.pravruti?._id)
                 await dispatch(DeletePravrutiAction(deleteInfo?.pravruti?._id)).then(()=>{
@@ -251,7 +274,7 @@ export default function MasterManage() {
                                             <p className="text-[15px] font-Outfit">{pravruti.name}</p>
                                         </div>
                                         <div className="flex justify-center items-center text-center py-3 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
-                                            <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditPravruti(index)} />
+                                            <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditPravruti(index + 0 + (currentPage - 1) * itemsPerPage)} />
                                             <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can" onClick={() =>handleDelete(pravruti,{typeofManges:'pravruti'})}></i>
                                         </div>
                                     </div>
@@ -348,14 +371,14 @@ export default function MasterManage() {
                                                     style={{ width: "15px", height: '15px' }}
                                                     className='ml-[-8%]'
                                                 />
-                                                <p className="w-fit text-[17px] mt-[2%] font-Outfit">{index + 1}</p>
+                                                <p className="w-fit text-[17px] mt-[2%] font-Outfit">{index + 1 + (currentPage - 1) * itemsPerPage}</p>
                                             </div>
 
                                             <div className="flex justify-start text-center py-3 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
                                                 <p className="text-[15px] font-Outfit">{kshetra.name}</p>
                                             </div>
                                             <div className="flex justify-center items-center text-center py-3 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
-                                                <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditKshetra(index)} />
+                                                <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditKshetra(index + 0 + (currentPage - 1) * itemsPerPage)} />
                                                 <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can"
                                                  onClick={() =>handleDelete(kshetra,{typeofManges:'kshetra'})}
                                                     ></i>
@@ -454,13 +477,13 @@ export default function MasterManage() {
                                                     style={{ width: "15px", height: '15px' }}
                                                     className='ml-[-8%]'
                                                 />
-                                                <p className="w-fit text-[17px] mt-[2%] font-Outfit">{index + 1}</p>
+                                                <p className="w-fit text-[17px] mt-[2%] font-Outfit">{index + 1 + (currentPage - 1) * itemsPerPage}</p>
                                             </div>
                                             <div className="flex justify-start text-center py-3 border-r border-b border-black px-3 min-w-[88%] max-w-[88%]">
                                                 <p className="text-[15px] font-Outfit">{designation.name}</p>
                                             </div>
                                             <div className="flex justify-center items-center text-center py-3 border-b gap-[13px] border-black px-3 min-w-[6%] max-w-[6%]">
-                                                <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditDesignation(index)} />
+                                                <img className='w-[26px] cursor-pointer' src={Editpng} alt="Edit" onClick={() => handleEditDesignation(index + 0 + (currentPage - 1) * itemsPerPage)} />
                                                 <i className="text-[23px] cursor-pointer mt-[2px] text-[#ff0b0b] fa-solid fa-trash-can"  onClick={() =>handleDelete(designation,{typeofManges:'designations'})}></i>
                                             </div>
                                         </div>

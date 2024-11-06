@@ -169,10 +169,6 @@ export default function CreateUser() {
     }
   };
 
-
-
-
-
   const handleCheckboxChange = (index) => {
     setCheckedItems(prevCheckedItems => {
       if (prevCheckedItems.includes(index)) {
@@ -195,6 +191,11 @@ export default function CreateUser() {
   const handelAddData = async () =>{
     setIsEditData(false)
   }
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  }, [users,totalPages]); 
   return (
     <>
       <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto ">
@@ -288,11 +289,11 @@ export default function CreateUser() {
                               <input
                                 type="checkbox"
                                 checked={checkedItems.includes(index)}
-                                onChange={() => handleCheckboxChange(index)}
+                                onChange={() => handleCheckboxChange(index + 1)}
                                 style={{ width: "15px", height: '15px' }}
                                 className='ml-[-25%]'
                               />
-                              <p className="font-[600] md11:text-[15px] md150:text-[17px] md11:mt-[5%] md150:mt-[2%]">{index + 1}</p>
+                              <p className="font-[600] md11:text-[15px] md150:text-[17px] md11:mt-[5%] md150:mt-[2%]">{index + 1 + (currentPage - 1) * itemsPerPage}</p>
                             </div>
 
                             <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">

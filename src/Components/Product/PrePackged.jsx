@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 import { addFoodCategoryAction, addFoodItemAction, addPrePackageFoodCategoryAction, addPrePackageFoodItemAction, DeletePrePackageCategoryAction, deletePrePackageMethodByIdAction, EditPrePackageFoodItemAction, getAllFoodCategoryAction, getAllPrePackageFoodCategoryAction, getFoodItemByCategoryIdAction, getPrePackageFoodItemByCategoryIdAction, UpdatePrePackageCategoryNameAction } from '../../redux/action/productMaster';
 import { useDispatch, useSelector } from 'react-redux';
+import cloudinaryUpload from '../../helper/cloudinaryUpload';
 
 export default function PrePackged({ methodType }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -12,7 +13,7 @@ export default function PrePackged({ methodType }) {
     const [isDelOpen, setIsDelOpen] = useState(false);
     const [deleteData, setDeleteData] = useState("")
     const [selectedButton, setSelectedButton] = useState(0);
-    const [foodItemInput, setFoodItemInput] = useState({ name: '', price: '', description: '', photo: '' });
+    const [foodItemInput, setFoodItemInput] = useState({ name: '', price: '', description: '', photo: '',foodId: '' });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [editingCategory, setEditingCategory] = useState(null);
@@ -26,7 +27,8 @@ export default function PrePackged({ methodType }) {
     const dispatch = useDispatch();
     const [isCategoryDelete, setIsCategoryDelete] = useState("")
     const [categoriesDeleteId, setCategoriesDeleteId] = useState("")
-
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [cloudImage,setCloudImage] = useState("");
     useEffect(() => {
         const fetchCategories = async () => {
             if (methodType === "PRE-PACKGED") {
@@ -132,18 +134,22 @@ export default function PrePackged({ methodType }) {
         formData.append('name', foodItemInput.name);
         formData.append('price', foodItemInput.price);
         formData.append('description', foodItemInput.description);
-        formData.append('photo', imageFile);
+        formData.append('photo', cloudImage);
         formData.append('foodId', selectedFoodCategory?._id);
 
         if (isUpdateData) {
-            dispatch(EditPrePackageFoodItemAction(foodItemInput._id, foodItemInput))
+            const updatedFoodItemInput = {
+                ...foodItemInput,
+                photo: cloudImage, 
+              };
+            dispatch(EditPrePackageFoodItemAction(foodItemInput._id, updatedFoodItemInput))
                 .then(response => {
                     setFoodItems(prev =>
                         prev.map(item =>
                             item._id === foodItemInput._id ? response : item
                         )
                     );
-                    setFoodItemInput({ name: '', price: '', description: '', photo: null });
+                    setFoodItemInput({ name: '', price: '', description: '', photo: null,foodId:'' });
                     setImagePreview(null);
                     onOpenChange(false);
                 })
@@ -169,21 +175,30 @@ export default function PrePackged({ methodType }) {
 
     };
 
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        setImageFile(file);
+    // const handleFileChange = (event) => {
+    //     const file = event.target.files[0];
+    //     setImageFile(file);
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setImagePreview(reader.result);
-        };
+    //     const reader = new FileReader();
+    //     reader.onloadend = () => {
+    //         setImagePreview(reader.result);
+    //     };
+    //     if (file) {
+    //         reader.readAsDataURL(file);
+    //     } else {
+    //         setImagePreview(null);
+    //     }
+    // };
+
+    const handleFileChange = async(event) => {
+        const file = event.target.files[0];
         if (file) {
-            reader.readAsDataURL(file);
-        } else {
-            setImagePreview(null);
+            const cloudImg = await cloudinaryUpload(file)
+            setCloudImage(cloudImg)
+            const imageUrl = URL.createObjectURL(file);
+            setSelectedImage(imageUrl); 
         }
     };
-
     const [textareaValue, setTextareaValue] = useState(() => {
         return Array.from({ length: 1 }, (_, i) => `${i + 1}. `).join('\n');
     });
@@ -276,7 +291,7 @@ export default function PrePackged({ methodType }) {
 
 
     const handleEditFoodItem = (item) => {
-        if (selectedFoodItem) {
+        if (selectedFoodItem && selectedFoodCategory?._id) {
             onOpen();
             setPopupVisible(false);
             setIsUpdateData(true)
@@ -285,8 +300,10 @@ export default function PrePackged({ methodType }) {
                 price: item?.price,
                 description: item?.description,
                 photo: null,
-                _id: item?._id
+                _id: item?._id,
+                foodId:selectedFoodCategory?._id
             });
+            setSelectedImage(item?.photo)
         }
     };
 
@@ -374,7 +391,8 @@ export default function PrePackged({ methodType }) {
                     </div>
 
                     <div className=" flex-wrap  flex rlative  gap-[20px] ">
-                        <div className="border-[1px]  h-[100%] border-dashed border-[#feaa00] rounded-[8px]  w-[180px] cursor-pointer" onClick={onOpen}>
+                        <div className="border-[1px]  h-[100%] border-dashed border-[#feaa00] rounded-[8px]  w-[180px] cursor-pointer"  
+                        onClick={() =>{setSelectedImage("");setCloudImage();setFoodItemInput({});onOpen();}} >
                             <div className="flex justify-center h-[140px] items-center pt-[10px]">
                                 <i className="text-[70px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
                             </div>
@@ -447,23 +465,20 @@ export default function PrePackged({ methodType }) {
                                     <div className=" w-[100%] flex gap-[29px] flex-col">
                                         <div className="w-[100%] flex gap-[16px]">
                                             <div className="border-[1px] border-dashed max-h-[170px]  border-[#feaa00] rounded-[8px] flex justify-center items-center w-[167px] cursor cursor-pointer" onClick={onOpen}>
-                                                <label htmlFor="imageUpload" className="cursor-pointer flex justify-center !w-[560px]">
-                                                    {imagePreview ? (
-                                                        <img
-                                                            src={imagePreview}
-                                                            className="h-[160px] w-[600px] rounded-[8px]"
-                                                        />
-                                                    ) : (
-                                                        <i className="text-[60px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
-                                                    )}
-                                                    <input
-                                                        type="file"
-                                                        id="imageUpload"
-                                                        name="photo"
-                                                        className="hidden"
-                                                        onChange={handleFileChange}
-                                                        accept="image/*"
-                                                    />
+                                            <label htmlFor="imageUpload" className="cursor-pointer flex justify-center !w-[560px]">
+                                                      {selectedImage ? (
+                                                    <img src={selectedImage} alt="Selected" className="h-[160px] w-[600px] rounded-[8px]" />
+                                                ) : (
+                                                    <i className="text-[60px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
+                                                )}
+                                                <input
+                                                    type="file"
+                                                    id="imageUpload"
+                                                    name="photo"
+                                                    className="hidden"
+                                                    onChange={handleFileChange}
+                                                    accept="image/*"
+                                                />
                                                 </label>
 
                                             </div>
