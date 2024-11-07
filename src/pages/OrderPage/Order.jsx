@@ -1,17 +1,29 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import Header from '../../Components/header/Header';
-import { Modal as NextUIModal, ModalBody, ModalContent } from '@nextui-org/react';
-import { getAllPadiOrderListAction, getAllPrePackagePadiOrderListAction, getAllPrePackageUnpadiOrderListAction, getAllUnpadiOrderListAction } from '../../redux/action/orderListing';
-import { useDispatch, useSelector } from 'react-redux';
-import { getPaymentByIdAction, getPrePackagePaymentByIdAction } from '../../redux/action/payment';
-import { useNavigate } from 'react-router-dom';
-
+import React, { useState, useEffect, useMemo } from "react";
+import Header from "../../Components/header/Header";
+import {
+  Modal as NextUIModal,
+  ModalBody,
+  ModalContent,
+} from "@nextui-org/react";
+import {
+  getAllPadiOrderListAction,
+  getAllPrePackagePadiOrderListAction,
+  getAllPrePackageUnpadiOrderListAction,
+  getAllUnpadiOrderListAction,
+} from "../../redux/action/orderListing";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getPaymentByIdAction,
+  getPrePackagePaymentByIdAction,
+} from "../../redux/action/payment";
+import { useNavigate } from "react-router-dom";
+import userpng from "../../../public/img/AdminSpalsh/user 3.png";
+import Logout from "../../Components/logout/Logout";
 
 export default function OrderManagement() {
-
-  const [activeTab, setActiveTab] = useState('self-serving');
+  const [activeTab, setActiveTab] = useState("self-serving");
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState("all");
   const [isNotifictionModalOpen, setIsNotifictionModalOpen] = useState(false);
   const [isPackgingModalOpen, setPackegingModalOpen] = useState(false);
   const [isReciptModalOpen, setReciptModalOpen] = useState(false);
@@ -21,17 +33,27 @@ export default function OrderManagement() {
   const [paymentData, setPaymentData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const paidOrderList = useSelector((state) => state.orderListingState?.getPaidOrderList);
-  const unpaidOrderList = useSelector((state) => state.orderListingState?.getUnpaidOrderList);
-  const prePackagePaidOrderList = useSelector((state) => state.orderListingState?.getPrePackagePaidOrderList);
-  const prePackageUnpaidOrderList = useSelector((state) => state.orderListingState?.getPrePackageUnpaidOrderList);
-  const prePayment = useSelector((state) => state.paymentState?.getPrePackagePayment);
+  const paidOrderList = useSelector(
+    (state) => state.orderListingState?.getPaidOrderList
+  );
+  const unpaidOrderList = useSelector(
+    (state) => state.orderListingState?.getUnpaidOrderList
+  );
+  const prePackagePaidOrderList = useSelector(
+    (state) => state.orderListingState?.getPrePackagePaidOrderList
+  );
+  const prePackageUnpaidOrderList = useSelector(
+    (state) => state.orderListingState?.getPrePackageUnpaidOrderList
+  );
+  const prePayment = useSelector(
+    (state) => state.paymentState?.getPrePackagePayment
+  );
   const payment = useSelector((state) => state.paymentState?.getPayment);
   const handleBack = () => {
     navigate(-1);
-  }
+  };
 
   useEffect(() => {
     dispatch(getAllPadiOrderListAction());
@@ -44,7 +66,6 @@ export default function OrderManagement() {
     setSelectedOrder(orderId);
   };
 
-
   const selectedOrderData = useMemo(() => {
     return (
       paidOrderList.find((order) => order._id === selectedOrder) ||
@@ -52,39 +73,43 @@ export default function OrderManagement() {
       prePackagePaidOrderList.find((order) => order._id === selectedOrder) ||
       prePackageUnpaidOrderList.find((order) => order._id === selectedOrder)
     );
-  }, [selectedOrder, paidOrderList, unpaidOrderList, prePackagePaidOrderList, prePackageUnpaidOrderList]);
+  }, [
+    selectedOrder,
+    paidOrderList,
+    unpaidOrderList,
+    prePackagePaidOrderList,
+    prePackageUnpaidOrderList,
+  ]);
 
   function formatDateAndTime(dateInput) {
     const date = new Date(dateInput);
     if (isNaN(date.getTime())) {
-      return 'Invalid Date';
+      return "Invalid Date";
     }
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
 
     let hours = date.getHours();
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12;
     hours = hours ? hours : 12;
     return `${day}/${month}/${year} - ${hours}:${minutes} ${ampm}`;
   }
 
-
   const openNotifictionModal = () => {
     setIsNotifictionModalOpen(true);
-    window.history.pushState({}, '');
+    window.history.pushState({}, "");
   };
   const closeNotifictionModal = () => {
     setIsNotifictionModalOpen(false);
     window.history.back();
   };
 
-
   const openPackgingnModal = () => {
     setPackegingModalOpen(true);
-    window.history.pushState({}, '');
+    window.history.pushState({}, "");
   };
 
   const closePackgingModal = () => {
@@ -92,21 +117,24 @@ export default function OrderManagement() {
     window.history.back();
   };
 
-
-
   const closeOrderModal = () => {
     setOrderReciptModalOpen(false);
     window.history.back();
   };
 
-
-  const paidOrderCount = activeTab === 'self-serving' ? paidOrderList?.length : prePackagePaidOrderList?.length;
-  const unpaidOrderCount = activeTab === 'self-serving' ? unpaidOrderList?.length : prePackageUnpaidOrderList?.length;
+  const paidOrderCount =
+    activeTab === "self-serving"
+      ? paidOrderList?.length
+      : prePackagePaidOrderList?.length;
+  const unpaidOrderCount =
+    activeTab === "self-serving"
+      ? unpaidOrderList?.length
+      : prePackageUnpaidOrderList?.length;
   const allOrderCount = paidOrderCount + unpaidOrderCount;
 
   const openReciptModal = () => {
     setReciptModalOpen(true);
-    window.history.pushState({}, '');
+    window.history.pushState({}, "");
   };
 
   const closeReciptModal = () => {
@@ -133,63 +161,69 @@ export default function OrderManagement() {
     window.history.back();
   };
 
-
-
   const paidOrder = {
-    id: '30481',
-    date: '21/08/2024 - 09:20 PM',
-    forDate: '23/08/2024',
-    location: 'Shraddhapark',
-    name: 'MR. HITESH OZA',
-    total: '₹ 360',
+    id: "30481",
+    date: "21/08/2024 - 09:20 PM",
+    forDate: "23/08/2024",
+    location: "Shraddhapark",
+    name: "MR. HITESH OZA",
+    total: "₹ 360",
     items: [
-      { name: 'ONLY BHAJI 200GMS', qty: '05', price: '₹ 180.00' },
-      { name: 'ONLY BHAJI 200GMS', qty: '05', price: '₹ 180.00' },
+      { name: "ONLY BHAJI 200GMS", qty: "05", price: "₹ 180.00" },
+      { name: "ONLY BHAJI 200GMS", qty: "05", price: "₹ 180.00" },
     ],
-    status: 'Order successful',
-    address: 'Shraddhapark',
+    status: "Order successful",
+    address: "Shraddhapark",
     paid: true,
   };
 
   const unpaidOrder = {
-    id: '30482',
-    date: '22/08/2024 - 08:10 PM',
-    forDate: '24/08/2024',
-    location: 'Shraddhapark',
-    name: 'MR. RAJESH KUMAR',
-    total: '₹ 420',
+    id: "30482",
+    date: "22/08/2024 - 08:10 PM",
+    forDate: "24/08/2024",
+    location: "Shraddhapark",
+    name: "MR. RAJESH KUMAR",
+    total: "₹ 420",
     items: [
-      { name: 'ONLY BHAJI 300GMS', qty: '04', price: '₹ 200.00' },
-      { name: 'ONLY BHAJI 300GMS', qty: '04', price: '₹ 200.00' },
+      { name: "ONLY BHAJI 300GMS", qty: "04", price: "₹ 200.00" },
+      { name: "ONLY BHAJI 300GMS", qty: "04", price: "₹ 200.00" },
     ],
-    status: 'Order successful',
-    address: 'Shraddhapark',
-    paid: false, 
+    status: "Order successful",
+    address: "Shraddhapark",
+    paid: false,
   };
 
-  const shouldShowPaid = activeFilter === 'all' || activeFilter === 'paid';
-  const shouldShowUnpaid = activeFilter === 'all' || activeFilter === 'unpaid';
-
+  const shouldShowPaid = activeFilter === "all" || activeFilter === "paid";
+  const shouldShowUnpaid = activeFilter === "all" || activeFilter === "unpaid";
 
   useEffect(() => {
-    if (activeTab === 'self-serving') {
-      if (activeFilter === 'all') {
+    if (activeTab === "self-serving") {
+      if (activeFilter === "all") {
         setSelectedOrder(paidOrderList[0]?._id || unpaidOrderList[0]?._id);
-      } else if (activeFilter === 'paid') {
+      } else if (activeFilter === "paid") {
         setSelectedOrder(paidOrderList[0]?._id);
-      } else if (activeFilter === 'unpaid') {
+      } else if (activeFilter === "unpaid") {
         setSelectedOrder(unpaidOrderList[0]?._id);
       }
-    } else if (activeTab === 'pre-packaged') {
-      if (activeFilter === 'all') {
-        setSelectedOrder(prePackagePaidOrderList[0]?._id || prePackageUnpaidOrderList[0]?._id);
-      } else if (activeFilter === 'paid') {
+    } else if (activeTab === "pre-packaged") {
+      if (activeFilter === "all") {
+        setSelectedOrder(
+          prePackagePaidOrderList[0]?._id || prePackageUnpaidOrderList[0]?._id
+        );
+      } else if (activeFilter === "paid") {
         setSelectedOrder(prePackagePaidOrderList[0]?._id);
-      } else if (activeFilter === 'unpaid') {
+      } else if (activeFilter === "unpaid") {
         setSelectedOrder(prePackageUnpaidOrderList[0]?._id);
       }
     }
-  }, [activeFilter, activeTab, paidOrderList, unpaidOrderList, prePackagePaidOrderList, prePackageUnpaidOrderList]);
+  }, [
+    activeFilter,
+    activeTab,
+    paidOrderList,
+    unpaidOrderList,
+    prePackagePaidOrderList,
+    prePackageUnpaidOrderList,
+  ]);
 
   const openOrderModal = async () => {
     setLoading(true);
@@ -199,7 +233,9 @@ export default function OrderManagement() {
       if (activeTab === "self-serving") {
         data = await dispatch(getPaymentByIdAction(selectedOrderData._id));
       } else if (activeTab === "pre-packaged") {
-        data = await dispatch(getPrePackagePaymentByIdAction(selectedOrderData._id));
+        data = await dispatch(
+          getPrePackagePaymentByIdAction(selectedOrderData._id)
+        );
       }
 
       setPaymentData(data);
@@ -213,41 +249,42 @@ export default function OrderManagement() {
     }
   };
 
-
-
   return (
     <>
       <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto ">
-        <div className=" mx-auto flex gap-[30px] w-[100%] md11:h-[92vh] md150:h-[90vh] flex-col relative    rounded-[19px] border-[1px] border-[#FEAA00]">
-
+        <div className=" mx-auto flex gap-[30px] w-[100%] md11:h-[92vh] md150:h-[90vh] flex-col relative    rounded-[19px] border-[1px] border-[#F28C28]">
           <div className="flex absolute gap-[10px] left-[3%]  md11:top-[4.1%]  md150:top-[5%] items-center    md11:text-[18px] md150:text-[20px] font-[600]">
-            <i className="fa-solid fa-angle-up fa-rotate-270" onClick={handleBack}></i>
+            <i
+              className="fa-solid fa-angle-up fa-rotate-270"
+              onClick={handleBack}
+            ></i>
 
-            <div className=' font-Potua  flex items-center gap-[10px] cursor-pointer' onClick={handleBack}>
-              <p>
-                ORDERS
-              </p>
-              <p>
-                MANAGEMENT
-              </p>
+            <div
+              className=" font-Potua  flex items-center gap-[10px] cursor-pointer"
+              onClick={handleBack}
+            >
+              <p>ORDERS</p>
+              <p>MANAGEMENT</p>
             </div>
           </div>
           <div className="flex absolute md150:top-[5.9%] top-[5%] gap-[10px]  right-[7%] ">
             <div
               onClick={() => setActiveTab("self-serving")}
-              className={`w-[130px] p-[8px]  rounded-tl-[7px] font-[500]  rounded-tr-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "self-serving"
-                ? "bg-[#FEAA00] text-[#fff]"
-                : "border-t-[1px] border-l-[1px] border-r-[1px]"
-                }`}
+              className={`w-[130px] p-[8px]  rounded-tl-[7px] font-[500]  rounded-tr-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${
+                activeTab === "self-serving"
+                  ? "bg-[#F28C28] text-[#fff]"
+                  : "border-t-[1px] border-l-[1px] border-r-[1px]"
+              }`}
             >
               <p>Self Serving</p>
             </div>
             <div
               onClick={() => setActiveTab("pre-packaged")}
-              className={`w-[130px] p-[8px]  rounded-tr-[7px] font-[500]  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "pre-packaged"
-                ? "bg-[#FEAA00] text-[#fff]"
-                : "border-t-[1px] border-l-[1px] border-r-[1px]"
-                }`}
+              className={`w-[130px] p-[8px]  rounded-tr-[7px] font-[500]  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${
+                activeTab === "pre-packaged"
+                  ? "bg-[#F28C28] text-[#fff]"
+                  : "border-t-[1px] border-l-[1px] border-r-[1px]"
+              }`}
             >
               <p>Pre - Packaged</p>
             </div>
@@ -257,37 +294,46 @@ export default function OrderManagement() {
             <Header />
             {activeTab === "self-serving" && (
               <div className="md150:py-[20px] md150:px-[20px] md11:px-[15px] md11:py-[15px] flex gap-[10px] md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
-                <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
+                <div className="w-[23%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#F28C28] overflow-y-auto">
                   <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[30px] md11:text-[14px] md150:text-[16px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
                     <div
-                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
-                        ? "bg-[#00984B] text-white py-[70px]"
-                        : "bg-white text-[#000]"
-                        }`}
+                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${
+                        activeFilter === "all"
+                          ? "bg-[#00984B] text-white py-[70px]"
+                          : "bg-white text-[#000]"
+                      }`}
                       onClick={() => setActiveFilter("all")}
                     >
                       <p>All</p>
-                      <p className='md11:text-[10px] md150:text-[14px]'>({allOrderCount})</p>
+                      <p className="md11:text-[10px] md150:text-[14px]">
+                        ({allOrderCount})
+                      </p>
                     </div>
                     <div
-                      className={`w-[100%] h-[100%] gap-[5px] font-[500] text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
-                        ? "bg-[#006198] text-white py-[70px]"
-                        : "bg-white text-[#000]"
-                        }`}
+                      className={`w-[100%] h-[100%] gap-[5px] font-[500] text-center flex items-center justify-center cursor-pointer ${
+                        activeFilter === "paid"
+                          ? "bg-[#006198] text-white py-[70px]"
+                          : "bg-white text-[#000]"
+                      }`}
                       onClick={() => setActiveFilter("paid")}
                     >
                       <p>Paid</p>
-                      <p className='md11:text-[10px] md150:text-[14px]'>({paidOrderCount})</p>
+                      <p className="md11:text-[10px] md150:text-[14px]">
+                        ({paidOrderCount})
+                      </p>
                     </div>
                     <div
-                      className={`w-[100%] gap-[5px]   font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
-                        ? "bg-[RED] text-white  py-[70px]"
-                        : "bg-white text-[#000]"
-                        }`}
+                      className={`w-[100%] gap-[5px]   font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${
+                        activeFilter === "unpaid"
+                          ? "bg-[RED] text-white  py-[70px]"
+                          : "bg-white text-[#000]"
+                      }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
                       <p>Unpaid </p>
-                      <p className='md11:text-[10px] md150:text-[14px]'>({unpaidOrderCount})</p>
+                      <p className="md11:text-[10px] md150:text-[14px]">
+                        ({unpaidOrderCount})
+                      </p>
                     </div>
                   </div>
 
@@ -310,10 +356,11 @@ export default function OrderManagement() {
                           <p>Pickup location - {order?.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
-                            ? "bg-[#00984B] text-white"
-                            : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
-                            }`}
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
+                            selectedOrder === order._id
+                              ? "bg-[#00984B] text-white"
+                              : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
+                          }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -339,10 +386,11 @@ export default function OrderManagement() {
                           <p>Pickup location - {order.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
-                            ? "bg-[#FF0606] text-white"
-                            : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
-                            }`}
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
+                            selectedOrder === order._id
+                              ? "bg-[#FF0606] text-white"
+                              : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
+                          }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -351,7 +399,7 @@ export default function OrderManagement() {
                 </div>
 
                 {selectedOrderData && (
-                  <div className="w-[75%] relative no-scrollbar rounded-[10px] justify-between  gap-[10px] flex flex-col p-[15px] h-[100%] border-[1.4px] border-[#FEAA00] overflow-y-auto">
+                  <div className="w-[75%] relative no-scrollbar rounded-[10px] justify-between  gap-[10px] flex flex-col p-[15px] h-[100%] border-[1.4px] border-[#F28C28] overflow-y-auto">
                     <div className="flex justify-between  pt-[3px]">
                       <div className="md150:text-[18px] md11:text-[16px]  items-center  flex gap-[20px] font-[500]">
                         <p>ORDERS DETAILS</p>
@@ -361,10 +409,11 @@ export default function OrderManagement() {
                         ></i>
                       </div>
                       <div
-                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center  ${selectedOrder === 0
-                          ? "text-[#00984B]"
-                          : "text-[#FF0606]"
-                          }`}
+                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center  ${
+                          selectedOrder === 0
+                            ? "text-[#00984B]"
+                            : "text-[#FF0606]"
+                        }`}
                       >
                         <p>
                           {paidOrderList.find(
@@ -376,10 +425,11 @@ export default function OrderManagement() {
                       </div>
                     </div>
                     <div
-                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${selectedOrder === 0
-                        ? "border-[#00984B]"
-                        : "border-[#FF0606]"
-                        }`}
+                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${
+                        selectedOrder === 0
+                          ? "border-[#00984B]"
+                          : "border-[#FF0606]"
+                      }`}
                     >
                       <div className="w-[100%] flex justify-between">
                         <div className="md150:text-[14px] md11:text-[13px] font-[400]">
@@ -508,7 +558,6 @@ export default function OrderManagement() {
                           <p>Reject Order</p>
                         </div>
 
-
                         {paidOrderList.find(
                           (order) => order._id === selectedOrder
                         ) ? (
@@ -534,37 +583,47 @@ export default function OrderManagement() {
             )}
             {activeTab === "pre-packaged" && (
               <div className="md150:py-[20px] md150:px-[20px] md11:px-[15px] md11:py-[15px] flex gap-[10px] md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
-                <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#FEAA00] overflow-y-auto">
+                <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#F28C28] overflow-y-auto">
                   <div className="w-[100%] md11:text-[14px] md150:text-[16px] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] text-[14px] flex justify-between border-[#595454]">
                     <div
-                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
-                        ? "bg-[#00984B] text-white py-[70px]"
-                        : "bg-white text-[#000]"
-                        }`}
+                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${
+                        activeFilter === "all"
+                          ? "bg-[#00984B] text-white py-[70px]"
+                          : "bg-white text-[#000]"
+                      }`}
                       onClick={() => setActiveFilter("all")}
                     >
                       <p>All</p>
-                      <p className='md11:text-[10px] md150:text-[14px]'> ({allOrderCount})</p>
+                      <p className="md11:text-[10px] md150:text-[14px]">
+                        {" "}
+                        ({allOrderCount})
+                      </p>
                     </div>
                     <div
-                      className={`w-[100%] h-[100%] gap-[5px]  font-[500] text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
-                        ? "bg-[#006198] text-white py-[70px]"
-                        : "bg-white text-[#000]"
-                        }`}
+                      className={`w-[100%] h-[100%] gap-[5px]  font-[500] text-center flex items-center justify-center cursor-pointer ${
+                        activeFilter === "paid"
+                          ? "bg-[#006198] text-white py-[70px]"
+                          : "bg-white text-[#000]"
+                      }`}
                       onClick={() => setActiveFilter("paid")}
                     >
                       <p>Paid</p>
-                      <p className='md11:text-[10px] md150:text-[14px]'>({paidOrderCount})</p>
+                      <p className="md11:text-[10px] md150:text-[14px]">
+                        ({paidOrderCount})
+                      </p>
                     </div>
                     <div
-                      className={`w-[100%]  gap-[5px] font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
-                        ? "bg-[RED] text-white  py-[70px]"
-                        : "bg-white text-[#000]"
-                        }`}
+                      className={`w-[100%]  gap-[5px] font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${
+                        activeFilter === "unpaid"
+                          ? "bg-[RED] text-white  py-[70px]"
+                          : "bg-white text-[#000]"
+                      }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
                       <p>Unpaid</p>
-                      <p className='md11:text-[10px] md150:text-[14px]'>({unpaidOrderCount})</p>
+                      <p className="md11:text-[10px] md150:text-[14px]">
+                        ({unpaidOrderCount})
+                      </p>
                     </div>
                   </div>
 
@@ -588,10 +647,11 @@ export default function OrderManagement() {
                           <p>Pickup location - {order?.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
-                            ? "bg-[#00984B] text-white"
-                            : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
-                            }`}
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
+                            selectedOrder === order._id
+                              ? "bg-[#00984B] text-white"
+                              : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
+                          }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -618,10 +678,11 @@ export default function OrderManagement() {
                           <p>Pickup location - {order.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
-                            ? "bg-[#FF0606] text-white"
-                            : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
-                            }`}
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
+                            selectedOrder === order._id
+                              ? "bg-[#FF0606] text-white"
+                              : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
+                          }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -630,7 +691,7 @@ export default function OrderManagement() {
                 </div>
 
                 {selectedOrderData && (
-                  <div className="w-[75%] relative no-scrollbar rounded-[10px] justify-between  gap-[10px] flex flex-col p-[15px] h-[100%] border-[1.4px] border-[#FEAA00] overflow-y-auto">
+                  <div className="w-[75%] relative no-scrollbar rounded-[10px] justify-between  gap-[10px] flex flex-col p-[15px] h-[100%] border-[1.4px] border-[#F28C28] overflow-y-auto">
                     <div className="flex justify-between  pt-[3px]">
                       <div className="md150:text-[18px] md11:text-[16px]  items-center  flex gap-[20px] font-[500]">
                         <p>ORDERS DETAILS</p>
@@ -638,26 +699,31 @@ export default function OrderManagement() {
                           className=" text-[25px] cursor-pointer fa-regular fa-print"
                           onClick={openOrderModal}
                         ></i>
-
                       </div>
                       <div
-                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center ${prePackagePaidOrderList.find((order) => order._id === selectedOrder)
+                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center ${
+                          prePackagePaidOrderList.find(
+                            (order) => order._id === selectedOrder
+                          )
                             ? "text-[#00984B]"
-                            : "text-[#FF0606]" 
-                          }`}
+                            : "text-[#FF0606]"
+                        }`}
                       >
                         <p>
-                          {prePackagePaidOrderList.find((order) => order._id === selectedOrder)
+                          {prePackagePaidOrderList.find(
+                            (order) => order._id === selectedOrder
+                          )
                             ? "ORDER PAID"
                             : "ORDER UNPAID"}
                         </p>
                       </div>
                     </div>
                     <div
-                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${selectedOrder === 0
-                        ? "border-[#00984B]"
-                        : "border-[#FF0606]"
-                        }`}
+                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${
+                        selectedOrder === 0
+                          ? "border-[#00984B]"
+                          : "border-[#FF0606]"
+                      }`}
                     >
                       <div className="w-[100%] flex justify-between">
                         <div className="md150:text-[14px] md11:text-[13px] font-[400]">
@@ -737,10 +803,9 @@ export default function OrderManagement() {
                           >
                             <p>View KOT</p>
                           </div>
-
                         </div>
                       </div>
-                      
+
                       <div className="flex gap-[10px] items-center">
                         <div
                           className="w-[130px] rounded-[5px] flex justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
@@ -771,12 +836,14 @@ export default function OrderManagement() {
                 )}
               </div>
             )}
+
+          <Logout />
           </div>
         </div>
       </div>
 
       <NextUIModal
-        className="md:max-w-[390px] max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[60%] h-[350px]"
+        className="md:max-w-[390px] max-w-[333px] relative   rounded-[10px] flex justify-center !py-0 mx-auto md:h-[60%] h-[350px]"
         isOpen={isNotifictionModalOpen}
         backdrop={"blur"}
         onOpenChange={closeNotifictionModal}
@@ -785,7 +852,7 @@ export default function OrderManagement() {
           <ModalBody className="!py-0">
             <div className="w-[100%] flex  items-center ">
               <div className="w-[100%]">
-                <div className="w-[100%] absolute left-0  items-center justify-center flex flex-col h-[80px] bg-[#FEAA00] text-[#fff] text-center ">
+                <div className="w-[100%] absolute left-0  items-center justify-center flex flex-col h-[80px] bg-[#F28C28] text-[#fff] text-center ">
                   <p className="text-[25px] leading-[30px]">MAHANT PRASADAM</p>
                   <p className="text-[15px]">Kitchen Order Ticket</p>
                 </div>
@@ -806,11 +873,9 @@ export default function OrderManagement() {
                     <p className="text-right w-[30%]">Quantity</p>
                   </div>
 
-
                   {selectedOrderData?.orderId?.items?.map((item, index) => (
-
                     <>
-                      <div className='max-h-[200px] overflow-y-auto '>
+                      <div className="max-h-[200px] overflow-y-auto ">
                         <div
                           key={index}
                           className="w-[100%] px-[20px] text-[16px] font-[500] py-[2px]  flex justify-between left-0"
@@ -818,16 +883,12 @@ export default function OrderManagement() {
                           <p className="w-[15%]">
                             {String(index + 1).padStart(2, "0")}
                           </p>{" "}
-
                           <p className="w-[55%]">{item.foodItem?.name}</p>
                           <p className="text-right w-[30%]">{item?.quantity}</p>
                         </div>
-
-
                       </div>
                     </>
                   ))}
-
                 </div>
                 <div className="flex w-[100%] left-0 bg-white justify-between absolute bottom-[60px]  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed">
                   <p>
@@ -850,7 +911,7 @@ export default function OrderManagement() {
         </ModalContent>
       </NextUIModal>
       <NextUIModal
-        className="md:max-w-[390px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[60%] h-[350px]"
+        className="md:max-w-[390px]  max-w-[333px] relative  flex justify-center rounded-[10px] !py-0 mx-auto md:h-[60%] h-[350px]"
         isOpen={isPackgingModalOpen}
         backdrop={"blur"}
         onOpenChange={closePackgingModal}
@@ -859,7 +920,7 @@ export default function OrderManagement() {
           <ModalBody className="!py-0">
             <div className="w-[100%] flex  items-center ">
               <div className="w-[100%]">
-                <div className="w-[100%] absolute left-0  items-center justify-center flex flex-col h-[80px] bg-[#FEAA00] text-[#fff] text-center ">
+                <div className="w-[100%] absolute left-0  items-center justify-center flex flex-col h-[80px] bg-[#F28C28] text-[#fff] text-center ">
                   <p className="text-[25px] leading-[30px]">MAHANT PRASADAM</p>
                   <p className="text-[15px]">Packaging Details</p>
                 </div>
@@ -880,11 +941,10 @@ export default function OrderManagement() {
                     <p className="text-right w-[30%]">Quantity</p>
                   </div>
 
-
                   {selectedOrderData?.orderId?.servingMethodId?.map(
                     (item, index) => (
                       <>
-                        <div className='max-h-[175px] overflow-y-auto'>
+                        <div className="max-h-[175px] overflow-y-auto">
                           <div
                             key={index}
                             className="w-[100%] px-[20px] text-[16px] font-[500] py-[2px] flex justify-between left-0"
@@ -892,16 +952,17 @@ export default function OrderManagement() {
                             <p className="w-[15%]">
                               {String(index + 1).padStart(2, "0")}
                             </p>{" "}
-                        
-                            <p className="w-[55%]">{item.servingMethod?.name}</p>
-                            <p className="text-right w-[30%]">{item.quantity}</p>
+                            <p className="w-[55%]">
+                              {item.servingMethod?.name}
+                            </p>
+                            <p className="text-right w-[30%]">
+                              {item.quantity}
+                            </p>
                           </div>
                         </div>
                       </>
                     )
                   )}
-         
-        
                 </div>
                 <div className="flex w-[100%] left-0 justify-between absolute bottom-[60px]  text-[18px] px-[15px] border-t-[1.5px] border-b-[1.5px] border-[#000] border-dashed">
                   <p>
@@ -922,11 +983,10 @@ export default function OrderManagement() {
               </div>
             </div>
           </ModalBody>
-
         </ModalContent>
       </NextUIModal>
       <NextUIModal
-        className="md:max-w-[490px] max-w-[563px] overflow-hidden relative  flex justify-center  rounded-[20px] !py-0 mx-auto md:h-[68%] h-[350px]"
+        className="md:max-w-[490px] max-w-[563px] overflow-hidden relative  flex justify-center   rounded-[20px] !py-0 mx-auto md:h-[68%] h-[350px]"
         isOpen={isReciptModalOpen}
         backdrop={"blur"}
         onOpenChange={closeReciptModal}
@@ -1043,7 +1103,7 @@ export default function OrderManagement() {
         </ModalContent>
       </NextUIModal>
       <NextUIModal
-        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[45%] h-[350px]"
+        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto  rounded-[10px] h-[350px]"
         isOpen={isOrderReciptModalOpen}
         backdrop={"blur"}
         onOpenChange={closeOrderModal}
@@ -1063,13 +1123,19 @@ export default function OrderManagement() {
               <div className=" flex flex-col gap-[28px] w-[100%]">
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Cashier name :</p>
-                  <p className=" border-b-[1.5px]  overflow-x-auto w-[50%] border-[#000]">{paymentData?.cashierName}</p>
+                  <p className=" border-b-[1.5px]  overflow-x-auto w-[50%] border-[#000]">
+                    {paymentData?.cashierName}
+                  </p>
                 </div>
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Receipt Number :</p>
-                  <p className=" border-b-[1.5px] w-[50%] border-[#000]">{paymentData?.recieptNo}</p>
+                  <p className=" border-b-[1.5px] w-[50%] border-[#000]">
+                    {paymentData?.recieptNo}
+                  </p>
                 </div>
-                <div className=" border-[1px] rounded-[10px] border-[#00984B] h-[140px] w-[90%] mx-auto">{paymentData?.recieptImage}</div>
+                <div className=" border-[1px] rounded-[10px] border-[#00984B] h-[140px] w-[90%] mx-auto">
+                  {paymentData?.recieptImage}
+                </div>
               </div>
             </div>
           </ModalBody>
@@ -1094,14 +1160,12 @@ export default function OrderManagement() {
               <div className=" flex font-[500] font-Poppins text-[green]  text-[28px] mx-auto">
                 <p>Order Accept</p>
               </div>
-
-
             </div>
           </ModalBody>
         </ModalContent>
       </NextUIModal>
       <NextUIModal
-        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto md:h-[40%] h-[300px]"
+        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto rounded-[10px] h-[300px]"
         isOpen={isRejectModalOpen}
         backdrop={"blur"}
         onOpenChange={closeRejectModal}
@@ -1117,11 +1181,17 @@ export default function OrderManagement() {
               </div>
 
               <div className=" w-[90%] mx-auto flex items-center  ">
-                <div className=" bg-[#34aff7] rounded-tl-[10px] cursor-pointer  rounded-bl-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]" onClick={closeRejectModal}>
+                <div
+                  className=" bg-[#34aff7] rounded-tl-[10px] cursor-pointer  rounded-bl-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]"
+                  onClick={closeRejectModal}
+                >
                   {" "}
                   Cancel
                 </div>
-                <div className=" bg-[Red] rounded-tr-[10px] cursor-pointer   rounded-br-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]" onClick={closeRejectModal}>
+                <div
+                  className=" bg-[Red] rounded-tr-[10px] cursor-pointer   rounded-br-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]"
+                  onClick={closeRejectModal}
+                >
                   {" "}
                   Confirm
                 </div>

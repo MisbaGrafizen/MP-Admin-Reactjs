@@ -41,7 +41,7 @@ export default function TransectionHistory() {
     return (
       <>
         <div className="w-[99%] h-[100vh]  relative overflow-hidden top-0 bottom-0  px-[40px] py-[48px] mx-auto   my-auto ">
-          <div className="mx-auto flex gap-[30px] h-[90vh] flex-col relative rounded-[19px] border-[1px] border-[#FEAA00]">
+          <div className="mx-auto flex gap-[30px] h-[90vh] flex-col relative rounded-[19px] border-[1px] border-[#F28C28]">
             <div className="flex absolute left-[3%] top-[5%] text-[20px] font-[600]">
               <i className="fa-solid fa-angle-up fa-rotate-270"></i>
               <p>ORDERS TRANSACTION</p>
@@ -75,7 +75,7 @@ export default function TransectionHistory() {
                   </div>
 
                   <div className="w-[100%] flex flex-col">
-                    <div className="bg-[#FEAA00] border-t-[1px] border-b-[1px] border-[#000] border-dashed flex font-[600] text-[18px] text-[#fff] justify-between px-[19px] py-[7px]">
+                    <div className="bg-[#F28C28] border-t-[1px] border-b-[1px] border-[#000] border-dashed flex font-[600] text-[18px] text-[#fff] justify-between px-[19px] py-[7px]">
                       <p className="w-[15%]">Order id</p>
                       <p className="w-[24%]">Date</p>
                       <p className="w-[23%]">Customer Name</p>
@@ -87,7 +87,7 @@ export default function TransectionHistory() {
                     {currentTransactions.map((transaction) => (
                       <div
                         key={transaction.id}
-                        className="border-b-[1px] border-[#FEAA00] flex font-[600] text-[16px] text-[#000] justify-between px-[19px] py-[10px]"
+                        className="border-b-[1px] border-[#F28C28] flex font-[600] text-[16px] text-[#000] justify-between px-[19px] py-[10px]"
                       >
                         <p className="w-[15%]">{transaction.id}</p>
                         <p className="w-[24%]">{transaction.date}</p>

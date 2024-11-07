@@ -142,7 +142,7 @@ export default function Login() {
             </label>
 
             <div
-              className="text-white cursor-pointer text-[23px] font-bold bg-[#FEAA00] flex justify-center items-center py-[8px] rounded-[10px] transition duration-300 ease-in-out transform hover:bg-[#e69900] hover:scale-20 active:scale-105"
+              className="text-white cursor-pointer text-[23px] font-bold bg-[#F28C28] flex justify-center items-center py-[8px] rounded-[10px] transition duration-300 ease-in-out transform hover:bg-[#e69900] hover:scale-20 active:scale-105"
               onClick={handleLogin}
             >
               <p>LOGIN</p>

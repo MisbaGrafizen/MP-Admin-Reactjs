@@ -7,6 +7,9 @@ import { getDesignationAction, getKshetraAction, getPravrutiAction } from '../..
 import Editimg from '../../../public/img/Foodsection/edit.png'
 import { useNavigate } from 'react-router-dom';
 
+import userpng from '../../../public/img/AdminSpalsh/user 3.png'
+import Logout from '../../Components/logout/Logout';
+
 export default function CreateUser() {
 
   const { isOpen, onOpen, onOpenChange,onClose } = useDisclosure();
@@ -225,33 +228,35 @@ export default function CreateUser() {
   return (
     <>
       <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto ">
-        <div className="  mx-auto flex gap-[30px] w-[100%] md11:h-[92vh] md150:h-[90vh] flex-col relative    rounded-[19px] border-[1px] border-[#FEAA00]">
+        <div className="  mx-auto flex gap-[30px] w-[100%] md11:h-[92vh] md150:h-[90vh] flex-col relative    rounded-[19px] border-[1px] border-[#F28C28]">
           <div className="flex absolute gap-[10px] left-[3%]  md11:top-[4.1%]  md150:top-[5%] items-center    md11:text-[18px] md150:text-[20px] font-[600]">
-            <i className="fa-solid fa-angle-up fa-rotate-270" onClick={handleBack}></i>
+            <i
+              className="fa-solid fa-angle-up fa-rotate-270"
+              onClick={handleBack}
+            ></i>
 
-            <div className=' font-Potua  flex items-center gap-[10px] cursor-pointer' onClick={handleBack}>
-              <p>
-                USERS
-              </p>
-              <p>
-                MANAGEMENT
-              </p>
+            <div
+              className=" font-Potua  flex items-center gap-[10px] cursor-pointer"
+              onClick={handleBack}
+            >
+              <p>USERS</p>
+              <p>MANAGEMENT</p>
             </div>
           </div>
           <div
-            className="border-t-[1.5px] font-[600] cursor-pointer  border-l-[1.5px] border-r-[1.5px] text-[#FEAA00] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px]  active:bg-[#feaa00] active:text-[#fff] md150:top-[5.8%] right-[8%] w-[160px] flex items-center justify-center   rounded-tl-[10px]  absolute border-[#FEAA00] rounded-tr-[10px] ro"
+            className="border-t-[1.5px] font-[600] cursor-pointer  border-l-[1.5px] border-r-[1.5px] text-[#FEAA00] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px]  active:bg-[#F28C28] active:text-[#fff] md150:top-[5.8%] right-[8%] w-[160px] flex items-center justify-center   rounded-tl-[10px]  absolute border-[#F28C28] rounded-tr-[10px] ro"
             onClick={() => {
               setIsEditData(false);
               setUserData({});
-              setSelectedPravruti({ id: '', name: 'Select Pravruti' });
-              setSelectedKshetra({ id: '', name: 'Select Kshetra' });
-              setSelectedDesignation({ id: '', name: 'Select Designation' });
-              onOpen(); 
+              setSelectedPravruti({ id: "", name: "Select Pravruti" });
+              setSelectedKshetra({ id: "", name: "Select Kshetra" });
+              setSelectedDesignation({ id: "", name: "Select Designation" });
+              onOpen();
             }}
           >
             <p>Create a new user</p>
           </div>
-
+        <Logout />
           <div className=" md11:py-[69px] md150:py-[90px] flex md11:w-[98%] md150:w-[97%] md11:gap-[15px]  md150:gap-[20px]">
             <Header />
             <div className="  py-[20px] px-[20px]  md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
@@ -259,16 +264,18 @@ export default function CreateUser() {
                 <div className="w-full h-full mx-auto mb-3 scroll-d-none">
                   <div className="w-full h-full mx-auto rounded-[10px] border border-black overflow-x-hidden relative">
                     <div className="box-border w-full">
-                      <div className="sticky top-0 flex bg-[#FEAA00] border-black w-full">
+                      <div className="sticky top-0 flex bg-[#F28C28] border-black w-full">
                         <div className="flex justify-center text-center gap-[7px] py-[10px] border-r border-b border-black items-center px-3 min-w-[6%] max-w-[6%]">
                           <input
                             type="checkbox"
                             id="check-all"
                             checked={checkAll}
                             onChange={handleCheckAll}
-                            style={{ width: "15px", height: '15px' }}
+                            style={{ width: "15px", height: "15px" }}
                           />
-                          <p className="w-fit  md11:text-[14px] md150:text-[18px] font-[600] text-[#fff] font-Outfit">Sr.</p>
+                          <p className="w-fit  md11:text-[14px] md150:text-[18px] font-[600] text-[#fff] font-Outfit">
+                            Sr.
+                          </p>
                         </div>
 
                         <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
@@ -316,10 +323,12 @@ export default function CreateUser() {
                                 type="checkbox"
                                 checked={checkedItems.includes(index)}
                                 onChange={() => handleCheckboxChange(index + 1)}
-                                style={{ width: "15px", height: '15px' }}
-                                className='ml-[-25%]'
+                                style={{ width: "15px", height: "15px" }}
+                                className="ml-[-25%]"
                               />
-                              <p className="font-[600] md11:text-[15px] md150:text-[17px] md11:mt-[5%] md150:mt-[2%]">{index + 1 + (currentPage - 1) * itemsPerPage}</p>
+                              <p className="font-[600] md11:text-[15px] md150:text-[17px] md11:mt-[5%] md150:mt-[2%]">
+                                {index + 1 + (currentPage - 1) * itemsPerPage}
+                              </p>
                             </div>
 
                             <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
@@ -349,19 +358,21 @@ export default function CreateUser() {
                               </p>
                             </div>
                             <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[14%] max-w-[14%]">
-                              <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
-
-                              </p>
+                              <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit "></p>
                             </div>
                             <div className="flex justify-center items-center gap-[15px] text-center py-2 border-b  border-black min-w-[9%] max-w-[9%]">
-                              <img onClick={() => {
-                                onOpen(); 
-                                handelEdit(item); 
-                              }}
+                              <img
+                                onClick={() => {
+                                  onOpen();
+                                  handelEdit(item);
+                                }}
                                 className="w-[20px] cursor-pointer"
                                 src={Editimg}
                               />
-                              <i className="text-[18px] mt-[1px] text-[#ff0b0b] cursor-pointer fa-solid fa-trash-can" onClick={() => handleDelete(item)}></i>
+                              <i
+                                className="text-[18px] mt-[1px] text-[#ff0b0b] cursor-pointer fa-solid fa-trash-can"
+                                onClick={() => handleDelete(item)}
+                              ></i>
                             </div>
                           </div>
                         ))
@@ -369,27 +380,36 @@ export default function CreateUser() {
                         <p>No users found</p>
                       )}
                     </div>
-
                   </div>
                 </div>
-                <div className='flex absolute bottom-3 right-6 font-Poppins items-center gap-[10px]' ref={paginationDropdownRef}>
+                <div
+                  className="flex absolute bottom-3 right-6 font-Poppins items-center gap-[10px]"
+                  ref={paginationDropdownRef}
+                >
                   <div>
-                    <p className='text-[15px] font-[600] text-[#2565df]'>
+                    <p className="text-[15px] font-[600] text-[#2565df]">
                       Total pages - {totalPages}
                     </p>
                   </div>
                   <div>
-                    <div className='flex justify-center border-[1.7px] border-[#000] cursor-pointer py-[5px] px-[24px] rounded-[10px] text-[14px] font-[600]' onClick={() => setDropdownOpen(!dropdownOpen)}>
+                    <div
+                      className="flex justify-center border-[1.7px] border-[#000] cursor-pointer py-[5px] px-[24px] rounded-[10px] text-[14px] font-[600]"
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                    >
                       <p>{currentPage}</p>
                     </div>
                   </div>
                   {dropdownOpen && (
-                    <div className='border-[1.7px] flex flex-col bg-[#fff] min-h-[100%] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute'>
+                    <div className="border-[1.7px] flex flex-col bg-[#fff] min-h-[100%] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute">
                       {Array.from({ length: totalPages }, (_, i) => (
                         <div
                           key={i + 1}
                           className={`w-[100%] text-[14px] border-b-[1.7px] rounded-[6px] border-[#847e7e] py-[6px] font-[600] flex justify-center items-center cursor-pointer 
-                        ${currentPage === i + 1 ? 'bg-[#feaa00] text-[#fff]' : 'hover:bg-[#e1ab3e] hover:text-[#fff]'}`}
+                        ${
+                          currentPage === i + 1
+                            ? "bg-[#F28C28] text-[#fff]"
+                            : "hover:bg-[#e1ab3e] hover:text-[#fff]"
+                        }`}
                           onClick={() => goToPage(i + 1)}
                         >
                           <p>{i + 1}</p>
@@ -401,7 +421,6 @@ export default function CreateUser() {
               </div>
             </div>
 
-
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
               <ModalContent className="md150:w-[390px] md11:w-[360px] rounded-[10px] relative md150:h-[510px] md11:h-[460px]">
                 {(onClose) => (
@@ -409,15 +428,14 @@ export default function CreateUser() {
                     <div className="relative ">
                       <div className="relative">
                         <div className="flex justify-center md11:p-[25px] md150:p-[30px]">
-                          <img
-                            className="w-[90px]"
-                            src="../../public/img/AdminSpalsh/user 3.png"
-                          />
+                          <img className="w-[90px]" src={userpng} />
                         </div>
                         <div className="flex gap-[30px] relative  px-[30px]">
                           <div className="flex flex-col  gap-[10px]">
                             <div className="flex items-center  gap-[40px]">
-                              <p className="md150:text-[18px] md11:text-[15px] font-[600]">Name:</p>
+                              <p className="md150:text-[18px] md11:text-[15px] font-[600]">
+                                Name:
+                              </p>
                             </div>
                             <div className="flex items-center  gap-[40px]">
                               <p className="md150:text-[18px] md11:text-[15px] font-[600]">
@@ -439,8 +457,10 @@ export default function CreateUser() {
                                 Phone no:
                               </p>
                             </div>
-                            <div className='flex items-center  gap-[40px]'>
-                              <p className='md150:text-[18px] md11:text-[15px] font-[600]'>Mondal name :</p>
+                            <div className="flex items-center  gap-[40px]">
+                              <p className="md150:text-[18px] md11:text-[15px] font-[600]">
+                                Mondal name :
+                              </p>
                             </div>
                             <div className="flex items-center  gap-[40px]">
                               <p className="md150:text-[18px] md11:text-[15px] mt-[3px] font-[600]">
@@ -461,12 +481,18 @@ export default function CreateUser() {
 
                             <div className="flex relative   md150:mt-[4px] items-center gap-[40px]">
                               <div
-                              ref={pravrutiDropdownRef}
+                                ref={pravrutiDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
                                 onClick={toggleDropdown}
                               >
                                 <p>{selectedPravruti.name}</p>
-                                <i className={`fa-solid fa-angle-up ${isDropdownOpen ? 'fa-rotate-0' : 'fa-rotate-180'}`}></i>
+                                <i
+                                  className={`fa-solid fa-angle-up ${
+                                    isDropdownOpen
+                                      ? "fa-rotate-0"
+                                      : "fa-rotate-180"
+                                  }`}
+                                ></i>
                               </div>
 
                               {isDropdownOpen && (
@@ -474,9 +500,14 @@ export default function CreateUser() {
                                   {pravruties?.map((pravruti) => (
                                     <div
                                       key={pravruti._id}
-                                      onClick={() => handleSelectPravruti(pravruti)}
-                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] md11:text-[13px] md150:text-[16px] rounded-[5px]  cursor-pointer ${pravruti._id === selectedPravruti.id ? 'bg-[#feaa00] text-white' : 'hover:bg-[#f5e7ca]'
-                                        }`}
+                                      onClick={() =>
+                                        handleSelectPravruti(pravruti)
+                                      }
+                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] md11:text-[13px] md150:text-[16px] rounded-[5px]  cursor-pointer ${
+                                        pravruti._id === selectedPravruti.id
+                                          ? "bg-[#F28C28] text-white"
+                                          : "hover:bg-[#f5e7ca]"
+                                      }`}
                                     >
                                       <p>{pravruti.name}</p>
                                     </div>
@@ -486,12 +517,18 @@ export default function CreateUser() {
                             </div>
                             <div className="flex relative items-center gap-[40px]">
                               <div
-                              ref={kshetraDropdownRef}
+                                ref={kshetraDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
                                 onClick={toggleKhestraDropdown}
                               >
                                 <p>{selectedKshetra.name}</p>
-                                <i className={`fa-solid fa-angle-up ${isKshetraDropdownOpen ? 'fa-rotate-0' : 'fa-rotate-180'}`}></i>
+                                <i
+                                  className={`fa-solid fa-angle-up ${
+                                    isKshetraDropdownOpen
+                                      ? "fa-rotate-0"
+                                      : "fa-rotate-180"
+                                  }`}
+                                ></i>
                               </div>
 
                               {isKshetraDropdownOpen && (
@@ -499,9 +536,14 @@ export default function CreateUser() {
                                   {kshetras?.map((kshetra) => (
                                     <div
                                       key={kshetra._id}
-                                      onClick={() => handleSelectKshetra(kshetra)}
-                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] rounded-[5px] md11:text-[13px] md150:text-[16px]   cursor-pointer ${kshetra._id === selectedKshetra.id ? 'bg-[#feaa00] text-white' : 'hover:bg-[#f5e7ca]'
-                                        }`}
+                                      onClick={() =>
+                                        handleSelectKshetra(kshetra)
+                                      }
+                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] rounded-[5px] md11:text-[13px] md150:text-[16px]   cursor-pointer ${
+                                        kshetra._id === selectedKshetra.id
+                                          ? "bg-[#F28C28] text-white"
+                                          : "hover:bg-[#f5e7ca]"
+                                      }`}
                                     >
                                       <p>{kshetra.name}</p>
                                     </div>
@@ -511,12 +553,19 @@ export default function CreateUser() {
                             </div>
 
                             <div className="flex relative items-center gap-[40px]">
-                              <div ref={designationDropdownRef}
+                              <div
+                                ref={designationDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
                                 onClick={toggleDesgnationDropdown}
                               >
                                 <p>{selectedDesignation.name}</p>
-                                <i className={`fa-solid fa-angle-up ${isDesigDropdownOpen ? 'fa-rotate-0' : 'fa-rotate-180'}`}></i>
+                                <i
+                                  className={`fa-solid fa-angle-up ${
+                                    isDesigDropdownOpen
+                                      ? "fa-rotate-0"
+                                      : "fa-rotate-180"
+                                  }`}
+                                ></i>
                               </div>
 
                               {isDesigDropdownOpen && (
@@ -524,9 +573,15 @@ export default function CreateUser() {
                                   {designations?.map((designations) => (
                                     <div
                                       key={designations._id}
-                                      onClick={() => handleSelectDesignation(designations)}
-                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] rounded-[5px] md11:text-[13px] md150:text-[16px]  cursor-pointer ${designations._id === selectedDesignation.id ? 'bg-[#feaa00] text-white' : 'hover:bg-[#f5e7ca]'
-                                        }`}
+                                      onClick={() =>
+                                        handleSelectDesignation(designations)
+                                      }
+                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] rounded-[5px] md11:text-[13px] md150:text-[16px]  cursor-pointer ${
+                                        designations._id ===
+                                        selectedDesignation.id
+                                          ? "bg-[#F28C28] text-white"
+                                          : "hover:bg-[#f5e7ca]"
+                                      }`}
                                     >
                                       <p>{designations.name}</p>
                                     </div>
@@ -557,8 +612,6 @@ export default function CreateUser() {
                               <input
                                 className="px-[5px] w-[100%] text-[14px] font-[400] outline-none border-b-[1px]"
                                 type="text"
-
-
                               />
                             </div>
                             <div className="flex items-center gap-[10px]">
@@ -570,9 +623,10 @@ export default function CreateUser() {
                                 onChange={handleChange}
                               />
                               <i
-                                className={`fa-regular ${showPassword ? "fa-eye " : "fa-eye-slash"
-                                  }`}
-                                  onClick={togglePasswordVisibility}
+                                className={`fa-regular ${
+                                  showPassword ? "fa-eye " : "fa-eye-slash"
+                                }`}
+                                onClick={togglePasswordVisibility}
                                 style={{
                                   cursor: "pointer",
                                   color: showPassword ? "inherit" : "#ff8000 ",
@@ -581,10 +635,7 @@ export default function CreateUser() {
                             </div>
                           </div>
                         </div>
-
-
                       </div>
-
                     </div>
                     <div
                       className=" bg-[#00984B] cursor-pointer font-Poppins absolute bottom-0 w-[100%] font-[500] text-[18px]   flex justify-center py-[10px] text-[white]"
@@ -601,37 +652,33 @@ export default function CreateUser() {
         </div>
       </div>
 
-
-
-
       <Modal isOpen={isDelOpen} onOpenChange={setIsDelOpen}>
         <ModalContent className="md:max-w-[350px] max-w-[333px] relative  flex justify-center !py-0 mx-auto  h-[300px] shadow-delete ">
           {(onClose) => (
             <>
               <div className="relative w-[100%] h-[100%] ">
                 <div className="relative  w-[100%] h-[100%]">
-                  <div className='w-[100%] flex gap-7 flex-col'>
-                    <div className='w-[100%] mt-[30px] p-[10px] mx-auto flex justify-center s'>
+                  <div className="w-[100%] flex gap-7 flex-col">
+                    <div className="w-[100%] mt-[30px] p-[10px] mx-auto flex justify-center s">
                       <i className=" text-[80px] text-[red] shadow-delete-icon rounded-full fa-solid fa-circle-xmark"></i>
                     </div>
-                    <div className=' mx-auto justify-center flex text-[28px] font-[500] font-Poppins'>
+                    <div className=" mx-auto justify-center flex text-[28px] font-[500] font-Poppins">
                       <p>Are you sure ?</p>
-
                     </div>
-                    <div className='absolute bottom-0 flex w-[100%]'>
-                      <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={handleDeleteRecord}>
-                        <p>
-                          Delete
-                        </p>
+                    <div className="absolute bottom-0 flex w-[100%]">
+                      <div
+                        className="w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]"
+                        onClick={handleDeleteRecord}
+                      >
+                        <p>Delete</p>
                       </div>
-                      <div className='w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[#26b955] rounded-br-[10px] text-[#fff] font-[600] font-Poppins text-[20px]' onClick={closeDeleteModal}>
-                        <p>
-                          Cancel
-                        </p>
+                      <div
+                        className="w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[#26b955] rounded-br-[10px] text-[#fff] font-[600] font-Poppins text-[20px]"
+                        onClick={closeDeleteModal}
+                      >
+                        <p>Cancel</p>
                       </div>
                     </div>
-
-
                   </div>
                 </div>
               </div>

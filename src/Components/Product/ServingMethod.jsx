@@ -343,7 +343,7 @@ export default function ServingMethod() {
                         {servingCategories.map((category, index) => (
                             <div
                                 key={category._id}
-                                className={`border-[0.5px] border-[#000] font-[600] md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px] flex justify-center items-center rounded-[8px] cursor-pointer ${selectedButton === index ? 'bg-[#feaa00] text-white' : ''}`}
+                                className={`border-[0.5px] border-[#000] font-[600] md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px] flex justify-center items-center rounded-[8px] cursor-pointer ${selectedButton === index ? 'bg-[#F28C28] text-white' : ''}`}
                                 onClick={() => handleCategoryClick(category, index)}
                                 onDoubleClick={() => handleCategoryDoubleClick(category)}
                             >
@@ -371,11 +371,11 @@ export default function ServingMethod() {
 
                     <div className="flex flex-wrap gap-[20px] ">
 
-                        <div className="border-[1px] border-dashed border-[#feaa00] rounded-[8px] h-[100%] w-[180px] cursor-pointer" onClick={() =>{setSelectedImage("");setCloudImage();setServingMethodInput({});onOpen()}}>
+                        <div className="border-[1px] border-dashed border-[#F28C28] rounded-[8px] h-[100%] w-[180px] cursor-pointer" onClick={() =>{setSelectedImage("");setCloudImage();setServingMethodInput({});onOpen()}}>
                             <div className="flex justify-center h-[140px] items-center pt-[10px]">
                                 <i className="text-[70px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
                             </div>
-                            <div className="border-dashed flex gap-[20px] p-[10px] rounded-[8px] border-[#fff] bg-[#feaa00] border-t-[1.7px] w-full">
+                            <div className="border-dashed flex gap-[20px] p-[10px] rounded-[8px] border-[#fff] bg-[#F28C28] border-t-[1.7px] w-full">
                                 <div className="font-[600] pl-[7px] text-[15px] text-[white]">
                                     <p>Name:</p>
                                     <p>Price:</p>
@@ -385,13 +385,13 @@ export default function ServingMethod() {
                         {servingMethods?.map((method, index) => (
                             <div
                                 key={index}
-                                className="border-[1px] border-dashed border-[#feaa00] rounded-[8px] w-[180px] h-[100%] cursor-pointer"
+                                className="border-[1px] border-dashed border-[#F28C28] rounded-[8px] w-[180px] h-[100%] cursor-pointer"
                                 onDoubleClick={(e) => handleServingMethodDoubleClick(method, e)}
                             >
                                 <div className="flex justify-center h-[140px] w-full p-[10px]">
                                     <img className=" w-[100%] rounded-tl-[8px] rounded-tr-[8px]" src={method?.photo} alt={method?.name || 'Serving Method Image'} />
                                 </div>
-                                <div className="border-dashed pl-[7px] flex gap-[20px] p-[10px] rounded-[8px] border-[#fff] bg-[#feaa00] border-t-[1.7px] w-full">
+                                <div className="border-dashed pl-[7px] flex gap-[20px] p-[10px] rounded-[8px] border-[#fff] bg-[#F28C28] border-t-[1.7px] w-full">
                                     <div className="font-[600] pl-[7px] text-[15px] text-[white]">
                                         <p>Name:</p>
                                         <p>Price:</p>
@@ -439,7 +439,7 @@ export default function ServingMethod() {
                                 <div className=" px-[20px] py-[20px]   relative">
                                     <div className=" w-[100%] flex gap-[29px] flex-col">
                                         <div className="w-[100%] flex gap-[16px]">
-                                            <div className="border-[1px] border-dashed max-h-[170px]  border-[#feaa00] rounded-[8px] flex justify-center items-center w-[167px] cursor cursor-pointer" onClick={onOpen}>
+                                            <div className="border-[1px] border-dashed max-h-[170px]  border-[#F28C28] rounded-[8px] flex justify-center items-center w-[167px] cursor cursor-pointer" onClick={onOpen}>
                                             <label htmlFor="imageUpload" className="cursor-pointer flex justify-center !w-[560px]">
                                                       {selectedImage ? (
                                                     <img src={selectedImage} alt="Selected" className="h-[160px] w-[600px] rounded-[8px]" />

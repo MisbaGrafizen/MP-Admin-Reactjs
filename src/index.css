@@ -14,6 +14,18 @@
     display: none !important;
 }
 
+.customres {
+bottom: 13.2% !important;
+}
 
-@media only screen and (max-height: 600px) 
-(min-height:) {}
+@media only screen and (max-height: 760px) and (min-height: 500px) {
+    .customres {
+        bottom: 13.2% !important;
+    }
+}
+
+@media only screen and (max-height: 1000px) and (min-height: 800px) {
+    .customres {
+        bottom: 14.9% !important;
+    }
+}
