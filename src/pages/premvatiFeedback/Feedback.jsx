@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import Header from "../../Components/header/Header";
 import userpng from "../../../public/img/AdminSpalsh/user 3.png";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import Logout from "../../Components/logout/Logout";
+import { ApiGet } from "../../helper/axios";
 
 export default function Feedback() {
   const navigate = useNavigate();
@@ -63,8 +63,8 @@ export default function Feedback() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/v1/all-feedbacks`
+        const response = await ApiGet(
+          `/api/v1/all-feedbacks`
         );
 
         const fetchedData = response.data;
