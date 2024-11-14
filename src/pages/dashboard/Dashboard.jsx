@@ -38,7 +38,7 @@ export default function Dashboard() {
                 </p>
 
                 <p className="text-[20px] text-center">
-                  Releasing on <b>15 Novembar</b>......{" "}
+                  Releasing on <b>15 November</b>......{" "}
                 </p>
               </div>
             </div>

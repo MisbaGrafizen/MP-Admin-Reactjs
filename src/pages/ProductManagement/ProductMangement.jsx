@@ -6,6 +6,7 @@ import PrePackged from '../../Components/Product/PrePackged';
 import { useNavigate } from 'react-router-dom';
 import userpng from "../../../public/img/AdminSpalsh/user 3.png";
 import Logout from '../../Components/logout/Logout';
+import PremvatiPrduct from '../../Components/Product/PremvatiPrduct';
 
 export default function ProductMangement() {
 
@@ -39,7 +40,14 @@ export default function ProductMangement() {
                     <PrePackged methodType={"PRE-PACKGED"} />
                 </div>
             );
-        }
+        } else if (activeForm === 'PREMVATI') {
+          return (
+              <div className="flex justify-between w-full gap-[20px]">
+                  <PremvatiPrduct />
+              </div>
+          );
+      } 
+        
     };
     
     return (
@@ -60,7 +68,12 @@ export default function ProductMangement() {
                 <p>MANAGEMENT</p>
               </div>
             </div>
-            <div className="flex gap-[10px] mx-auto justify-center absolute  right-[7%]  z-0 md11:top-[5.3%] md150:top-[5.9%]">
+
+
+          <Logout />
+            <div className="md11:py-[69px] relative md150:py-[90px] flex md11:w-[98%] md150:w-[97%] md11:gap-[15px]  md150:gap-[20px]">
+              <Header />
+              <div className="flex gap-[10px] mx-auto justify-center absolute  right-[7%]  z-0 md150:top-[5.9%]   top-[5%] ">
               <div
                 className={`md150:w-[160px] md11:w-[130px] flex items-center md150:text-[18px] text-[16px] justify-center  rounded-tr-[10px]  rounded-tl-[10px]  border-r-[1px]  border-l-[1px]  font-[600] border-t-[1px] border-[#F28C28]  ${
                   activeForm === "SELF"
@@ -93,18 +106,23 @@ export default function ProductMangement() {
               >
                 <p>Pre - Packaged</p>
               </div>
+              <div
+                className={`md150:w-[160px] md11:w-[130px] flex items-center md150:text-[18px] text-[16px] justify-center  rounded-tr-[10px]  rounded-tl-[10px]  border-r-[1px] font-[600] border-l-[1px]  border-t-[1px] border-[#F28C28]  ${
+                  activeForm === "PREMVATI"
+                    ? "bg-[#F28C28] text-[#fff]"
+                    : "text-[#FEAA00]  bg-white "
+                } md150:h-[40px] md11:h-[35px] cursor-pointer`}
+                onClick={() => handleActiveFormChange("PREMVATI")}
+              >
+                <p>Premvati</p>
+              </div>
             </div>
-
-          <Logout />
-            <div className="md11:py-[69px] md150:py-[90px] flex md11:w-[98%] md150:w-[97%] md11:gap-[15px]  md150:gap-[20px]">
-              <Header />
-
               <div className="   md150:py-[20px] md150:px-[20px] md11:px-[15px] md11:py-[15px]  md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
                 {renderForm()}
               </div>
             </div>
           </div>
-        </div>+
+        </div>
       </>
     );
 }
