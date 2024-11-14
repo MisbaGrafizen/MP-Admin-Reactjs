@@ -9,8 +9,32 @@ import { useNavigate } from 'react-router-dom';
 
 import userpng from '../../../public/img/AdminSpalsh/user 3.png'
 import Logout from '../../Components/logout/Logout';
+import PremvatiUser from '../../Components/premvatiUser/PremvatiUser';
 
 export default function CreateUser() {
+  const [isPremvatiUserActive, setIsPremvatiUserActive] = useState(false);
+  const [isUserListActive, setIsUserListActive] = useState(true); 
+
+
+  const handleSwitchToPremvatiUser = () => {
+    setIsPremvatiUserActive(true);
+    setIsUserListActive(false); // When "Premvati user" is active, the "User List" button is disabled
+  };
+
+  const handleBackToCreateUser = () => {
+    setIsPremvatiUserActive(false);
+    setIsUserListActive(true); // When "User List" is active, the "Premvati user" button is disabled
+  };
+
+  const handleToggleUserList = () => {
+    if (isUserListActive) {
+      onOpen(); // Open modal when switching back to "Create User"
+    }
+    setIsUserListActive(!isUserListActive);
+  };
+
+
+  
 
   const { isOpen, onOpen, onOpenChange,onClose } = useDisclosure();
   const navigate = useNavigate()
@@ -228,7 +252,7 @@ export default function CreateUser() {
   return (
     <>
       <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto ">
-        <div className="  mx-auto flex gap-[30px] w-[100%] md11:h-[92vh] md150:h-[90vh] flex-col relative    rounded-[19px] border-[1px] border-[#F28C28]">
+        <div className="  mx-auto flex gap-[30px] w-[100%] md11:h-[92vh] md150:h-[90vh] relative    rounded-[19px] border-[1px] border-[#F28C28]">
           <div className="flex absolute gap-[10px] left-[3%]  md11:top-[4.1%]  md150:top-[5%] items-center    md11:text-[18px] md150:text-[20px] font-[600]">
             <i
               className="fa-solid fa-angle-up fa-rotate-270"
@@ -244,21 +268,29 @@ export default function CreateUser() {
             </div>
           </div>
           <div
-            className="border-t-[1.5px] font-[600] cursor-pointer  border-l-[1.5px] border-r-[1.5px] text-[#FEAA00] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px]  active:bg-[#F28C28] active:text-[#fff] md150:top-[5.8%] right-[8%] w-[160px] flex items-center justify-center   rounded-tl-[10px]  absolute border-[#F28C28] rounded-tr-[10px] ro"
-            onClick={() => {
-              setIsEditData(false);
-              setUserData({});
-              setSelectedPravruti({ id: "", name: "Select Pravruti" });
-              setSelectedKshetra({ id: "", name: "Select Kshetra" });
-              setSelectedDesignation({ id: "", name: "Select Designation" });
-              onOpen();
-            }}
-          >
-            <p>Create a new user</p>
-          </div>
+          className={`border-t-[1.5px] font-[600] cursor-pointer border-l-[1.5px] border-r-[1.5px] text-[#FEAA00] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px] active:bg-[#F28C28] active:text-[#fff] md150:top-[5.8%] right-[22%] w-[160px] flex items-center justify-center rounded-tl-[10px] absolute border-[#F28C28] rounded-tr-[10px] ro ${
+            isUserListActive ? 'bg-[#F28C28] text-white' : ''
+          }`}
+          onClick={handleToggleUserList}
+        >
+          <p>{isUserListActive ? 'User List' : 'Create User'}</p>
+        </div>
+
+        {/* Button to activate Premvati User */}
+        <div
+          className={`border-t-[1.5px] font-[600] cursor-pointer border-l-[1.5px] border-r-[1.5px] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px] md150:top-[5.8%] right-[8%] w-[160px] flex items-center justify-center rounded-tl-[10px] absolute border-[#F28C28] rounded-tr-[10px] ro ${
+            isPremvatiUserActive ? 'bg-[#F28C28] text-white' : ''
+          }`}
+          onClick={handleSwitchToPremvatiUser}
+        >
+          <p>Premvati User</p>
+        </div>
+
         <Logout />
+
           <div className=" md11:py-[69px] md150:py-[90px] flex md11:w-[98%] md150:w-[97%] md11:gap-[15px]  md150:gap-[20px]">
             <Header />
+            {!isPremvatiUserActive ? (
             <div className="  py-[20px] px-[20px]  md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
               <div className="flex justify-between w-full gap-[20px]">
                 <div className="w-full h-full mx-auto mb-3 scroll-d-none">
@@ -420,6 +452,9 @@ export default function CreateUser() {
                 </div>
               </div>
             </div>
+          ) : (
+          <PremvatiUser /> // Render PremvatiUser component when isPremvatiUserActive is true
+        )}
 
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
               <ModalContent className="md150:w-[390px] md11:w-[360px] rounded-[10px] relative md150:h-[510px] md11:h-[460px]">
@@ -689,3 +724,12 @@ export default function CreateUser() {
     </>
   );
 }
+
+
+
+
+
+
+
+
+

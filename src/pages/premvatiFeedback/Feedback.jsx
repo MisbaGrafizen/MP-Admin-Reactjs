@@ -4,18 +4,26 @@ import userpng from "../../../public/img/AdminSpalsh/user 3.png";
 import { useNavigate } from "react-router-dom";
 import Logout from "../../Components/logout/Logout";
 import { ApiGet } from "../../helper/axios";
+import dayjs from 'dayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 
 export default function Feedback() {
   const navigate = useNavigate();
+  const [activeButton, setActiveButton] = useState("All");
   const [checkAll, setCheckAll] = useState(false);
   const [checkedItems, setCheckedItems] = useState([]);
   const [displayedData, setDisplayedData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const paginationDropdownRef = useRef(null);
   const itemsPerPage = 5;
+  const [value, setValue] = useState(dayjs());
 
-    const totalPages = Math.ceil(displayedData.length / itemsPerPage);
+  const totalPages = Math.ceil(displayedData.length / itemsPerPage);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -25,6 +33,20 @@ export default function Feedback() {
         setDropdownOpen(false); // Close pagination dropdown on outside click
       }
     };
+
+    const branches = [
+      "All",
+      "Kalawad",
+      "Shradhdha",
+      "PramukhVatika",
+      "Dholakiya",
+      "Mavdi",
+      "Tirupati",
+      "SorathiyaVadi",
+    ];
+
+
+
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -38,10 +60,10 @@ export default function Feedback() {
   };
 
 
-    const currentPageData = displayedData.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
-    );
+  const currentPageData = displayedData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
 
 
@@ -96,32 +118,155 @@ export default function Feedback() {
     });
   };
 
+
+
+
+
+  const handleBranchClick = (branch) => {
+    setActiveButton(branch);
+    setFilteredData(
+      branch === "All" ? displayedData : displayedData.filter((item) => item.branch === branch)
+    );
+  };
+
+
+
   return (
     <>
       <div className="    w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0      py-[34px] md150:py-[48px]     px-[30px] md150:px-[40px]  mx-auto   my-auto ">
         <div className="  mx-auto flex gap-[30px] w-[100%]     h-[92vh] md150:h-[90vh] flex-col relative    rounded-[19px] border-[1px] border-[#F28C28]">
-          <div className="flex absolute gap-[10px] left-[3%]      top-[4.1%]  md150:top-[5%] items-center        text-[18px] md150:text-[20px] font-[600]">
-            <i
-              className="cursor-pointer fa-solid fa-angle-up fa-rotate-270"
-              onClick={handleBack}
-            ></i>
-            <div
-              className="font-Potua  flex items-center gap-[10px] cursor-pointer"
-              onClick={handleBack}
-            >
-              <p>FEEDBACK</p>
-              <p>MANAGEMENT</p>
+          <div className="flex absolute gap-[10px] left-[3%]   w-[100%]    top-[4.1%]  md150:top-[5%] items-center        text-[18px] md150:text-[20px] font-[600]">
+            <div className="flex gap-[10px] items-center">
+
+
+              <i
+                className="cursor-pointer fa-solid fa-angle-up fa-rotate-270"
+                onClick={handleBack}
+              ></i>
+              <div
+                className="font-Potua  flex items-center gap-[10px] cursor-pointer"
+                onClick={handleBack}
+              >
+                <p>FEEDBACK</p>
+                <p>MANAGEMENT</p>
+              </div>
             </div>
+            <div className="w-[100%] flex gap-[20px]">
+              <div
+                className={`w-[80px] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Today"
+                    ? "text-[#fff] bg-[#F28C28]"
+                    : "text-[#000] border-[#F28C28] border-[1.9px]"
+                  }`}
+                onClick={() => setActiveButton("Today")}
+              >
+                <p>Today</p>
+              </div>
+              <div
+                className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Kalawad"
+                    ? "text-[#fff] bg-[#F28C28]"
+                    : "text-[#000] border-[#F28C28] border-[1.9px]"
+                  }`}
+                onClick={() => setActiveButton("Kalawad")}
+              >
+                <p>Till Date</p>
+              </div>
+              <div className="flex border-[1.4px] gap-[10px] items-center px-[10px] h-[35px] w-[160px] border-[#F28C28] rounded-[6px]">
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer
+                          components={["DatePicker", "DatePicker"]}
+                        >
+                          <DatePicker
+                            value={value}
+                            onChange={(newValue) => setValue(newValue)}
+                            
+                          />
+                        </DemoContainer>
+                      </LocalizationProvider>
+                    </div>
+      
+         
+           
+            </div>
+
+            <div>
+
+            </div>
+
           </div>
 
-         <Logout />
+          <Logout />
           <div className="    py-[69px] md150:py-[90px] flex     w-[98%] md150:w-[97%]     gap-[15px]  md150:gap-[20px]">
             <Header />
             <div className="  md150:py-[20px] md150:px-[20px]     px-[15px]     py-[15px]  md150:h-[70vh]     h-[73vh]   bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
               <div className="flex justify-between w-full gap-[20px]">
                 <div className="w-full h-full mx-auto mb-3 scroll-d-none">
+                  <div className="w-[100%] flex gap-[20px] mb-[20px]">
+                    <div
+                      className={`w-[80px] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "All"
+                          ? "text-[#fff] bg-[#F28C28]"
+                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                        }`}
+                      onClick={() => setActiveButton("All")}
+                    >
+                      <p>All</p>
+                    </div>
+                    <div
+                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Kalawad"
+                          ? "text-[#fff] bg-[#F28C28]"
+                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                        }`}
+                      onClick={() => setActiveButton("Kalawad")}
+                    >
+                      <p>Kalawad</p>
+                    </div>
+                    <div
+                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Shradhdha"
+                          ? "text-[#fff] bg-[#F28C28]"
+                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                        }`}
+                      onClick={() => setActiveButton("Shradhdha")}
+                    >
+                      <p>Shradhdha</p>
+                    </div>
+                    <div
+                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "PramukhVatika"
+                          ? "text-[#fff] bg-[#F28C28]"
+                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                        }`}
+                      onClick={() => setActiveButton("PramukhVatika")}
+                    >
+                      <p>Pramukh Vatika</p>
+                    </div>
+                    <div
+                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Dholakiya"
+                          ? "text-[#fff] bg-[#F28C28]"
+                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                        }`}
+                      onClick={() => setActiveButton("Dholakiya")}
+                    >
+                      <p>Dholakiya</p>
+                    </div>
+                    <div
+                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Tirupati"
+                          ? "text-[#fff] bg-[#F28C28]"
+                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                        }`}
+                      onClick={() => setActiveButton("Tirupati")}
+                    >
+                      <p>Tirupati</p>
+                    </div>
+                    <div
+                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "SorathiyaVadi"
+                          ? "text-[#fff] bg-[#F28C28]"
+                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                        }`}
+                      onClick={() => setActiveButton("SorathiyaVadi")}
+                    >
+                      <p>Sorathiya Vadi</p>
+                    </div>
+                  </div>
                   <div className="w-full h-full mx-auto rounded-[10px] border border-black overflow-x-hidden relative">
-                    <div className="box-border font-Poppins w-full">
+                    <div className="box-border w-full font-Poppins">
                       <div className="sticky top-0 flex bg-[#F28C28] border-black w-full">
                         <div className="flex !font-Poppins  justify-center text-center py-[6px] items-center border-r border-b border-black gap-[3px] px-3 min-w-[4%] max-w-[4%]">
                           <input
@@ -152,22 +297,22 @@ export default function Feedback() {
                         </div>
                         <div className="flex justify-start items-center text-center py-[6px] border-r border-b border-black px-3 min-w-[9%] max-w-[9%]">
                           <p className="md150:text-[16px] text-[12px] font-[600] font-Outfit text-[#fff]">
-                            Order 
+                            Order
                           </p>
                         </div>
                         <div className="flex justify-start items-center text-center py-[6px] border-r border-b border-black px-3 min-w-[9%] max-w-[9%]">
                           <p className="md150:text-[16px] text-[12px] font-[600] font-Outfit text-[#fff]">
-                            Quality 
+                            Quality
                           </p>
                         </div>
                         <div className="flex justify-start items-center text-center py-[6px] border-r border-b border-black px-3 min-w-[9%] max-w-[9%]">
                           <p className="md150:text-[16px] text-[12px] font-[600] font-Outfit text-[#fff]">
-                            Taste 
+                            Taste
                           </p>
                         </div>
                         <div className="flex justify-start items-center text-center py-[6px] border-r border-b border-black px-3 min-w-[9%] max-w-[9%]">
                           <p className="md150:text-[16px] text-[12px] font-[600] font-Outfit text-[#fff]">
-                            Serving 
+                            Serving
                           </p>
                         </div>
                         <div className="flex justify-start items-center text-center py-[6px] border-r border-b border-black px-3 min-w-[9%] max-w-[9%]">
@@ -182,7 +327,7 @@ export default function Feedback() {
                         </div>
                         <div className="flex justify-start items-center text-center py-[6px] border-r border-b border-black px-3 min-w-[10%] max-w-[10%]">
                           <p className="md150:text-[16px] text-[12px] font-[600] font-Outfit text-[#fff]">
-                            Contact 
+                            Contact
                           </p>
                         </div>
                         <div className="flex justify-start items-center text-center py-[6px] border-r border-b border-black px-3 min-w-[10%] max-w-[10%]">
@@ -192,7 +337,7 @@ export default function Feedback() {
                         </div>
                       </div>
                       {Array.isArray(displayedData) &&
-                      displayedData.length > 0 ? (
+                        displayedData.length > 0 ? (
                         displayedData.map((item, index) => (
                           <div key={item._id} className="flex justify-between">
                             <div className="flex justify-center text-center py-[7px] items-center border-r border-b border-black gap-[7px] px-3 min-w-[4%] max-w-[4%]">
@@ -289,11 +434,10 @@ export default function Feedback() {
                           <div
                             key={i + 1}
                             className={`w-[100%] text-[14px] border-b-[1.7px] rounded-[6px] border-[#847e7e] py-[6px] font-[600] flex justify-center items-center cursor-pointer 
-                        ${
-                          currentPage === i + 1
-                            ? "bg-[#F28C28] text-[#fff]"
-                            : "hover:bg-[#e1ab3e] hover:text-[#fff]"
-                        }`}
+                        ${currentPage === i + 1
+                                ? "bg-[#F28C28] text-[#fff]"
+                                : "hover:bg-[#e1ab3e] hover:text-[#fff]"
+                              }`}
                             onClick={() => goToPage(i + 1)}
                           >
                             <p>{i + 1}</p>
