@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import Editimg from '../../../public/img/Foodsection/edit.png'
 import { useDispatch } from 'react-redux';
-import { addAdminUserAction, addUserAction, getAdminUserAction, getUserAction } from '../../redux/action/userMaster';
+import { addAdminUserAction, addEditUserAction, addUserAction, deleteAdminUserAction, getAdminUserAction, getUserAction } from '../../redux/action/userMaster';
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 import { getPremvatiAction } from '../../redux/action/premvatiList';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-
+import moment from "moment"
 export default function PremvatiUser() {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [editingUser, setEditingUser] = useState(null);
+  const [userDeleteId,setUserDeleteId] = useState("")
 
   const [users, setUsers] = useState([]);
 
@@ -18,6 +19,8 @@ export default function PremvatiUser() {
     phoneNumber: '',
     password: '',
     date: '',
+    isUpdate:false,
+    userId:''
   });
 
   const handleChange = (event) => {
@@ -38,14 +41,27 @@ export default function PremvatiUser() {
 
 
   const handleEdit = (user) => {
-    setEditingUser(user); // Set the user being edited
+    let date;
+    console.log("user?.createdAt",user?.createdAt)
+    if(user?.createdAt){
+      date = moment(user?.createdAt).format("YYYY-MM-DD")
+    }
+    console.log("user?.createdAt",date)
+    setEditingUser(user); 
     setFormData({
       name: user.name || '',
       phoneNumber: user.phoneNumber || '',
-      password: '', // Avoid showing actual passwords
-      date: user.createdAt || '',
+      password: '', 
+      date: date || '',
+      isUpdate:true,
+      userId:user._id
     });
-    setSelectedLocation(user.premvati || '');
+    if(location){
+      const filteredLocation = location.find((item) => item.name === user.premvati.name);
+    if(filteredLocation){
+      setSelectedLocation(filteredLocation)
+    }
+    }
   };
 
   const handleSubmit = async () => {
@@ -54,12 +70,14 @@ export default function PremvatiUser() {
       premvati: selectedLocation._id || selectedLocation,
     };
 
-    if (editingUser) {
-      // Update the user logic here
-      console.log('Updating user:', editingUser._id, FData);
-      // Add your dispatch/update API logic
+    if (formData?.isUpdate) {
+      const user = await dispatch(addEditUserAction(formData?.userId,FData));
+      console.log("usersd",user)
+      if (user) {
+        console.log('User added:', user);
+        setUsers((prev) => prev.map(u => u._id === user?._id ? user : u ));
+      }
     } else {
-      // Add a new user
       const user = await dispatch(addAdminUserAction(FData));
       if (user) {
         console.log('User added:', user);
@@ -73,6 +91,8 @@ export default function PremvatiUser() {
       phoneNumber: '',
       password: '',
       date: '',
+      isUpdate:false,
+      userId:''
     });
     setSelectedLocation('');
     setEditingUser(null);
@@ -127,7 +147,21 @@ export default function PremvatiUser() {
     fetchLocation();
   }, [dispatch]);
 
-
+  const handleCategoryDelete = async(data) =>{
+    console.log("data",data)
+      if(data) {
+      setUserDeleteId(data._id)
+      onOpen(); 
+    }
+}
+  const handleItemDelete = async() =>{
+   const response = await  dispatch(deleteAdminUserAction(userDeleteId))
+   if(response){
+     setUsers(prev => prev.filter(item => item._id !== response._id) )
+    onClose()
+   }
+      // setIsDelOpen(false);
+  }
 
   return (
     <div className="  py-[20px] px-[20px]  md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
@@ -187,11 +221,7 @@ export default function PremvatiUser() {
                   paginatedUsers.map((item, index) => (  */}
               <div className="flex justify-between">
                 <div className="flex justify-center items-center text-center py-[10px] border-r border-b border-black gap-[7px] px-3 min-w-[6%] max-w-[6%]">
-
-
                 </div>
-
-
                 <div className="flex justify-start md11:items-center text-center py-[5px] h-[50px]  border-r border-b border-black px-3 min-w-[20%] max-w-[88%]">
                   {/* <input className='w-[100%] h-[100%] border-none h outline-none' type=' text' /> */}
                   <input
@@ -206,7 +236,7 @@ export default function PremvatiUser() {
                   {/* <input className='w-[100%] h-[100%] border-none h outline-none' type='tel' /> */}
                   <input
                     className='w-[100%] h-[100%] border-none outline-none'
-                    type='tel'
+                    type='number'
                     name="phoneNumber" // Name to target the phone field
                     value={formData.phoneNumber}
                     onChange={handleChange}
@@ -311,7 +341,7 @@ export default function PremvatiUser() {
                         src={Editimg}
                       />
                       <i
-                        className="text-[18px] mt-[1px] text-[#ff0b0b] cursor-pointer fa-solid fa-trash-can" onClick={onOpenChange}
+                        className="text-[18px] mt-[1px] text-[#ff0b0b] cursor-pointer fa-solid fa-trash-can" onClick={() =>{handleCategoryDelete(item)}}
 
                       ></i>
                     </div>
@@ -378,7 +408,7 @@ export default function PremvatiUser() {
                       <div className="absolute bottom-0 flex w-[100%]">
                         <div
                           className="w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]"
-
+                        onClick={handleItemDelete}
                         >
                           <p>Delete</p>
                         </div>

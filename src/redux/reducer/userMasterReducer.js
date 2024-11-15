@@ -1,11 +1,13 @@
-import { GET_USER, ADD_USER, RESET_GLOBAL_STATE, LOGIN_ADMIN, DELETE_USER, UPDATE_USER, GET_ADMIN_USER, ADD_ADMIN_USER } from '../type';
+import { GET_USER, ADD_USER, RESET_GLOBAL_STATE, LOGIN_ADMIN, DELETE_USER, UPDATE_USER, GET_ADMIN_USER, ADD_ADMIN_USER, EDIT_ADMIN_USER, DELETE_ADMIN_USER } from '../type';
 
 const initialState = {
     addUser: [],
     getUser: [],
     loginAdmin:[],
     getAdminUser:[],
-    addAdminUser:[]
+    addAdminUser:[],
+    editAdmin:[],
+    deleteAdmin:[]
 };
 
 const userMasterReducer = (state = initialState, action) => {
@@ -19,6 +21,16 @@ const userMasterReducer = (state = initialState, action) => {
         return {
             ...state,
             getAdminUser: action.payload,
+        };
+        case EDIT_ADMIN_USER: 
+        return {
+            ...state,
+            editAdmin: action.payload,
+        };
+        case DELETE_ADMIN_USER: 
+        return {
+            ...state,
+            deleteAdmin: action.payload,
         };
         case LOGIN_ADMIN:
             return {

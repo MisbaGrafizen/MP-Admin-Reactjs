@@ -8,7 +8,7 @@ import {
     ApiPostNoAuth,
     ApiPut,
 } from '../../helper/axios';
-import { ADD_ADMIN_USER, ADD_USER, DELETE_USER, GET_ADMIN_USER, GET_USER, LOGIN_ADMIN, UPDATE_USER } from '../type';
+import { ADD_ADMIN_USER, ADD_USER, DELETE_ADMIN_USER, DELETE_USER, EDIT_ADMIN_USER, GET_ADMIN_USER, GET_USER, LOGIN_ADMIN, UPDATE_USER } from '../type';
 
 
 export const addUserAction = (userData) => {
@@ -72,6 +72,50 @@ export const addAdminUserAction = (userData) => {
       .catch((error) => {
         dispatch({
           type: ADD_ADMIN_USER,
+          payload: error,
+        });
+      });
+  };
+};
+
+export const addEditUserAction = (userId,userData) => {
+    return (dispatch) => {
+        return ApiPut(`/api/admin/edit_user/${userId}`, userData)
+      .then((res) => {
+       
+        if (res) {
+          dispatch({
+            type: EDIT_ADMIN_USER,
+            payload: res,
+          });
+          return res;
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: EDIT_ADMIN_USER,
+          payload: error,
+        });
+      });
+  };
+};
+
+export const deleteAdminUserAction = (userId) => {
+    return (dispatch) => {
+        return ApiDelete(`/api/admin/delete_user/${userId}`)
+      .then((res) => {
+       
+        if (res) {
+          dispatch({
+            type: DELETE_ADMIN_USER,
+            payload: res.data,
+          });
+          return res.data;
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: DELETE_ADMIN_USER,
           payload: error,
         });
       });
