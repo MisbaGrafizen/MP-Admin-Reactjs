@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Editimg from '../../../public/img/Foodsection/edit.png'
 import { useDispatch } from 'react-redux';
 import { addAdminUserAction, addUserAction, getAdminUserAction, getUserAction } from '../../redux/action/userMaster';
+import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 import { getPremvatiAction } from '../../redux/action/premvatiList';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 export default function PremvatiUser() {
   const dispatch = useDispatch();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [editingUser, setEditingUser] = useState(null);
 
   const [users, setUsers] = useState([]);
 
@@ -14,7 +17,7 @@ export default function PremvatiUser() {
     name: '',
     phoneNumber: '',
     password: '',
-    date:'',
+    date: '',
   });
 
   const handleChange = (event) => {
@@ -26,27 +29,55 @@ export default function PremvatiUser() {
   };
 
   const [location, setLocation] = useState([]);
-  console.log("users",users)
+  console.log("users", users)
   const [selectedLocation, setSelectedLocation] = useState('');
   const handleLocationChange = (event) => {
-    console.log("event",event.target.value)
+    console.log("event", event.target.value)
     setSelectedLocation(event.target.value);
   };
 
-  const handelSubmitForm =async() =>{
-      console.log("date",formData)
-      console.log("location",selectedLocation)
-    const FData ={
+
+  const handleEdit = (user) => {
+    setEditingUser(user); // Set the user being edited
+    setFormData({
+      name: user.name || '',
+      phoneNumber: user.phoneNumber || '',
+      password: '', // Avoid showing actual passwords
+      date: user.createdAt || '',
+    });
+    setSelectedLocation(user.premvati || '');
+  };
+
+  const handleSubmit = async () => {
+    const FData = {
       ...formData,
-      premvati:selectedLocation._id
-    }
-    console.log("FDaata",FData)
-      const user = await dispatch(addAdminUserAction(FData))
-      if(user){
-        console.log(user)
+      premvati: selectedLocation._id || selectedLocation,
+    };
+
+    if (editingUser) {
+      // Update the user logic here
+      console.log('Updating user:', editingUser._id, FData);
+      // Add your dispatch/update API logic
+    } else {
+      // Add a new user
+      const user = await dispatch(addAdminUserAction(FData));
+      if (user) {
+        console.log('User added:', user);
+        setUsers((prev) => [...prev, user]);
       }
-      
-  }
+    }
+
+    // Clear form and editing state
+    setFormData({
+      name: '',
+      phoneNumber: '',
+      password: '',
+      date: '',
+    });
+    setSelectedLocation('');
+    setEditingUser(null);
+  };
+
   // const [currentPage, setCurrentPage] = useState(1);
   // const [dropdownOpen, setDropdownOpen] = useState(false);
   // const itemsPerPage = 1; // Example items per page
@@ -79,25 +110,25 @@ export default function PremvatiUser() {
   // };
   useEffect(() => {
     const fetchUsers = async () => {
-            const response  = await dispatch(getAdminUserAction());
-            if(response.length > 0 ){
-              setUsers(response)
-            }        
+      const response = await dispatch(getAdminUserAction());
+      if (response.length > 0) {
+        setUsers(response)
+      }
     };
 
     const fetchLocation = async () => {
-            const response  = await dispatch(getPremvatiAction());
-            if(response.length > 0 ){
-              setLocation(response)
-            }        
+      const response = await dispatch(getPremvatiAction());
+      if (response.length > 0) {
+        setLocation(response)
+      }
     };
-    
+
     fetchUsers();
     fetchLocation();
-}, [dispatch]);
+  }, [dispatch]);
 
-  
-  
+
+
   return (
     <div className="  py-[20px] px-[20px]  md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
       <div className="flex justify-between w-full gap-[20px]">
@@ -152,7 +183,7 @@ export default function PremvatiUser() {
                 </div>
               </div>
 
-               {/* {Array.isArray(users) && users.length > 0 ? (
+              {/* {Array.isArray(users) && users.length > 0 ? (
                   paginatedUsers.map((item, index) => (  */}
               <div className="flex justify-between">
                 <div className="flex justify-center items-center text-center py-[10px] border-r border-b border-black gap-[7px] px-3 min-w-[6%] max-w-[6%]">
@@ -164,129 +195,129 @@ export default function PremvatiUser() {
                 <div className="flex justify-start md11:items-center text-center py-[5px] h-[50px]  border-r border-b border-black px-3 min-w-[20%] max-w-[88%]">
                   {/* <input className='w-[100%] h-[100%] border-none h outline-none' type=' text' /> */}
                   <input
-className='w-[100%] h-[100%] border-none outline-none'
-type='text'
-name="name" 
-value={formData.name}
-onChange={handleChange} 
-/>  
+                    className='w-[100%] h-[100%] border-none outline-none'
+                    type='text'
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                  />
                 </div>
                 <div className="flex justify-start md11:items-center text-center  py-[5px] h-[50px]  border-r border-b border-black px-3 min-w-[16%] max-w-[15%]">
                   {/* <input className='w-[100%] h-[100%] border-none h outline-none' type='tel' /> */}
                   <input
-          className='w-[100%] h-[100%] border-none outline-none'
-          type='tel'
-          name="phoneNumber" // Name to target the phone field
-          value={formData.phoneNumber}
-          onChange={handleChange}
-        />
+                    className='w-[100%] h-[100%] border-none outline-none'
+                    type='tel'
+                    name="phoneNumber" // Name to target the phone field
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                  />
                 </div>
                 <div className="flex justify-start md11:items-center text-center  py-[5px] h-[50px]  border-r border-b border-black px-3 min-w-[17%] max-w-[11%]">
-                <FormControl fullWidth>
-        <InputLabel id="location-select-label">Select Location</InputLabel>
-        <Select
-          labelId="location-select-label"
-          value={selectedLocation}
-          onChange={handleLocationChange}
-          // displayEmpty
-          label="Select Location"
-        >
-          {console.log("location",location)}
-          {location.map((loc, index) => (
-            <MenuItem key={index} value={loc}>
-              {loc?.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+                  <FormControl fullWidth>
+                    <InputLabel id="location-select-label">Select Location</InputLabel>
+                    <Select
+                      labelId="location-select-label"
+                      value={selectedLocation}
+                      onChange={handleLocationChange}
+                      // displayEmpty
+                      label="Select Location"
+                    >
+                      {console.log("location", location)}
+                      {location.map((loc, index) => (
+                        <MenuItem key={index} value={loc}>
+                          {loc?.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </div>
 
                 <div className="flex justify-start md11:items-center text-center  py-[5px] h-[50px]  border-r border-b border-black px-3 min-w-[15%] max-w-[11%]">
-                <input
-                className='w-[100%] h-[100%] border-none outline-none'
-                type='password'
-                name="password" 
-                value={formData.password}
-                onChange={handleChange}
-                />
-                </div>
-                
-                <div className="flex justify-start md11:items-center text-center  py-[5px] h-[50px]  border-r border-b border-black px-3 min-w-[17%] max-w-[11%]">
-                <input
-          className='w-[100%] h-[100%] border-none outline-none'
-          type="date"
-          name="date" // Name to target date field
-          value={formData.date}
-          onChange={handleChange}
-        />
+                  <input
+                    className='w-[100%] h-[100%] border-none outline-none'
+                    type='password'
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
                 </div>
 
-                <div className="flex justify-center items-center gap-[15px] text-center py-2 border-b  border-black min-w-[10%] max-w-[9%]" onClick={handelSubmitForm}>
+                <div className="flex justify-start md11:items-center text-center  py-[5px] h-[50px]  border-r border-b border-black px-3 min-w-[17%] max-w-[11%]">
+                  <input
+                    className='w-[100%] h-[100%] border-none outline-none'
+                    type="date"
+                    name="date" // Name to target date field
+                    value={formData.date}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="flex justify-center items-center gap-[15px] text-center py-2 border-b  border-black min-w-[10%] max-w-[9%]" onClick={handleSubmit}>
                   <i className='fa-paper-plane-top text-[25px] text-[#00984B] fa-solid '></i>
                 </div>
               </div>
 
 
 
-             {Array.isArray(users) && users.length > 0 && users.map((item)=>(
-              <>
-              <div className="flex justify-between">
-                <div className="flex justify-center items-center text-center py-[10px] border-r border-b border-black gap-[7px] px-3 min-w-[6%] max-w-[6%]">
-                  <input
-                    type="checkbox"
-                    //   checked={checkedItems.includes(index)}
-                    //   onChange={() => handleCheckboxChange(index + 1)}
-                    style={{ width: "15px", height: "15px" }}
-                    className="ml-[-25%]"
-                  />
-                  <p className="font-[600] md11:text-[15px] md150:text-[17px] md11:mt-[5%] md150:mt-[2%]">
-                    {/* {index + 1 + (currentPage - 1) * itemsPerPage} */}
-                    1
-                  </p>
-                </div>
+              {Array.isArray(users) && users.length > 0 && users.map((item) => (
+                <>
+                  <div className="flex justify-between">
+                    <div className="flex justify-center items-center text-center py-[10px] border-r border-b border-black gap-[7px] px-3 min-w-[6%] max-w-[6%]">
+                      <input
+                        type="checkbox"
+                        //   checked={checkedItems.includes(index)}
+                        //   onChange={() => handleCheckboxChange(index + 1)}
+                        style={{ width: "15px", height: "15px" }}
+                        className="ml-[-25%]"
+                      />
+                      <p className="font-[600] md11:text-[15px] md150:text-[17px] md11:mt-[5%] md150:mt-[2%]">
+                        {/* {index + 1 + (currentPage - 1) * itemsPerPage} */}
+                        1
+                      </p>
+                    </div>
 
 
 
-                <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[20%] max-w-[88%]">
-                  <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit">
-                  {item.name}
-                  </p>
-                </div>
-                <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[16%] max-w-[15%]">
-                  <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
-              {item?.phoneNumber}
-                  </p>
-                </div>
-                <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[17%] max-w-[11%]">
-                  <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
-                {item?.premvati?.name}
-                  </p>
-                </div>
+                    <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[20%] max-w-[88%]">
+                      <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit">
+                        {item.name}
+                      </p>
+                    </div>
+                    <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[16%] max-w-[15%]">
+                      <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
+                        {item?.phoneNumber}
+                      </p>
+                    </div>
+                    <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[17%] max-w-[11%]">
+                      <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
+                        {item?.premvati?.name}
+                      </p>
+                    </div>
 
-                <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[11%]">
-                  <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
-                {/* {item?.password} */}
-                  </p>
-                </div>
-                <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[17%] max-w-[11%]">
-                  <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
-                    {item?.createdAt}
-                  </p>
-                </div>
-                <div className="flex justify-center items-center gap-[15px] text-center py-2 border-b  border-black min-w-[10%] max-w-[9%]">
-                  <img
+                    <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[11%]">
+                      <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
+                        {/* {item?.password} */}
+                      </p>
+                    </div>
+                    <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[17%] max-w-[11%]">
+                      <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
+                        {item?.createdAt}
+                      </p>
+                    </div>
+                    <div className="flex justify-center items-center gap-[15px] text-center py-2 border-b  border-black min-w-[10%] max-w-[9%]">
+                      <img   onClick={() => handleEdit(item)}
 
-                    className="w-[20px] cursor-pointer"
-                    src={Editimg}
-                  />
-                  <i
-                    className="text-[18px] mt-[1px] text-[#ff0b0b] cursor-pointer fa-solid fa-trash-can"
+                        className="w-[20px] cursor-pointer"
+                        src={Editimg}
+                      />
+                      <i
+                        className="text-[18px] mt-[1px] text-[#ff0b0b] cursor-pointer fa-solid fa-trash-can" onClick={onOpenChange}
 
-                  ></i>
-                </div>
-              </div>
-              </>
-             )) }
+                      ></i>
+                    </div>
+                  </div>
+                </>
+              ))}
 
             </div>
           </div>
@@ -327,7 +358,49 @@ onChange={handleChange}
               </div>
             )}
           </div> */}
+
+
+
+
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+          <ModalContent className="md:max-w-[350px] max-w-[333px] relative  flex justify-center !py-0 mx-auto  h-[300px] shadow-delete ">
+            {(onClose) => (
+              <>
+                <div className="relative w-[100%] h-[100%] ">
+                  <div className="relative  w-[100%] h-[100%]">
+                    <div className="w-[100%] flex gap-7 flex-col">
+                      <div className="w-[100%] mt-[30px] p-[10px] mx-auto flex justify-center s">
+                        <i className=" text-[80px] text-[red] shadow-delete-icon rounded-full fa-solid fa-circle-xmark"></i>
+                      </div>
+                      <div className=" mx-auto justify-center flex text-[28px] font-[500] font-Poppins">
+                        <p>Are you sure ?</p>
+                      </div>
+                      <div className="absolute bottom-0 flex w-[100%]">
+                        <div
+                          className="w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[red] rounded-bl-[10px] text-[#fff] font-[600] font-Poppins text-[20px]"
+
+                        >
+                          <p>Delete</p>
+                        </div>
+                        <div
+                          className="w-[50%] cursor-pointer flex justify-center items-center py-[10px]  bg-[#26b955] rounded-br-[10px] text-[#fff] font-[600] font-Poppins text-[20px]"
+                          onClick={onClose}
+                        >
+                          <p>Cancel</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </div>
     </div>
+
+
+
+
   );
 }
