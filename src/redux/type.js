@@ -25,6 +25,8 @@ export const UPDATE_DESIGNATION = "UPDATE_DESIGNATION";
 
 //User Master
 export const ADD_USER = "ADD_USER";
+export const GET_ADMIN_USER = "GET_ADMIN_USER"
+export const ADD_ADMIN_USER = "ADD_ADMIN_USER"
 export const GET_USER = "GET_USER";
 export const DELETE_USER = "DELETE_USER"
 export const UPDATE_USER = "UPDATE_USER"

@@ -20,14 +20,14 @@ export default function Header() {
         <div className="mx-auto justify-between flex flex-col h-[100%]">
           <div className="relative flex items-center">
             <img
-              className="w-[35px] cursor-pointer"
+              className="w-[33px] cursor-pointer"
               src={dashboard}
               alt=""
               onClick={() => (window.location.pathname = "/dashboard")}
             />
             {currentPath === "/dashboard" && (
               <img
-                className="absolute left-[-35px] w-[30px]"
+                className="absolute left-[-35px] w-[25px]"
                 src={tick}
                 alt="Selected"
               />
@@ -36,10 +36,10 @@ export default function Header() {
 
           <Link to="/orders-management">
             <div className="relative flex items-center">
-              <img className="w-[35px] cursor-pointer" src={orders} alt="" />
+              <img className="w-[33px] cursor-pointer" src={orders} alt="" />
               {currentPath === "/orders-management" && (
                 <img
-                  className="absolute left-[-35px] w-[30px]"
+                  className="absolute left-[-35px] w-[25px]"
                   src={tick}
                   alt="Selected"
                 />
@@ -49,12 +49,13 @@ export default function Header() {
 
           <Link to="/users-management">
             <div className="relative flex items-center">
-              <img className="w-[35px] cursor-pointer" src={users} alt="" />
+              <img className="w-[33px] cursor-pointer" src={users} alt="" />
               {currentPath === "/users-management" && (
                 <img
-                  className="absolute left-[-35px] w-[30px]"
+                  className="absolute left-[-35px] w-[25px]"
                   src={tick}
                   alt="Selected"
+                  // width={10}
                 />
               )}
             </div>
@@ -62,10 +63,10 @@ export default function Header() {
 
           <Link to="/feedback-management">
             <div className="relative flex items-center">
-              <img className="w-[35px] cursor-pointer" src={feedback} alt="" />
+              <img className="w-[33px] cursor-pointer" src={feedback} alt="" />
               {currentPath === "/feedback-management" && (
                 <img
-                  className="absolute left-[-35px] w-[30px]"
+                  className="absolute left-[-35px] w-[25px]"
                   src={tick}
                   alt="Selected"
                 />
@@ -75,10 +76,10 @@ export default function Header() {
 
           <Link to="/master-management">
             <div className="relative flex items-center">
-              <img className="w-[35px] cursor-pointer" src={master} alt="" />
+              <img className="w-[33px] cursor-pointer" src={master} alt="" />
               {currentPath === "/master-management" && (
                 <img
-                  className="absolute left-[-35px] w-[30px]"
+                  className="absolute left-[-35px] w-[25px]"
                   src={tick}
                   alt="Selected"
                 />
@@ -88,10 +89,10 @@ export default function Header() {
 
           <Link to="/premvati-management">
             <div className="relative flex items-center">
-              <img className="w-[35px] cursor-pointer" src={premvati} alt="" />
+              <img className="w-[33px] cursor-pointer" src={premvati} alt="" />
               {currentPath === "/premvati-management" && (
                 <img
-                  className="absolute left-[-35px] w-[30px]"
+                  className="absolute left-[-35px] w-[25px]"
                   src={tick}
                   alt="Selected"
                 />
@@ -101,10 +102,10 @@ export default function Header() {
 
           <Link to="/product-management">
             <div className="relative flex items-center">
-              <img className="w-[35px] cursor-pointer" src={product} alt="" />
+              <img className="w-[33px] cursor-pointer" src={product} alt="" />
               {currentPath === "/product-management" && (
                 <img
-                  className="absolute left-[-35px] w-[30px]"
+                  className="absolute left-[-35px] w-[25px]"
                   src={tick}
                   alt="Selected"
                 />
@@ -114,10 +115,10 @@ export default function Header() {
 
           <Link to="/splash-screen">
             <div className="relative flex items-center">
-              <img className="w-[35px] cursor-pointer" src={splash} alt="" />
+              <img className="w-[33px] cursor-pointer" src={splash} alt="" />
               {currentPath === "/splash-screen" && (
                 <img
-                  className="absolute left-[-35px] w-[30px]"
+                  className="absolute left-[-35px] w-[25px]"
                   src={tick}
                   alt="Selected"
                 />

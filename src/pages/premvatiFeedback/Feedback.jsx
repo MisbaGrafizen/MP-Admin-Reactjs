@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import  { useState, useEffect, useRef } from "react";
 import Header from "../../Components/header/Header";
-import userpng from "../../../public/img/AdminSpalsh/user 3.png";
+// import userpng from "../../../public/img/AdminSpalsh/user 3.png";
 import { useNavigate } from "react-router-dom";
 import Logout from "../../Components/logout/Logout";
 import { ApiGet } from "../../helper/axios";
@@ -14,16 +14,18 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 export default function Feedback() {
   const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState("All");
+  const [filterActiveButton, setFilterActiveButton] = useState("");
   const [checkAll, setCheckAll] = useState(false);
   const [checkedItems, setCheckedItems] = useState([]);
   const [displayedData, setDisplayedData] = useState([]);
+  const [mainData, setMainData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const paginationDropdownRef = useRef(null);
   const itemsPerPage = 5;
   const [value, setValue] = useState(dayjs());
 
-  const totalPages = Math.ceil(displayedData.length / itemsPerPage);
+  const totalPages = Math.ceil(displayedData?.length / itemsPerPage);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -34,16 +36,16 @@ export default function Feedback() {
       }
     };
 
-    const branches = [
-      "All",
-      "Kalawad",
-      "Shradhdha",
-      "PramukhVatika",
-      "Dholakiya",
-      "Mavdi",
-      "Tirupati",
-      "SorathiyaVadi",
-    ];
+    // const branches = [
+    //   "All",
+    //   "Kalawad",
+    //   "Shradhdha",
+    //   "PramukhVatika",
+    //   "Dholakiya",
+    //   "Mavdi",
+    //   "Tirupati",
+    //   "SorathiyaVadi",
+    // ];
 
 
 
@@ -60,10 +62,10 @@ export default function Feedback() {
   };
 
 
-  const currentPageData = displayedData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  // const currentPageData = displayedData.slice(
+  //   (currentPage - 1) * itemsPerPage,
+  //   currentPage * itemsPerPage
+  // );
 
 
 
@@ -81,23 +83,33 @@ export default function Feedback() {
 
     return `${day}/${month}/${year}`;
   };
-
+  const apiUrlMapping = {
+    "SorathiyaVadi": "/sorathiya-vadi/feedbacks",
+    "Tirupati": "/tirupati/feedbacks",
+    "Dholakiya": "/dholakiya/feedbacks",
+    "PramukhVatika": "/pramukh-vatika/feedbacks",
+    "Shradhdha": "/shradhdha-park/feedbacks",
+    "Kalawad": "/kalawad-road/feedbacks",
+    "Mavdi": "/mavdi/feedbacks",
+    "All":"/all-feedbacks"
+};
   useEffect(() => {
     const fetchData = async () => {
+      setFilterActiveButton("")
       try {
-        const response = await ApiGet(
-          `/api/v1/all-feedbacks`
-        );
-
-        const fetchedData = response.data;
-
+        const apiUrl = apiUrlMapping[activeButton];
+          const response = await ApiGet(`/api/v1${apiUrl}`);
+        const fetchedData =activeButton === "All"?  response.data :response;
+        console.log("fetchedData",fetchedData)
         setDisplayedData(fetchedData);
+        setMainData(fetchedData)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
+      console.log("activeButton",activeButton)
     };
-    fetchData();
-  }, []);
+   if(activeButton) fetchData();
+  }, [activeButton]);
 
   const handleCheckAll = () => {
     setCheckAll(!checkAll);
@@ -108,29 +120,59 @@ export default function Feedback() {
     }
   };
 
-  const handleCheckboxChange = (index) => {
-    setCheckedItems((prevCheckedItems) => {
-      if (prevCheckedItems.includes(index)) {
-        return prevCheckedItems.filter((item) => item !== index);
-      } else {
-        return [...prevCheckedItems, index];
+  // const handleCheckboxChange = (index) => {
+  //   setCheckedItems((prevCheckedItems) => {
+  //     if (prevCheckedItems.includes(index)) {
+  //       return prevCheckedItems.filter((item) => item !== index);
+  //     } else {
+  //       return [...prevCheckedItems, index];
+  //     }
+  //   });
+  // };
+
+
+
+
+
+  // const handleBranchClick = (branch) => {
+  //   setActiveButton(branch);
+  //   setFilteredData(
+  //     branch === "All" ? displayedData : displayedData.filter((item) => item.branch === branch)
+  //   );
+  // };
+
+  useEffect(()=>{
+    // if(displayedData && filterActiveButton === "today"){
+    //   const today = new Date().toISOString().split('T')[0];
+    //   const filteredData = displayedData.filter(item => item.date.split('T')[0] === today);
+    //   setDisplayedData(filteredData)
+    // }else if( displayedData && filterActiveButton === "select_date" && value){
+    //   const selectedDate = value.toISOString().split("T")[0];
+    //   const filteredData = displayedData.filter(item => {
+    //     const itemDate = item.date.split('T')[0]; 
+    //     return itemDate === selectedDate; 
+    //   });
+    //   setDisplayedData(filteredData.length > 0 && filteredData)
+    //   console.log("filteredDatas",filteredData)
+    // }
+    if (displayedData) {
+      let filteredData = [...mainData];
+    
+      if (filterActiveButton === "today") {
+        const today = new Date().toISOString().split('T')[0];
+        filteredData = filteredData.filter(item => item.date.split('T')[0] === today);
       }
-    });
-  };
-
-
-
-
-
-  const handleBranchClick = (branch) => {
-    setActiveButton(branch);
-    setFilteredData(
-      branch === "All" ? displayedData : displayedData.filter((item) => item.branch === branch)
-    );
-  };
-
-
-
+    
+      if (filterActiveButton === "select_date" && value) {
+        const selectedDate = value.toISOString().split("T")[0];
+        filteredData = filteredData.filter(item => item.date.split('T')[0] === selectedDate);
+      }
+    
+      setDisplayedData(filteredData);
+      
+    }
+    
+  },[filterActiveButton,value])
   return (
     <>
       <div className="    w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0      py-[34px] md150:py-[48px]     px-[30px] md150:px-[40px]  mx-auto   my-auto ">
@@ -157,7 +199,7 @@ export default function Feedback() {
                     ? "text-[#fff] bg-[#F28C28]"
                     : "text-[#000] border-[#F28C28] border-[1.9px]"
                   }`}
-                onClick={() => setActiveButton("Today")}
+                onClick={() => setFilterActiveButton("today")}
               >
                 <p>Today</p>
               </div>
@@ -166,7 +208,7 @@ export default function Feedback() {
                     ? "text-[#fff] bg-[#F28C28]"
                     : "text-[#000] border-[#F28C28] border-[1.9px]"
                   }`}
-                onClick={() => setActiveButton("Kalawad")}
+                onClick={() => setFilterActiveButton("till_date")}
               >
                 <p>Till Date</p>
               </div>
@@ -177,15 +219,12 @@ export default function Feedback() {
                         >
                           <DatePicker
                             value={value}
-                            onChange={(newValue) => setValue(newValue)}
+                            onChange={(newValue) => {setValue(newValue);setFilterActiveButton("select_date")}}
                             
                           />
                         </DemoContainer>
                       </LocalizationProvider>
                     </div>
-      
-         
-           
             </div>
 
             <div>

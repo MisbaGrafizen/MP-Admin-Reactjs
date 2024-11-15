@@ -8,7 +8,7 @@ import {
     ApiPostNoAuth,
     ApiPut,
 } from '../../helper/axios';
-import { ADD_USER, DELETE_USER, GET_USER, LOGIN_ADMIN, UPDATE_USER } from '../type';
+import { ADD_ADMIN_USER, ADD_USER, DELETE_USER, GET_ADMIN_USER, GET_USER, LOGIN_ADMIN, UPDATE_USER } from '../type';
 
 
 export const addUserAction = (userData) => {
@@ -27,6 +27,51 @@ export const addUserAction = (userData) => {
       .catch((error) => {
         dispatch({
           type: ADD_USER,
+          payload: error,
+        });
+      });
+  };
+};
+
+
+export const getAdminUserAction = () => {
+  return (dispatch) => {
+      return ApiGet(`/api/admin/get_all_user`)
+    .then((res) => {
+      if (res.status === "success") {
+        dispatch({
+          type: GET_ADMIN_USER,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: GET_ADMIN_USER,
+        payload: error,
+      });
+    });
+};
+};
+
+
+export const addAdminUserAction = (userData) => {
+    return (dispatch) => {
+        return ApiPostData(`/api/admin/add_user`, userData)
+      .then((res) => {
+       
+        if (res.status === "success") {
+          dispatch({
+            type: ADD_ADMIN_USER,
+            payload: res.data,
+          });
+          return res.data;
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: ADD_ADMIN_USER,
           payload: error,
         });
       });

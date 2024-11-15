@@ -71,6 +71,11 @@ export default function Login() {
     })
 
   }
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin(); 
+    }
+  };
   return (
     <>
       <div className="w-[100%] relative">
@@ -92,6 +97,7 @@ export default function Login() {
                name="name"
               value={formData.name}
               onChange={handleInputChange}
+              // onKeyDown={handleKeyPress}
             />
             <input
               className="w-[100%] h-[45px] rounded-[10px] px-[20px] text-[17px] outline-none"
@@ -100,6 +106,7 @@ export default function Login() {
               name="password"
               value={formData.password}
               onChange={handleInputChange}
+              onKeyDown={handleKeyPress}
             />
             <label className="flex gap-[10px] px-[10px] text-[17px] cursor-pointer text-[#fff]">
               <input
