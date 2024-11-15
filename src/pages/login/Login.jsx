@@ -1,33 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import loginimg from '../../../public/img/login.png';
-import loginimgdesk from '../../../public/img/Login-Desktop.png';
-import { useDispatch } from 'react-redux';
-import { loginAdminAction } from '../../redux/action/userMaster';
-import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
-import { Toast } from 'bootstrap';
-import { toast } from '../../helper';
+import React, { useEffect, useState } from "react";
+import loginimg from "../../../public/img/login.png";
+import loginimgdesk from "../../../public/img/Login-Desktop.png";
+import { useDispatch } from "react-redux";
+import { loginAdminAction } from "../../redux/action/userMaster";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { Toast } from "bootstrap";
+import { toast } from "../../helper";
 
 export default function Login() {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
-
+  const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    password: '',
+    name: "",
+    password: "",
   });
-  console.log("sadsad",isChecked)
+  console.log("sadsad", isChecked);
 
-  useEffect(()=>{
+  useEffect(() => {
     const name = Cookies.get("Name");
-    const password = Cookies.get("Password")
-    console.log(name,password)
-    if(name !== undefined && password !== undefined){
-      setFormData({name:name,password:password})
-      setIsChecked(true)
+    const password = Cookies.get("Password");
+    console.log(name, password);
+    if (name !== undefined && password !== undefined) {
+      setFormData({ name: name, password: password });
+      setIsChecked(true);
     }
-  },[])
+  }, []);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
@@ -36,44 +35,40 @@ export default function Login() {
     const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: value, 
+      [name]: value,
     }));
   };
-  const handleLogin = async () =>{
+  const handleLogin = async () => {
     const { name, password } = formData;
-      
+
     if (!name || !password) {
       alert("Please fill in both fields.");
       return;
     }
-    if(isChecked && name && password) {
-      Cookies.set("Name",name)
-      Cookies.set("Password",password)
+    if (isChecked && name && password) {
+      Cookies.set("Name", name, { expires: 1 / 12 });
+      Cookies.set("Password", password, { expires: 1 / 12 });
     }
-  
-   await dispatch(loginAdminAction(formData)).then((response) =>{
-   
-    if(response.token !== undefined &&response.token !== null )
-    {
-      if(!isChecked){
-        Cookies.remove("Name")
-        Cookies.remove("Password")
-      }
-      Cookies.set('authToken', response.token); 
-      navigate("/splash-screen")
 
-    }else {
-      console.log("dsfsdhdgfsh",response.message)
-      if(response.message){
-        toast(response.message,"error")
+    await dispatch(loginAdminAction(formData)).then((response) => {
+      if (response.token !== undefined && response.token !== null) {
+        if (!isChecked) {
+          Cookies.remove("Name");
+          Cookies.remove("Password");
+        }
+        Cookies.set("authToken", response.token);
+        navigate("/splash-screen");
+      } else {
+        console.log("dsfsdhdgfsh", response.message);
+        if (response.message) {
+          toast(response.message, "error");
+        }
       }
-    }
-    })
-
-  }
+    });
+  };
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleLogin(); 
+    if (e.key === "Enter") {
+      handleLogin();
     }
   };
   return (
@@ -94,7 +89,7 @@ export default function Login() {
               className="w-[100%] h-[45px] rounded-[10px] px-[20px] text-[17px] outline-none"
               placeholder="Enter name"
               type="text"
-               name="name"
+              name="name"
               value={formData.name}
               onChange={handleInputChange}
               // onKeyDown={handleKeyPress}
