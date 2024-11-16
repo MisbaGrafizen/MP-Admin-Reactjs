@@ -10,6 +10,10 @@ import {
   getAllPrePackagePadiOrderListAction,
   getAllPrePackageUnpadiOrderListAction,
   getAllUnpadiOrderListAction,
+  updateOrderRecieptToCancelAction,
+  updateOrderRecieptToPaidAction,
+  updatePrePackageOrderRecieptToCancelAction,
+  updatePrePackageOrderRecieptToPaidAction,
 } from "../../redux/action/orderListing";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -248,6 +252,62 @@ export default function OrderManagement() {
       setLoading(false);
     }
   };
+
+
+  const handlePaymentConfirm = async () => {
+    try {
+      if(activeTab === "self-serving"){
+      const result = await dispatch(updateOrderRecieptToPaidAction(selectedOrderData.orderId._id));
+      if (result) {
+        setRejectModalOpen(true);
+        setTimeout (() => {
+          setPaymentModalOpen(false);
+          window.location.reload();
+        } , 2000)
+      }
+    }
+    if(activeTab === "pre-packaged") {
+      const result = await dispatch(updatePrePackageOrderRecieptToPaidAction(selectedOrderData.orderId._id));
+      if (result) {
+        setRejectModalOpen(true);
+        setTimeout (() => {
+          setPaymentModalOpen(false);
+          window.location.reload();
+        } , 2000)
+      }
+    }
+    } catch (error) {
+      console.error("Error updating order receipt to paid:", error);
+    }
+  };
+
+  const handleCancelOrder = async () => {
+    try {
+      if(activeTab === "self-serving"){
+      const result = await dispatch(updateOrderRecieptToCancelAction(selectedOrderData.orderId._id));
+      if (result) {
+        setRejectModalOpen(true);
+        setTimeout (() => {
+          setRejectModalOpen(false);
+          window.location.reload();
+        } , 2000)
+      }
+    }
+    if(activeTab === "pre-packaged") {
+      const result = await dispatch(updatePrePackageOrderRecieptToCancelAction(selectedOrderData.orderId._id));
+      if (result) {
+        setRejectModalOpen(true);
+        setTimeout (() => {
+          setRejectModalOpen(false);
+          window.location.reload();
+        } , 2000)
+      }
+    }
+    } catch (error) {
+      console.error("Error updating order receipt to paid:", error);
+    }
+  };
+
 
   return (
     <>
@@ -488,7 +548,7 @@ export default function OrderManagement() {
                               </div>
                             </div>
                             <div>
-                              <p className="text-[16px]">{item?.totalPrice}</p>
+                              <p className="text-[16px]">{item?.totalPrice.toFixed(2)}</p>
                             </div>
                           </div>
                         ))}
@@ -518,7 +578,7 @@ export default function OrderManagement() {
                               </div>
                               <div>
                                 <p className="text-[16px]">
-                                  {item?.totalPrice}
+                                  {item?.totalPrice.toFixed(2)}
                                 </p>
                               </div>
                             </div>
@@ -528,7 +588,7 @@ export default function OrderManagement() {
                       <div className="w-[100%] border-t-[2.3px]"></div>
                       <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
                         <p>Total</p>
-                        <p>{selectedOrderData?.orderId?.totalAmount}</p>
+                        <p>{selectedOrderData?.orderId?.totalAmount.toFixed(2)}</p>
                       </div>
                     </div>
 
@@ -570,7 +630,7 @@ export default function OrderManagement() {
                         ) : (
                           <div
                             className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
-                            onClick={openPaymentModal}
+                            onClick={handlePaymentConfirm}
                           >
                             <p>Accept Order</p>
                           </div>
@@ -825,7 +885,7 @@ export default function OrderManagement() {
                         ) : (
                           <div
                             className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
-                            onClick={openPaymentModal}
+                            onClick={handlePaymentConfirm}
                           >
                             <p>Accept Order</p>
                           </div>
@@ -1082,7 +1142,7 @@ export default function OrderManagement() {
                         </div>
                       </div>
                       <div>
-                        <p className="text-[16px]">{item?.totalPrice}</p>
+                        <p className="text-[16px]">{item?.totalPrice.toFixed(2)}</p>
                       </div>
                     </div>
                   )
@@ -1092,7 +1152,7 @@ export default function OrderManagement() {
                 <div className="w-[100%] border-t-[2.3px]"></div>
                 <div className="flex justify-between px-[10px] font-[500] text-[19px] font-mono">
                   <p>Total</p>
-                  <p>{selectedOrderData?.orderId?.totalAmount}</p>
+                  <p>{selectedOrderData?.orderId?.totalAmount.toFixed(2)}</p>
                 </div>
               </div>
               <div className="bg-[#00984B] absolute bottom-0 w-[100%] left-0 py-[9px] flex justify-center text-[30px] text-[#fff]">
@@ -1190,7 +1250,7 @@ export default function OrderManagement() {
                 </div>
                 <div
                   className=" bg-[Red] rounded-tr-[10px] cursor-pointer   rounded-br-[10px] w-[50%] text-[white] font-[600] items-center flex justify-center text-center  py-[10px]"
-                  onClick={closeRejectModal}
+                  onClick={handleCancelOrder}
                 >
                   {" "}
                   Confirm
