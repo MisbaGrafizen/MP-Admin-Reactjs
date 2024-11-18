@@ -9,7 +9,7 @@ import {
     ApiPut,
     ApiPutWithId,
 } from '../../helper/axios';
-import { GET_FOOD_ITEM, ADD_FOOD_CATEGORY,GET_PRE_PACKAGE_FOOD_CATEGORY, GET_BULK_ORDER_CATEGORY, ADD_PRE_PACKAGE_FOOD_CATEGORY,ADD_PRE_PACKAGE_FOOD_ITEM, ADD_BULK_ORDER_CATEGORY, GET_PRE_PACKAGE_FOOD_ITEM, ADD_FOOD_ITEM, GET_FOOD_CATEGORY, GET_SERVING_CATEGORY, ADD_SERVING_CATEGORY, GET_SERVING_METHOD, GET_BULK_ORDER_ITEM, ADD_BULK_ORDER_ITEM, ADD_SERVING_METHOD} from '../type';
+import { GET_FOOD_ITEM, ADD_CATEGORY, GET_CATEGORY, ADD_ITEM, GET_ITEM,  ADD_FOOD_CATEGORY,GET_PRE_PACKAGE_FOOD_CATEGORY, GET_BULK_ORDER_CATEGORY, ADD_PRE_PACKAGE_FOOD_CATEGORY,ADD_PRE_PACKAGE_FOOD_ITEM, ADD_BULK_ORDER_CATEGORY, GET_PRE_PACKAGE_FOOD_ITEM, ADD_FOOD_ITEM, GET_FOOD_CATEGORY, GET_SERVING_CATEGORY, ADD_SERVING_CATEGORY, GET_SERVING_METHOD, GET_BULK_ORDER_ITEM, ADD_BULK_ORDER_ITEM, ADD_SERVING_METHOD} from '../type';
 
 
 export const getAllFoodCategoryAction = () => {
@@ -70,6 +70,27 @@ export const getBulkOrderFoodCategoryAction = () => {
     .catch((error) => {
       dispatch({
         type: GET_BULK_ORDER_CATEGORY,
+        payload: error,
+      });
+    });
+};
+};
+
+export const getCategoryAction = () => {
+  return (dispatch) => {
+      return ApiGet(`/api/admin/categories`)
+    .then((res) => {
+      if (res.status === "success") {
+        dispatch({
+          type: GET_CATEGORY,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: GET_CATEGORY,
         payload: error,
       });
     });
@@ -161,6 +182,27 @@ export const addBulkOrderCategoryAction = (bulkOrderFoodData) => {
 };
 };
 
+export const addCategoryAction = (bulkOrderFoodData) => {
+  return (dispatch) => {
+      return ApiPostData(`/api/admin/category`, bulkOrderFoodData)
+    .then((res) => {
+      if (res.status === "success") {
+        dispatch({
+          type: ADD_CATEGORY,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: ADD_CATEGORY,
+        payload: error,
+      });
+    });
+};
+};
+
 export const addServingCategoryAction = (servingCategoryData) => {
   return (dispatch) => {
       return ApiPostData(`/api/admin/servingCategory`, servingCategoryData)
@@ -200,6 +242,21 @@ export const UpdateBulkOrderCategoryNameAction = (id,data) => {
   console.log("id,data",id,data)
   return (dispatch) => {
       return ApiPut(`/api/admin/bulkOrderCategory/${id}`, data)
+    .then((res) => {
+      if (res.status === "success") {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+     console.log(error)
+    });
+};
+};
+
+export const UpdateCategoryAction = (id,data) => {
+  console.log("id,data",id,data)
+  return (dispatch) => {
+      return ApiPut(`/api/admin/category/${id}`, data)
     .then((res) => {
       if (res.status === "success") {
         return res.data;
@@ -254,6 +311,22 @@ export const DeleteBulkOrderCategoryAction = (id) => {
     });
 };
 };
+
+export const DeleteCategoryAction = (id) => {
+  return (dispatch) => {
+      return ApiDelete(`/api/admin/category/${id}`)
+    .then((res) => {
+      console.log("sdsgdgg",res)
+      if (res.data) {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+     console.log(error)
+    });
+};
+};
+
 
 
 export const DeletePrePackageCategoryAction = (id) => {
@@ -366,6 +439,29 @@ export const getBulkOrderItemByCategoryIdAction = (foodId) => {
 };
 };
 
+export const getItemByCategoryIdAction = (foodId) => {
+  return (dispatch) => {
+      return ApiGet(`/api/menu/food-item/${foodId}`)
+    .then((res) => {
+      if (res.status === "success") {
+        dispatch({
+          type: GET_ITEM,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: GET_ITEM,
+        payload: error,
+      });
+    });
+};
+};
+
+
+
 
 export const getServingMethodByCategoryIdAction = (categoryId) => {
   return (dispatch) => {
@@ -430,7 +526,7 @@ export const deletePrePackageMethodByIdAction = (categoryId) => {
 };
 
 
-export const deletebBulkOrderMethodByIdAction = (categoryId) => {
+export const deleteBulkOrderMethodByIdAction = (categoryId) => {
   return () => {
       return ApiDelete(`/api/admin/bulkOrderItem/${categoryId}`)
     .then((res) => {
@@ -444,8 +540,19 @@ export const deletebBulkOrderMethodByIdAction = (categoryId) => {
 };
 };
 
-
-
+export const deleteItemByIdAction = (categoryId) => {
+  return () => {
+      return ApiDelete(`/api/admin/item/${categoryId}`)
+    .then((res) => {
+      if (res.data) {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      console.log("Error",error)
+    });
+};
+};
 
 export const addFoodItemAction = (formData) => {
   return (dispatch) => {
@@ -522,6 +629,21 @@ export const EditBulkOrderItemAction = (id,formData) => {
 };
 
 
+export const EditMenuItemAction = (id,formData) => {
+  return () => {
+      return ApiPut(`/api/admin/item/${id}`, formData)
+    .then((res) => {
+      if (res.data) {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    });
+};
+};
+
+
 export const addPrePackageFoodItemAction = (formData) => {
   return (dispatch) => {
       return ApiPostData(`/api/admin/pre_package_food_item`, formData)
@@ -580,6 +702,28 @@ export const addServingMethodAction = (formData) => {
     .catch((error) => {
       dispatch({
         type: ADD_SERVING_METHOD,
+        payload: error,
+      });
+    });
+};
+};
+
+
+export const addMenuItemAction = (formData) => {
+  return (dispatch) => {
+      return ApiPostData(`/api/admin/item`, formData)
+    .then((res) => {
+      if (res.status === "success") {
+        dispatch({
+          type: ADD_ITEM,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: ADD_ITEM,
         payload: error,
       });
     });

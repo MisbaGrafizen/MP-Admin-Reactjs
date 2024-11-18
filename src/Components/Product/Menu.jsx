@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
-import { addBulkOrderCategoryAction, addBulkOrderFoodItemAction, addPrePackageFoodCategoryAction, deleteBulkOrderMethodByIdAction, DeleteBulkOrderCategoryAction, EditBulkOrderItemAction, getAllFoodCategoryAction, getAllPrePackageFoodCategoryAction, getBulkOrderFoodCategoryAction, getBulkOrderItemByCategoryIdAction, getFoodItemByCategoryIdAction, getPrePackageFoodItemByCategoryIdAction, UpdateBulkOrderCategoryNameAction } from '../../redux/action/productMaster';
+import { addCategoryAction, addMenuItemAction, addPrePackageFoodCategoryAction, deleteItemByIdAction, DeleteCategoryAction, EditMenuItemAction, getAllFoodCategoryAction, getAllPrePackageFoodCategoryAction, getCategoryAction, getItemByCategoryIdAction, getFoodItemByCategoryIdAction, getPrePackageFoodItemByCategoryIdAction, UpdateCategoryAction } from '../../redux/action/productMaster';
 import { useDispatch, useSelector } from 'react-redux';
 import cloudinaryUpload from '../../helper/cloudinaryUpload';
 
 
-export default function PrePackged({ methodType }) {
+export default function Menu({ methodType }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [showInput, setShowInput] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -14,7 +14,7 @@ export default function PrePackged({ methodType }) {
     const [isDelOpen, setIsDelOpen] = useState(false);
     const [deleteData, setDeleteData] = useState("")
     const [selectedButton, setSelectedButton] = useState(0);
-    const [foodItemInput, setFoodItemInput] = useState({ name: '', price: '', description: '', photo: '',foodId: '' });
+    const [foodItemInput, setFoodItemInput] = useState({ name: '', price: '', foodId: '' });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [editingCategory, setEditingCategory] = useState(null);
@@ -29,14 +29,14 @@ export default function PrePackged({ methodType }) {
     const [isCategoryDelete, setIsCategoryDelete] = useState("")
     const [categoriesDeleteId, setCategoriesDeleteId] = useState("")
     const [selectedImage, setSelectedImage] = useState(null);
-    const [cloudImage,setCloudImage] = useState("");
+    const [cloudImage, setCloudImage] = useState("");
     useEffect(() => {
         const fetchCategories = async () => {
             if (methodType === "PRE-PACKGED") {
                 const categories = await dispatch(getAllPrePackageFoodCategoryAction());
                 setFoodCategories(categories);
             } else {
-                const categories = await dispatch(getBulkOrderFoodCategoryAction());
+                const categories = await dispatch(getCategoryAction());
                 setFoodCategories(categories);
             }
         };
@@ -52,7 +52,7 @@ export default function PrePackged({ methodType }) {
                         setFoodItems(response)
                     });
             } else {
-                dispatch(getBulkOrderItemByCategoryIdAction(selectedFoodCategory?._id)).then((response) => {
+                dispatch(getItemByCategoryIdAction(selectedFoodCategory?._id)).then((response) => {
                     setFoodItems(response)
                 });
             }
@@ -67,7 +67,7 @@ export default function PrePackged({ methodType }) {
                             setFoodItems(response)
                         });
                 } else {
-                    dispatch(getBulkOrderItemByCategoryIdAction(categoriesSingle?._id)).then((response) => {
+                    dispatch(getItemByCategoryIdAction(categoriesSingle?._id)).then((response) => {
                         console.log("elsePar", response)
                         setFoodItems(response)
                     });
@@ -107,7 +107,7 @@ export default function PrePackged({ methodType }) {
                     setFoodCategories(prevCategories => [...prevCategories, response]);
                 })
             } else {
-                dispatch(addBulkOrderCategoryAction({ name: inputValue })).then((response) => {
+                dispatch(addCategoryAction({ name: inputValue })).then((response) => {
                     setFoodCategories(prevCategories => [...prevCategories, response]);
                 })
             }
@@ -127,30 +127,30 @@ export default function PrePackged({ methodType }) {
             alert('Please select a valid food category.');
             return;
         }
-        if (!foodItemInput.name || !foodItemInput.price || !foodItemInput.description) {
+        if (!foodItemInput.name || !foodItemInput.price ) {
             alert('Please fill in all required fields and upload an image.');
             return;
         }
         const formData = new FormData();
         formData.append('name', foodItemInput.name);
         formData.append('price', foodItemInput.price);
-        formData.append('description', foodItemInput.description);
-        formData.append('photo', cloudImage);
+        // formData.append('description', foodItemInput.description);
+        // formData.append('photo', cloudImage);
         formData.append('foodId', selectedFoodCategory?._id);
 
         if (isUpdateData) {
             const updatedFoodItemInput = {
                 ...foodItemInput,
-                photo: cloudImage, 
-              };
-            dispatch(EditBulkOrderItemAction(foodItemInput._id, updatedFoodItemInput))
+                photo: cloudImage,
+            };
+            dispatch(EditMenuItemAction(foodItemInput._id, updatedFoodItemInput))
                 .then(response => {
                     setFoodItems(prev =>
                         prev.map(item =>
                             item._id === foodItemInput._id ? response : item
                         )
                     );
-                    setFoodItemInput({ name: '', price: '', description: '', photo: null,foodId:'' });
+                    setFoodItemInput({ name: '', price: '', foodId: '' });
                     setImagePreview(null);
                     onOpenChange(false);
                 })
@@ -160,11 +160,18 @@ export default function PrePackged({ methodType }) {
         }
         else {
 
-            dispatch(addBulkOrderFoodItemAction(formData))
+            dispatch(addMenuItemAction(formData))
                 .then(response => {
                     console.log('Item added successfully:', response);
-                    setFoodItems(prev => [...prev, response])
-                    setFoodItemInput({ name: '', price: '', description: '', photo: null });
+                    setFoodItems((prev) => {
+                        console.log('prev', prev)
+                        if (!Array.isArray(prev)) {
+                            console.error("State is not an array:", prev);
+                            return [response];
+                        }
+                        return [...prev, response];
+                    });
+                    setFoodItemInput({ name: '', price: '' });
                     setImagePreview(null);
                     onOpenChange(false);
                 })
@@ -191,13 +198,13 @@ export default function PrePackged({ methodType }) {
     //     }
     // };
 
-    const handleFileChange = async(event) => {
+    const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
             const cloudImg = await cloudinaryUpload(file)
             setCloudImage(cloudImg)
             const imageUrl = URL.createObjectURL(file);
-            setSelectedImage(imageUrl); 
+            setSelectedImage(imageUrl);
         }
     };
     const [textareaValue, setTextareaValue] = useState(() => {
@@ -245,7 +252,7 @@ export default function PrePackged({ methodType }) {
 
     const handleCategoryUpdate = () => {
         if (inputValue && editingCategory) {
-            dispatch(UpdateBulkOrderCategoryNameAction(editingCategory, { name: inputValue }))
+            dispatch(UpdateCategoryAction(editingCategory, { name: inputValue }))
                 .then((response) => {
                     console.log("responsesdsd", response)
                     setEditingCategory(null);
@@ -255,7 +262,7 @@ export default function PrePackged({ methodType }) {
                         )
                     );
                     setInputValue('');
-                    dispatch(getBulkOrderFoodCategoryAction());
+                    dispatch(getCategoryAction());
                 })
                 .catch(error => console.error('Error updating category:', error));
         }
@@ -299,10 +306,10 @@ export default function PrePackged({ methodType }) {
             setFoodItemInput({
                 name: item?.name,
                 price: item?.price,
-                description: item?.description,
-                photo: null,
+                // description: item?.description,
+                // photo: null,
                 _id: item?._id,
-                foodId:selectedFoodCategory?._id
+                foodId: selectedFoodCategory?._id
             });
             setSelectedImage(item?.photo)
         }
@@ -318,13 +325,13 @@ export default function PrePackged({ methodType }) {
     };
     const handelConfirmDelete = () => {
         if (isCategoryDelete) {
-            dispatch(DeleteBulkOrderCategoryAction(categoriesDeleteId)).then((response) => {
+            dispatch(DeleteCategoryAction(categoriesDeleteId)).then((response) => {
                 setFoodCategories(prev => prev.filter(item => item._id !== response._id))
                 setCategoriesDeleteId("")
                 setIsDelOpen(false);
             })
         } else if (deleteData) {
-            dispatch(deleteBulkOrderMethodByIdAction(deleteData._id,))
+            dispatch(deleteItemByIdAction(deleteData._id,))
                 .then(response => {
 
                     setFoodItems(prev =>
@@ -392,15 +399,14 @@ export default function PrePackged({ methodType }) {
                     </div>
 
                     <div className=" flex-wrap  flex rlative  gap-[20px] ">
-                        <div className="border-[1px]  h-[100%] border-dashed border-[#F28C28] rounded-[8px]  w-[180px] cursor-pointer"  
-                        onClick={() =>{setSelectedImage("");setCloudImage();setFoodItemInput({});onOpen();}} >
-                            <div className="flex justify-center h-[140px] items-center pt-[10px]">
-                                <i className="text-[70px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
-                            </div>
+                        <div className=" h-[100%]  rounded-[8px]  w-[180px] cursor-pointer"
+                            onClick={() => { setSelectedImage(""); setCloudImage(); setFoodItemInput({}); onOpen(); }} >
+
                             <div className="border-dashed flex gap-[20px] p-[10px] rounded-[8px] border-[#fff] bg-[#F28C28] border-t-[1.7px] w-full">
                                 <div className="font-[600] pl-[7px] text-[15px] text-[white]">
                                     <p>Name:</p>
                                     <p>Price:</p>
+
                                 </div>
                             </div>
                         </div>
@@ -408,20 +414,22 @@ export default function PrePackged({ methodType }) {
                             foodItems.map((item, index) => (
                                 <div
                                     key={index}
-                                    className="border-[1px] border-dashed h-[100%] border-[#F28C28] rounded-[8px] w-[180px] cursor-pointer"
+                                    className=" h-[100%] rounded-[8px] w-[180px] cursor-pointer"
                                     onDoubleClick={(e) => handleFoodItemDoubleClick(item, e)}
                                 >
-                                    <div className="flex h-[140px] justify-center w-full p-[10px]">
+                                    {/* <div className="flex h-[140px] justify-center w-full p-[10px]">
                                         <img className=' w-[100%] rounded-tl-[8px] rounded-tr-[8px]' src={item?.photo} alt="" />
-                                    </div>
+                                    </div> */}
                                     <div className="border-dashed pl-[7px] flex gap-[20px] p-[10px] rounded-[8px] border-[#fff] bg-[#F28C28] border-t-[1.7px] w-full">
                                         <div className="font-[600] pl-[7px] text-[15px] text-[white]">
                                             <p>Name:</p>
                                             <p>Price:</p>
+
                                         </div>
                                         <div className="font-[600] text-[14px] text-[white]">
                                             <p>{item?.name}</p>
                                             <p>{item?.price}/-</p>
+
                                         </div>
                                     </div>
                                     {popupVisible && (
@@ -458,14 +466,14 @@ export default function PrePackged({ methodType }) {
             </div>
 
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} className='bg-[]'>
-                <ModalContent className='!max-w-[580px]  !mt-[100px] h-[480px] rounded-[10px] overflow-hidden bg-white border-[1px] border-[#000] ' >
+                <ModalContent className='!max-w-[300px]  !mt-[100px] h-[300px] rounded-[10px] overflow-hidden bg-white border-[1px] border-[#000] ' >
                     {(onClose) => (
                         <>
                             <div className='relative w-[100%] overflow-hidden'>
                                 <div className=" px-[20px] py-[20px] w-[100%]   relative">
                                     <div className=" w-[100%] flex gap-[29px] flex-col">
                                         <div className="w-[100%] flex gap-[16px]">
-                                            <div className="border-[1px] border-dashed max-h-[170px]  border-[#F28C28] rounded-[8px] flex justify-center items-center w-[167px] cursor cursor-pointer" onClick={onOpen}>
+                                            {/* <div className="border-[1px] border-dashed max-h-[170px]  border-[#F28C28] rounded-[8px] flex justify-center items-center w-[167px] cursor cursor-pointer" onClick={onOpen}>
                                             <label htmlFor="imageUpload" className="cursor-pointer flex justify-center !w-[560px]">
                                                       {selectedImage ? (
                                                     <img src={selectedImage} alt="Selected" className="h-[160px] w-[600px] rounded-[8px]" />
@@ -482,11 +490,11 @@ export default function PrePackged({ methodType }) {
                                                 />
                                                 </label>
 
-                                            </div>
+                                            </div> */}
 
                                             <div className=" flex flex-col w-[100%] gap-[20px]">
                                                 <div className="flex w-[100%] gap-[20px]">
-                                                    <div className=" flex gap-[5px] w-[50%]  text-[14px] items-center border-b-[1.9px] px-[5px] border-[#000]">
+                                                    <div className=" flex gap-[5px] w-[100%]  text-[14px] items-center border-b-[1.9px] px-[5px] border-[#000]">
                                                         <p className='font-[700]'>Name:</p>
                                                         <input className='outline-none w-[100%]'
                                                             type="text"
@@ -495,7 +503,9 @@ export default function PrePackged({ methodType }) {
                                                             onChange={handleFoodItemInputChange}
                                                         />
                                                     </div>
-                                                    <div className="  w-[50%] flex gap-[5px] items-center border-b-[1.9px] px-[5px] border-[#000]">
+                                                </div>
+                                                <div className="flex w-[100%] gap-[20px]">
+                                                    <div className="  w-[100%] flex gap-[5px] items-center border-b-[1.9px] px-[5px] border-[#000]">
                                                         <p className='font-[700] text-[14px] '>Price:</p>
                                                         <input className='outline-none w-[100%]'
                                                             type="text"
@@ -504,17 +514,18 @@ export default function PrePackged({ methodType }) {
                                                             onChange={handleFoodItemInputChange}
                                                         />
                                                     </div>
+
                                                 </div>
-                                                <div className="flex  gap-[2px] w-[100%] p-[10px] border-[#000] outline-none border-[1.9px] rounded-[8px] h-[120px] text-[15px">
+                                                {/* <div className="flex  gap-[2px] w-[100%] p-[10px] border-[#000] outline-none border-[1.9px] rounded-[8px] h-[120px] text-[15px">
                                                     <p>Self note : </p>
                                                     <textarea name="" className="font-[500] w-[78%] outline-none" id=""> </textarea>
 
-                                                </div>
+                                                </div> */}
 
                                             </div>
 
                                         </div>
-                                        <div className="textarea-container border-[1.9px] rounded-[8px] border-[#000]" >
+                                        {/* <div className="textarea-container border-[1.9px] rounded-[8px] border-[#000]" >
                                             <textarea
                                                 id="numbered-textarea"
                                                 className="w-[100%] p-[10px] outline-none  rounded-[8px] h-[180px] text-[15px] font-[500]"
@@ -522,7 +533,7 @@ export default function PrePackged({ methodType }) {
                                                 value={foodItemInput?.description}
                                                 onChange={handleTextareaInput}
                                             />
-                                        </div>
+                                        </div> */}
 
                                     </div>
 
@@ -584,22 +595,3 @@ export default function PrePackged({ methodType }) {
         </>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

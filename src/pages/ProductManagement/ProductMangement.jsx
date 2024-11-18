@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import userpng from "../../../public/img/AdminSpalsh/user 3.png";
 import Logout from '../../Components/logout/Logout';
 import PremvatiPrduct from '../../Components/Product/PremvatiPrduct';
+import Menu from '../../Components/Product/Menu';
 
 export default function ProductMangement() {
 
@@ -46,7 +47,13 @@ export default function ProductMangement() {
                   <PremvatiPrduct />
               </div>
           );
-      } 
+      } else if (activeForm === 'MENU') {
+        return (
+            <div className="flex justify-between w-full gap-[20px]">
+                <Menu />
+            </div>
+        );
+    }  
         
     };
     
@@ -115,6 +122,16 @@ export default function ProductMangement() {
                 onClick={() => handleActiveFormChange("PREMVATI")}
               >
                 <p>Premvati</p>
+              </div>
+              <div
+                className={`md150:w-[160px] md11:w-[130px] flex items-center md150:text-[18px] text-[16px] justify-center  rounded-tr-[10px]  rounded-tl-[10px]  border-r-[1px] font-[600] border-l-[1px]  border-t-[1px] border-[#F28C28]  ${
+                  activeForm === "MENU"
+                    ? "bg-[#F28C28] text-[#fff]"
+                    : "text-[#FEAA00]  bg-white "
+                } md150:h-[40px] md11:h-[35px] cursor-pointer`}
+                onClick={() => handleActiveFormChange("MENU")}
+              >
+                <p>Menu</p>
               </div>
             </div>
               <div className="   md150:py-[20px] md150:px-[20px] md11:px-[15px] md11:py-[15px]  md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
