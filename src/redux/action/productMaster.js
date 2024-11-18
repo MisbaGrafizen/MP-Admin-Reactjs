@@ -9,7 +9,7 @@ import {
     ApiPut,
     ApiPutWithId,
 } from '../../helper/axios';
-import { GET_FOOD_ITEM, ADD_FOOD_CATEGORY,GET_PRE_PACKAGE_FOOD_CATEGORY, ADD_PRE_PACKAGE_FOOD_CATEGORY,ADD_PRE_PACKAGE_FOOD_ITEM, GET_PRE_PACKAGE_FOOD_ITEM, ADD_FOOD_ITEM, GET_FOOD_CATEGORY, GET_SERVING_CATEGORY, ADD_SERVING_CATEGORY, GET_SERVING_METHOD, ADD_SERVING_METHOD} from '../type';
+import { GET_FOOD_ITEM, ADD_FOOD_CATEGORY,GET_PRE_PACKAGE_FOOD_CATEGORY, GET_BULK_ORDER_CATEGORY, ADD_PRE_PACKAGE_FOOD_CATEGORY,ADD_PRE_PACKAGE_FOOD_ITEM, ADD_BULK_ORDER_CATEGORY, GET_PRE_PACKAGE_FOOD_ITEM, ADD_FOOD_ITEM, GET_FOOD_CATEGORY, GET_SERVING_CATEGORY, ADD_SERVING_CATEGORY, GET_SERVING_METHOD, GET_BULK_ORDER_ITEM, ADD_BULK_ORDER_ITEM, ADD_SERVING_METHOD} from '../type';
 
 
 export const getAllFoodCategoryAction = () => {
@@ -32,6 +32,7 @@ export const getAllFoodCategoryAction = () => {
       });
   };
 };
+
 export const getAllPrePackageFoodCategoryAction = () => {
   return (dispatch) => {
       return ApiGet(`/api/admin/prePackageFoods`)
@@ -47,6 +48,28 @@ export const getAllPrePackageFoodCategoryAction = () => {
     .catch((error) => {
       dispatch({
         type: GET_PRE_PACKAGE_FOOD_CATEGORY,
+        payload: error,
+      });
+    });
+};
+};
+
+
+export const getBulkOrderFoodCategoryAction = () => {
+  return (dispatch) => {
+      return ApiGet(`/api/admin/bulkOrderCategories`)
+    .then((res) => {
+      if (res.status === "success") {
+        dispatch({
+          type: GET_BULK_ORDER_CATEGORY,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: GET_BULK_ORDER_CATEGORY,
         payload: error,
       });
     });
@@ -117,6 +140,27 @@ export const addPrePackageFoodCategoryAction = (prePackageFoodData) => {
 };
 };
 
+export const addBulkOrderCategoryAction = (bulkOrderFoodData) => {
+  return (dispatch) => {
+      return ApiPostData(`/api/admin/bulkOrderCategory`, bulkOrderFoodData)
+    .then((res) => {
+      if (res.status === "success") {
+        dispatch({
+          type: ADD_BULK_ORDER_CATEGORY,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: ADD_BULK_ORDER_CATEGORY,
+        payload: error,
+      });
+    });
+};
+};
+
 export const addServingCategoryAction = (servingCategoryData) => {
   return (dispatch) => {
       return ApiPostData(`/api/admin/servingCategory`, servingCategoryData)
@@ -141,6 +185,21 @@ export const UpdatePrePackageCategoryNameAction = (id,data) => {
   console.log("id,data",id,data)
   return (dispatch) => {
       return ApiPut(`/api/admin/prePackageFood/${id}`, data)
+    .then((res) => {
+      if (res.status === "success") {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+     console.log(error)
+    });
+};
+};
+
+export const UpdateBulkOrderCategoryNameAction = (id,data) => {
+  console.log("id,data",id,data)
+  return (dispatch) => {
+      return ApiPut(`/api/admin/bulkOrderCategory/${id}`, data)
     .then((res) => {
       if (res.status === "success") {
         return res.data;
@@ -180,6 +239,22 @@ export const DeleteSelfServingCategoryAction = (id) => {
     });
 };
 };
+
+export const DeleteBulkOrderCategoryAction = (id) => {
+  return (dispatch) => {
+      return ApiDelete(`/api/admin/bulkOrderCategory/${id}`)
+    .then((res) => {
+      console.log("sdsgdgg",res)
+      if (res.data) {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+     console.log(error)
+    });
+};
+};
+
 
 export const DeletePrePackageCategoryAction = (id) => {
   return (dispatch) => {
@@ -270,6 +345,28 @@ export const getPrePackageFoodItemByCategoryIdAction = (foodId) => {
 };
 
 
+export const getBulkOrderItemByCategoryIdAction = (foodId) => {
+  return (dispatch) => {
+      return ApiGet(`/api/bulk-order/food-item/${foodId}`)
+    .then((res) => {
+      if (res.status === "success") {
+        dispatch({
+          type: GET_BULK_ORDER_ITEM,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: GET_BULK_ORDER_ITEM,
+        payload: error,
+      });
+    });
+};
+};
+
+
 export const getServingMethodByCategoryIdAction = (categoryId) => {
   return (dispatch) => {
       return ApiGet(`/api/admin/serving-method/${categoryId}`)
@@ -321,6 +418,21 @@ export const deleteServingSingleMethodByIdAction = (categoryId) => {
 export const deletePrePackageMethodByIdAction = (categoryId) => {
   return () => {
       return ApiDelete(`/api/admin/pre_package_food_item/${categoryId}`)
+    .then((res) => {
+      if (res.data) {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      console.log("Error",error)
+    });
+};
+};
+
+
+export const deletebBulkOrderMethodByIdAction = (categoryId) => {
+  return () => {
+      return ApiDelete(`/api/admin/bulkOrderItem/${categoryId}`)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -395,6 +507,20 @@ export const EditPrePackageFoodItemAction = (id,formData) => {
 };
 };
 
+export const EditBulkOrderItemAction = (id,formData) => {
+  return () => {
+      return ApiPut(`/api/admin/bulkOrderItem/${id}`, formData)
+    .then((res) => {
+      if (res.data) {
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    });
+};
+};
+
 
 export const addPrePackageFoodItemAction = (formData) => {
   return (dispatch) => {
@@ -411,6 +537,27 @@ export const addPrePackageFoodItemAction = (formData) => {
     .catch((error) => {
       dispatch({
         type: ADD_PRE_PACKAGE_FOOD_ITEM,
+        payload: error,
+      });
+    });
+};
+};
+
+export const addBulkOrderFoodItemAction = (formData) => {
+  return (dispatch) => {
+      return ApiPostData(`/api/admin/pre_package_food_item`, formData)
+    .then((res) => {
+      if (res.status === "success") {
+        dispatch({
+          type: ADD_BULK_ORDER_ITEM,
+          payload: res.data,
+        });
+        return res.data;
+      }
+    })
+    .catch((error) => {
+      dispatch({
+        type: ADD_BULK_ORDER_ITEM,
         payload: error,
       });
     });

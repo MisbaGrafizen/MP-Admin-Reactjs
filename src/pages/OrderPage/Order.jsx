@@ -14,6 +14,10 @@ import {
   updateOrderRecieptToPaidAction,
   updatePrePackageOrderRecieptToCancelAction,
   updatePrePackageOrderRecieptToPaidAction,
+  getAllUnpaidBulkOrderListAction,
+  getAllPaidBulkOrderListAction,
+  updateBulkOrderRecieptToCancelAction,
+  updateBulkOrderRecieptToPaidAction,
 } from "../../redux/action/orderListing";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -51,6 +55,12 @@ export default function OrderManagement() {
   const prePackageUnpaidOrderList = useSelector(
     (state) => state.orderListingState?.getPrePackageUnpaidOrderList
   );
+  const bulkOrderUnpaidList = useSelector(
+    (state) => state.orderListingState?.getBulkUnpaidOrderList
+  );
+  const bulkOrderPaidList = useSelector(
+    (state) => state.orderListingState?.getBulkPaidOrderList
+  );
   const prePayment = useSelector(
     (state) => state.paymentState?.getPrePackagePayment
   );
@@ -64,18 +74,43 @@ export default function OrderManagement() {
     dispatch(getAllUnpadiOrderListAction());
     dispatch(getAllPrePackagePadiOrderListAction());
     dispatch(getAllPrePackageUnpadiOrderListAction());
+    dispatch(getAllPaidBulkOrderListAction());
+    dispatch(getAllUnpaidBulkOrderListAction());
   }, [dispatch]);
 
   const handleSelectOrder = (orderId) => {
     setSelectedOrder(orderId);
   };
 
+  // const selectedOrderData = useMemo(() => {
+  //   return (
+  //     paidOrderList.find((order) => order._id === selectedOrder) ||
+  //     unpaidOrderList.find((order) => order._id === selectedOrder) ||
+  //     prePackagePaidOrderList.find((order) => order._id === selectedOrder) ||
+  //     prePackageUnpaidOrderList.find((order) => order._id === selectedOrder) ||
+  //     bulkOrderPaidList.find((order) => order._id === selectedOrder) ||
+  //     bulkOrderUnpaidList.find((order) => order._id === selectedOrder)
+  //   );
+  // }, [
+  //   selectedOrder,
+  //   paidOrderList,
+  //   unpaidOrderList,
+  //   prePackagePaidOrderList,
+  //   prePackageUnpaidOrderList,
+  //   bulkOrderPaidList,
+  //   bulkOrderUnpaidList,
+  // ]);
+
+
   const selectedOrderData = useMemo(() => {
+    const isArray = (list) => Array.isArray(list) ? list : [];
     return (
-      paidOrderList.find((order) => order._id === selectedOrder) ||
-      unpaidOrderList.find((order) => order._id === selectedOrder) ||
-      prePackagePaidOrderList.find((order) => order._id === selectedOrder) ||
-      prePackageUnpaidOrderList.find((order) => order._id === selectedOrder)
+      isArray(paidOrderList).find((order) => order._id === selectedOrder) ||
+      isArray(unpaidOrderList).find((order) => order._id === selectedOrder) ||
+      isArray(prePackagePaidOrderList).find((order) => order._id === selectedOrder) ||
+      isArray(prePackageUnpaidOrderList).find((order) => order._id === selectedOrder) ||
+      isArray(bulkOrderPaidList).find((order) => order._id === selectedOrder) ||
+      isArray(bulkOrderUnpaidList).find((order) => order._id === selectedOrder)
     );
   }, [
     selectedOrder,
@@ -83,8 +118,10 @@ export default function OrderManagement() {
     unpaidOrderList,
     prePackagePaidOrderList,
     prePackageUnpaidOrderList,
+    bulkOrderPaidList,
+    bulkOrderUnpaidList,
   ]);
-
+  
   function formatDateAndTime(dateInput) {
     const date = new Date(dateInput);
     if (isNaN(date.getTime())) {
@@ -219,14 +256,26 @@ export default function OrderManagement() {
       } else if (activeFilter === "unpaid") {
         setSelectedOrder(prePackageUnpaidOrderList[0]?._id);
       }
+    } else if (activeTab === "premvati") {
+    if (activeFilter === "all") {
+      setSelectedOrder(
+        bulkOrderPaidList[0]?._id || bulkOrderUnpaidList[0]?._id
+      );
+    } else if (activeFilter === "paid") {
+      setSelectedOrder(bulkOrderPaidList[0]?._id);
+    } else if (activeFilter === "unpaid") {
+      setSelectedOrder(bulkOrderUnpaidList[0]?._id);
     }
-  }, [
+  }
+},[
     activeFilter,
     activeTab,
     paidOrderList,
     unpaidOrderList,
     prePackagePaidOrderList,
     prePackageUnpaidOrderList,
+    bulkOrderPaidList,
+    bulkOrderUnpaidList,
   ]);
 
   const openOrderModal = async () => {
@@ -276,6 +325,16 @@ export default function OrderManagement() {
         } , 2000)
       }
     }
+    if(activeTab === "premvati") {
+      const result = await dispatch(updateBulkOrderRecieptToPaidAction(selectedOrderData.orderId._id));
+      if (result) {
+        setRejectModalOpen(true);
+        setTimeout (() => {
+          setPaymentModalOpen(false);
+          window.location.reload();
+        } , 2000)
+      }
+    }
     } catch (error) {
       console.error("Error updating order receipt to paid:", error);
     }
@@ -295,6 +354,16 @@ export default function OrderManagement() {
     }
     if(activeTab === "pre-packaged") {
       const result = await dispatch(updatePrePackageOrderRecieptToCancelAction(selectedOrderData.orderId._id));
+      if (result) {
+        setRejectModalOpen(true);
+        setTimeout (() => {
+          setRejectModalOpen(false);
+          window.location.reload();
+        } , 2000)
+      }
+    }
+    if(activeTab === "premvati") {
+      const result = await dispatch(updateBulkOrderRecieptToCancelAction(selectedOrderData.orderId._id));
       if (result) {
         setRejectModalOpen(true);
         setTimeout (() => {
@@ -347,6 +416,16 @@ export default function OrderManagement() {
               }`}
             >
               <p>Pre - Packaged</p>
+            </div>
+            <div
+              onClick={() => setActiveTab("premvati")}
+              className={`w-[130px] p-[8px]  rounded-tr-[7px] font-[500]  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${
+                activeTab === "premvati"
+                  ? "bg-[#F28C28] text-[#fff]"
+                  : "border-t-[1px] border-l-[1px] border-r-[1px]"
+              }`}
+            >
+              <p>Premvati</p>
             </div>
           </div>
 
@@ -896,6 +975,262 @@ export default function OrderManagement() {
                 )}
               </div>
             )}
+            {activeTab === "premvati" && (
+              <div className="md150:py-[20px] md150:px-[20px] md11:px-[15px] md11:py-[15px] flex gap-[10px] md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
+                <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#F28C28] overflow-y-auto">
+                  <div className="w-[100%] md11:text-[14px] md150:text-[16px] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] text-[14px] flex justify-between border-[#595454]">
+                    <div
+                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${
+                        activeFilter === "all"
+                          ? "bg-[#00984B] text-white py-[70px]"
+                          : "bg-white text-[#000]"
+                      }`}
+                      onClick={() => setActiveFilter("all")}
+                    >
+                      <p>All</p>
+                      <p className="md11:text-[10px] md150:text-[14px]">
+                        {" "}
+                        ({allOrderCount})
+                      </p>
+                    </div>
+                    <div
+                      className={`w-[100%] h-[100%] gap-[5px]  font-[500] text-center flex items-center justify-center cursor-pointer ${
+                        activeFilter === "paid"
+                          ? "bg-[#006198] text-white py-[70px]"
+                          : "bg-white text-[#000]"
+                      }`}
+                      onClick={() => setActiveFilter("paid")}
+                    >
+                      <p>Paid</p>
+                      <p className="md11:text-[10px] md150:text-[14px]">
+                        ({paidOrderCount})
+                      </p>
+                    </div>
+                    <div
+                      className={`w-[100%]  gap-[5px] font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${
+                        activeFilter === "unpaid"
+                          ? "bg-[RED] text-white  py-[70px]"
+                          : "bg-white text-[#000]"
+                      }`}
+                      onClick={() => setActiveFilter("unpaid")}
+                    >
+                      <p>Unpaid</p>
+                      <p className="md11:text-[10px] md150:text-[14px]">
+                        ({unpaidOrderCount})
+                      </p>
+                    </div>
+                  </div>
+
+                  {shouldShowPaid &&
+                    Array.isArray(prePackagePaidOrderList) &&
+                    prePackagePaidOrderList.map((order) => (
+                      <div
+                        key={order.id}
+                        className={`w-[100%] items-center justify-between rounded-[10px] border-[#00984B] text-[#00984B] flex md11:text-[10px] md150:text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
+                        onClick={() => handleSelectOrder(order._id)}
+                      >
+                        <div>
+                          <p>Order ID - #{order._id}</p>
+                          <p>
+                            Order on - {formatDateAndTime(order?.createdAt)}
+                          </p>
+                          <p>
+                            Order for -{" "}
+                            {formatDateAndTime(order?.orderDate?.pickupDate)}
+                          </p>
+                          <p>Pickup location - {order?.pickupLocation?.name}</p>
+                        </div>
+                        <div
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
+                            selectedOrder === order._id
+                              ? "bg-[#00984B] text-white"
+                              : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
+                          }`}
+                        >
+                          <i className="fa-solid fa-angle-up fa-rotate-90"></i>
+                        </div>
+                      </div>
+                    ))}
+
+                  {shouldShowUnpaid &&
+                    Array.isArray(prePackageUnpaidOrderList) &&
+                    prePackageUnpaidOrderList.map((order) => (
+                      <div
+                        key={order.id}
+                        className={`w-[100%] items-center justify-between rounded-[10px] border-[#FF0606] text-[#FF0606] flex md11:text-[10px] md150:text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
+                        onClick={() => handleSelectOrder(order._id)}
+                      >
+                        <div>
+                          <p>Order ID - #{order._id}</p>
+                          <p>
+                            Order on - {formatDateAndTime(order?.createdAt)}
+                          </p>
+                          <p>
+                            Order for -{" "}
+                            {formatDateAndTime(order.orderDate?.pickupDate)}
+                          </p>
+                          <p>Pickup location - {order.pickupLocation?.name}</p>
+                        </div>
+                        <div
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
+                            selectedOrder === order._id
+                              ? "bg-[#FF0606] text-white"
+                              : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
+                          }`}
+                        >
+                          <i className="fa-solid fa-angle-up fa-rotate-90"></i>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+
+                {selectedOrderData && (
+                  <div className="w-[75%] relative no-scrollbar rounded-[10px] justify-between  gap-[10px] flex flex-col p-[15px] h-[100%] border-[1.4px] border-[#F28C28] overflow-y-auto">
+                    <div className="flex justify-between  pt-[3px]">
+                      <div className="md150:text-[18px] md11:text-[16px]  items-center  flex gap-[20px] font-[500]">
+                        <p>ORDERS DETAILS</p>
+                        <i
+                          className=" text-[25px] cursor-pointer fa-regular fa-print"
+                          onClick={openOrderModal}
+                        ></i>
+                      </div>
+                      <div
+                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center ${
+                          prePackagePaidOrderList.find(
+                            (order) => order._id === selectedOrder
+                          )
+                            ? "text-[#00984B]"
+                            : "text-[#FF0606]"
+                        }`}
+                      >
+                        <p>
+                          {prePackagePaidOrderList.find(
+                            (order) => order._id === selectedOrder
+                          )
+                            ? "ORDER PAID"
+                            : "ORDER UNPAID"}
+                        </p>
+                      </div>
+                    </div>
+                    <div
+                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${
+                        selectedOrder === 0
+                          ? "border-[#00984B]"
+                          : "border-[#FF0606]"
+                      }`}
+                    >
+                      <div className="w-[100%] flex justify-between">
+                        <div className="md150:text-[14px] md11:text-[13px] font-[400]">
+                          <p>Order ID #{selectedOrderData?._id}</p>
+                          <p>
+                            Order on -{" "}
+                            {formatDateAndTime(selectedOrderData?.createdAt)}
+                          </p>
+                          <p>
+                            Order for -{" "}
+                            {formatDateAndTime(
+                              selectedOrderData?.orderDate?.pickupDate
+                            )}
+                          </p>
+                        </div>
+                        <p className="font-[500] pr-[20px] items-center text-[15px]">
+                          Name - {selectedOrderData?.orderId?.userId?.name}
+                        </p>
+                      </div>
+                      <div className="w-[100%] border-t-[1.7px] border-dashed"></div>
+                      <div className="flex px-[10px] items-center justify-between">
+                        <div className="flex flex-col gap-[5px]">
+                          <p className="font-[300]">Delivery Address :</p>
+                          <p className="font-[500] ">
+                            {selectedOrderData?.pickupLocation?.name}
+                          </p>
+                        </div>
+                        <div className="flex gap-[6px] pr-[20px]">
+                          <i className="fa-sharp-duotone fa-solid fa-circle-check tick text-[17px]"></i>
+                          <p>{selectedOrderData?.orderType}</p>
+                        </div>
+                      </div>
+                      <div className="w-[100%] border-t-[1.7px] border-dashed"></div>
+                      <div className="flex flex-col gap-[14px]">
+                        {selectedOrderData?.orderId?.items?.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between px-[10px]"
+                          >
+                            <div className="flex gap-[10px] items-center">
+                              <img
+                                className="w-[80px] rounded-[8px]"
+                                src={
+                                  item?.foodItem?.photo ||
+                                  "../../../public/img/Foodsection/newBhaji.png"
+                                }
+                                alt={item?.foodItem?.name}
+                              />
+                              <div>
+                                <p className="text-[14px]">
+                                  {item?.foodItem?.name}
+                                </p>
+                                <p className="text-[#595858]">
+                                  Qty - {item?.quantity}
+                                </p>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-[13px]">{item?.totalPrice}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="w-[100%] border-t-[2.3px]"></div>
+                      <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
+                        <p>Total</p>
+                        <p>{selectedOrderData?.orderId?.totalAmount}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between mt-[8px]">
+                      <div className="flex gap-[10px] justify-between w-[100%] items-center">
+                        <div className="flex gap-[10px] items-center">
+                          <div
+                            className="w-[130px] rounded-[5px] active:bg-[#006198] active:text-[#fff] items-center border-[#000] cursor-pointer flex justify-center py-[6px] font-[500] border-[1.7px]"
+                            onClick={openNotifictionModal}
+                          >
+                            <p>View KOT</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-[10px] items-center">
+                        <div
+                          className="w-[130px] rounded-[5px] flex justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
+                          onClick={openRejectModal}
+                        >
+                          <p>Reject Order</p>
+                        </div>
+                        {prePackagePaidOrderList.find(
+                          (order) => order._id === selectedOrder
+                        ) ? (
+                          <div
+                            className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
+                            onClick={openReciptModal}
+                          >
+                            <p>View Receipt</p>
+                          </div>
+                        ) : (
+                          <div
+                            className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
+                            onClick={handlePaymentConfirm}
+                          >
+                            <p>Accept Order</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
 
           <Logout />
           </div>

@@ -7,7 +7,7 @@ import {
     ApiPostNoAuth,
     ApiPut,
 } from '../../helper/axios';
-import { GET_PAID_ORDER_LIST, GET_UNPAID_ORDER_LIST, GET_PRE_PACKAGE_UNPAID_ORDER_LIST, GET_PRE_PACKAGE_PAID_ORDER_LIST, GET_PAID_ORDER, GET_PRE_PAID_ORDER,GET_CANCEL_ORDER, GET_PRE_CANCEL_ORDER } from '../type';
+import { GET_PAID_ORDER_LIST, GET_UNPAID_ORDER_LIST, GET_PAID_BULK_ORDER, GET_BULK_CANCEL_ORDER, GET_PAID_BULK_ORDER_LIST, GET_UNPAID_BULK_ORDER_LIST, GET_PRE_PACKAGE_UNPAID_ORDER_LIST, GET_PRE_PACKAGE_PAID_ORDER_LIST, GET_PAID_ORDER, GET_PRE_PAID_ORDER,GET_CANCEL_ORDER, GET_PRE_CANCEL_ORDER } from '../type';
 
 export const getAllUnpadiOrderListAction = () => {
   return (dispatch) => {
@@ -114,6 +114,27 @@ export const getAllPadiOrderListAction = () => {
     };
     };
 
+    export const updateBulkOrderRecieptToPaidAction = (orderId) => {
+      return (dispatch) => {
+          return ApiPut(`/api/bulk-order/order-receipt/${orderId}`)
+        .then((res) => {
+          if (res.status === "success") {
+            dispatch({
+              type: GET_PAID_BULK_ORDER,
+              payload: res?.data,
+            });
+            return res?.data;
+          }
+        })
+        .catch((error) => {
+          dispatch({
+            type: GET_PAID_BULK_ORDER,
+            payload: error,
+          });
+        });
+    };
+    };
+
 
     export const updatePrePackageOrderRecieptToPaidAction = (orderId) => {
       return (dispatch) => {
@@ -178,3 +199,66 @@ export const getAllPadiOrderListAction = () => {
         });
     };
     };
+
+    export const updateBulkOrderRecieptToCancelAction = (orderId) => {
+      return (dispatch) => {
+          return ApiPut(`/api/bulk-order/order-receipt/cancel/${orderId}`)
+        .then((res) => {
+          if (res.status === "success") {
+            dispatch({
+              type: GET_BULK_CANCEL_ORDER,
+              payload: res?.data,
+            });
+            return res?.data;
+          }
+        })
+        .catch((error) => {
+          dispatch({
+            type: GET_BULK_CANCEL_ORDER,
+            payload: error,
+          });
+        });
+    };
+    };
+
+    export const getAllUnpaidBulkOrderListAction = () => {
+      return (dispatch) => {
+          return ApiGet(`/api/admin/get-bulk-order/unpaid`)
+        .then((res) => {
+          if (res.status === "success") {
+            dispatch({
+              type: GET_UNPAID_BULK_ORDER_LIST,
+              payload: res?.data,
+            });
+            return res?.data;
+          }
+        })
+        .catch((error) => {
+          dispatch({
+            type: GET_UNPAID_BULK_ORDER_LIST,
+            payload: error,
+          });
+        });
+    };
+    };
+    
+    export const getAllPaidBulkOrderListAction = () => {
+        return (dispatch) => {
+            return ApiGet(`/api/admin/get-bulk-order/paid`)
+          .then((res) => {
+            if (res.status === "success") {
+              dispatch({
+                type: GET_PAID_BULK_ORDER_LIST,
+                payload: res?.data,
+              });
+              return res?.data;
+            }
+          })
+          .catch((error) => {
+            dispatch({
+              type: GET_PAID_BULK_ORDER_LIST,
+              payload: error,
+            });
+          });
+      };
+      };

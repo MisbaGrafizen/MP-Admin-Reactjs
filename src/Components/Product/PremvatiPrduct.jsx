@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
-import { addFoodCategoryAction, addFoodItemAction, addPrePackageFoodCategoryAction, addPrePackageFoodItemAction, DeletePrePackageCategoryAction, deletePrePackageMethodByIdAction, EditPrePackageFoodItemAction, getAllFoodCategoryAction, getAllPrePackageFoodCategoryAction, getFoodItemByCategoryIdAction, getPrePackageFoodItemByCategoryIdAction, UpdatePrePackageCategoryNameAction } from '../../redux/action/productMaster';
+import { addBulkOrderCategoryAction, addBulkOrderFoodItemAction, addPrePackageFoodCategoryAction, deletebBulkOrderMethodByIdAction, DeleteBulkOrderCategoryAction, EditBulkOrderItemAction, getAllFoodCategoryAction, getAllPrePackageFoodCategoryAction, getBulkOrderFoodCategoryAction, getBulkOrderItemByCategoryIdAction, getFoodItemByCategoryIdAction, getPrePackageFoodItemByCategoryIdAction, UpdateBulkOrderCategoryNameAction } from '../../redux/action/productMaster';
 import { useDispatch, useSelector } from 'react-redux';
 import cloudinaryUpload from '../../helper/cloudinaryUpload';
+
 
 export default function PrePackged({ methodType }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -35,7 +36,7 @@ export default function PrePackged({ methodType }) {
                 const categories = await dispatch(getAllPrePackageFoodCategoryAction());
                 setFoodCategories(categories);
             } else {
-                const categories = await dispatch(getAllFoodCategoryAction());
+                const categories = await dispatch(getBulkOrderFoodCategoryAction());
                 setFoodCategories(categories);
             }
         };
@@ -51,7 +52,7 @@ export default function PrePackged({ methodType }) {
                         setFoodItems(response)
                     });
             } else {
-                dispatch(getFoodItemByCategoryIdAction(selectedFoodCategory?._id)).then((response) => {
+                dispatch(getBulkOrderItemByCategoryIdAction(selectedFoodCategory?._id)).then((response) => {
                     setFoodItems(response)
                 });
             }
@@ -66,7 +67,7 @@ export default function PrePackged({ methodType }) {
                             setFoodItems(response)
                         });
                 } else {
-                    dispatch(getFoodItemByCategoryIdAction(categoriesSingle?._id)).then((response) => {
+                    dispatch(getBulkOrderItemByCategoryIdAction(categoriesSingle?._id)).then((response) => {
                         console.log("elsePar", response)
                         setFoodItems(response)
                     });
@@ -106,7 +107,7 @@ export default function PrePackged({ methodType }) {
                     setFoodCategories(prevCategories => [...prevCategories, response]);
                 })
             } else {
-                dispatch(addFoodCategoryAction({ name: inputValue })).then((response) => {
+                dispatch(addBulkOrderCategoryAction({ name: inputValue })).then((response) => {
                     setFoodCategories(prevCategories => [...prevCategories, response]);
                 })
             }
@@ -142,7 +143,7 @@ export default function PrePackged({ methodType }) {
                 ...foodItemInput,
                 photo: cloudImage, 
               };
-            dispatch(EditPrePackageFoodItemAction(foodItemInput._id, updatedFoodItemInput))
+            dispatch(EditBulkOrderItemAction(foodItemInput._id, updatedFoodItemInput))
                 .then(response => {
                     setFoodItems(prev =>
                         prev.map(item =>
@@ -159,7 +160,7 @@ export default function PrePackged({ methodType }) {
         }
         else {
 
-            dispatch(addPrePackageFoodItemAction(formData))
+            dispatch(addBulkOrderFoodItemAction(formData))
                 .then(response => {
                     console.log('Item added successfully:', response);
                     setFoodItems(prev => [...prev, response])
@@ -244,7 +245,7 @@ export default function PrePackged({ methodType }) {
 
     const handleCategoryUpdate = () => {
         if (inputValue && editingCategory) {
-            dispatch(UpdatePrePackageCategoryNameAction(editingCategory, { name: inputValue }))
+            dispatch(UpdateBulkOrderCategoryNameAction(editingCategory, { name: inputValue }))
                 .then((response) => {
                     console.log("responsesdsd", response)
                     setEditingCategory(null);
@@ -254,7 +255,7 @@ export default function PrePackged({ methodType }) {
                         )
                     );
                     setInputValue('');
-                    dispatch(getAllFoodCategoryAction());
+                    dispatch(getBulkOrderFoodCategoryAction());
                 })
                 .catch(error => console.error('Error updating category:', error));
         }
@@ -317,13 +318,13 @@ export default function PrePackged({ methodType }) {
     };
     const handelConfirmDelete = () => {
         if (isCategoryDelete) {
-            dispatch(DeletePrePackageCategoryAction(categoriesDeleteId)).then((response) => {
+            dispatch(DeleteBulkOrderCategoryAction(categoriesDeleteId)).then((response) => {
                 setFoodCategories(prev => prev.filter(item => item._id !== response._id))
                 setCategoriesDeleteId("")
                 setIsDelOpen(false);
             })
         } else if (deleteData) {
-            dispatch(deletePrePackageMethodByIdAction(deleteData._id,))
+            dispatch(deletebBulkOrderMethodByIdAction(deleteData._id,))
                 .then(response => {
 
                     setFoodItems(prev =>
