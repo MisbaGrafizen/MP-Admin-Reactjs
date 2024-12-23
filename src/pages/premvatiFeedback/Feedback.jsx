@@ -98,7 +98,7 @@ export default function Feedback() {
       setFilterActiveButton("")
       try {
         const apiUrl = apiUrlMapping[activeButton];
-          const response = await ApiGet(`/api/v1${apiUrl}`);
+          const response = await ApiGet(`/v1${apiUrl}`);
         const fetchedData =activeButton === "All"?  response.data :response;
         console.log("fetchedData",fetchedData)
         setDisplayedData(fetchedData);

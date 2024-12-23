@@ -9,7 +9,7 @@ import { GET_PAYMENT, GET_PRE_PACKAGE_PAYMENT } from '../type';
 export const getPaymentByIdAction = (orderId) => {
   console.log('payment api is called');
   return (dispatch) => {
-      return ApiGet(`/api/self-service/payment/${orderId}`)
+      return ApiGet(`/self-service/payment/${orderId}`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -31,7 +31,7 @@ export const getPaymentByIdAction = (orderId) => {
 
 export const getPrePackagePaymentByIdAction = (orderId) => {
   return (dispatch) => {
-      return ApiGet(`/api/pre-packaging/payment/${orderId}`)
+      return ApiGet(`/pre-packaging/payment/${orderId}`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({

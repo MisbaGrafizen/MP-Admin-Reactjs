@@ -12,7 +12,7 @@ import { ADD_PREMVATI, DELETE_PREMVATI, GET_PREMVATI, UPDATE_PREMVATI } from '..
 
 export const addPremvatiAction = (imageData) => {
     return (dispatch) => {
-        return ApiPost(`/api/admin/premvati`, imageData)
+        return ApiPost(`/admin/premvati`, imageData)
       .then((res) => {
         if (res.status === "success") {
           dispatch({
@@ -33,7 +33,7 @@ export const addPremvatiAction = (imageData) => {
 
 export const updatePremvatiAction = (id,imageData) => {
     return (dispatch) => {
-        return ApiPut(`/api/admin/premvati/${id}`, imageData)
+        return ApiPut(`/admin/premvati/${id}`, imageData)
       .then((res) => {
         console.log("asdhfgjh",res)
         if (res.status === "success") {
@@ -54,7 +54,7 @@ export const updatePremvatiAction = (id,imageData) => {
 };
 export const deletePremvatiAction = (id) => {
     return (dispatch) => {
-        return ApiDelete(`/api/admin/premvati/${id}`,)
+        return ApiDelete(`/admin/premvati/${id}`,)
       .then((res) => {
         console.log("safsaf",res)
         if (res) {
@@ -76,7 +76,7 @@ export const deletePremvatiAction = (id) => {
 
 export const getPremvatiAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/premvati`)
+      return ApiGet(`/admin/premvati`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({

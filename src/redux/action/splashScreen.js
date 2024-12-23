@@ -14,7 +14,7 @@ import { ADD_SPLASH_IMAGE, GET_SPLASH_IMAGE } from '../type';
 export const addSplashScreenImageAction = (imageData) => {
   console.log("ssdsds",imageData)
     return (dispatch) => {
-        return ApiPostData(`/api/admin/add_image`, imageData)
+        return ApiPostData(`/admin/add_image`, imageData)
       .then((res) => {
         console.log("sdfsdres",res)
         if (res.status === "success") {
@@ -36,7 +36,7 @@ export const addSplashScreenImageAction = (imageData) => {
 
 export const getSplashScreenImageAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/get_all_images`)
+      return ApiGet(`/admin/get_all_images`)
     .then((res) => {
       if (res) {
         dispatch({

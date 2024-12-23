@@ -11,7 +11,7 @@ import { GET_PAID_ORDER_LIST, GET_UNPAID_ORDER_LIST, GET_PAID_BULK_ORDER, GET_BU
 
 export const getAllUnpadiOrderListAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/get-order/unpaid`)
+      return ApiGet(`/admin/get-order/unpaid`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -32,7 +32,7 @@ export const getAllUnpadiOrderListAction = () => {
 
 export const getAllPadiOrderListAction = () => {
     return (dispatch) => {
-        return ApiGet(`/api/admin/get-pre-package-order/paid`)
+        return ApiGet(`/admin/get-pre-package-order/paid`)
       .then((res) => {
         if (res.status === "success") {
           dispatch({
@@ -53,7 +53,7 @@ export const getAllPadiOrderListAction = () => {
 
   export const getAllPrePackageUnpadiOrderListAction = () => {
     return (dispatch) => {
-        return ApiGet(`/api/admin/get-pre-package-order/unpaid`)
+        return ApiGet(`/admin/get-pre-package-order/unpaid`)
       .then((res) => {
         if (res.status === "success") {
           dispatch({
@@ -74,7 +74,7 @@ export const getAllPadiOrderListAction = () => {
   
   export const getAllPrePackagePadiOrderListAction = () => {
       return (dispatch) => {
-          return ApiGet(`/api/admin/get-order/paid`)
+          return ApiGet(`/admin/get-order/paid`)
         .then((res) => {
           if (res.status === "success") {
             dispatch({
@@ -95,7 +95,7 @@ export const getAllPadiOrderListAction = () => {
 
     export const updateOrderRecieptToPaidAction = (orderId) => {
       return (dispatch) => {
-          return ApiPut(`/api/self-service/order-receipt/${orderId}`)
+          return ApiPut(`/self-service/order-receipt/${orderId}`)
         .then((res) => {
           if (res.status === "success") {
             dispatch({
@@ -116,7 +116,7 @@ export const getAllPadiOrderListAction = () => {
 
     export const updateBulkOrderRecieptToPaidAction = (orderId) => {
       return (dispatch) => {
-          return ApiPut(`/api/bulk-order/order-receipt/${orderId}`)
+          return ApiPut(`/bulk-order/order-receipt/${orderId}`)
         .then((res) => {
           if (res.status === "success") {
             dispatch({
@@ -138,7 +138,7 @@ export const getAllPadiOrderListAction = () => {
 
     export const updatePrePackageOrderRecieptToPaidAction = (orderId) => {
       return (dispatch) => {
-          return ApiPut(`/api/pre-packaging/order-receipt/${orderId}`)
+          return ApiPut(`/pre-packaging/order-receipt/${orderId}`)
         .then((res) => {
           if (res.status === "success") {
             dispatch({
@@ -160,7 +160,7 @@ export const getAllPadiOrderListAction = () => {
 
     export const updateOrderRecieptToCancelAction = (orderId) => {
       return (dispatch) => {
-          return ApiPut(`/api/self-service/order-receipt/cancel/${orderId}`)
+          return ApiPut(`/self-service/order-receipt/cancel/${orderId}`)
         .then((res) => {
           if (res.status === "success") {
             dispatch({
@@ -181,7 +181,7 @@ export const getAllPadiOrderListAction = () => {
 
     export const updatePrePackageOrderRecieptToCancelAction = (orderId) => {
       return (dispatch) => {
-          return ApiPut(`/api/pre-packaging/order-receipt/cancel/${orderId}`)
+          return ApiPut(`/pre-packaging/order-receipt/cancel/${orderId}`)
         .then((res) => {
           if (res.status === "success") {
             dispatch({
@@ -202,7 +202,7 @@ export const getAllPadiOrderListAction = () => {
 
     export const updateBulkOrderRecieptToCancelAction = (orderId) => {
       return (dispatch) => {
-          return ApiPut(`/api/bulk-order/order-receipt/cancel/${orderId}`)
+          return ApiPut(`/bulk-order/order-receipt/cancel/${orderId}`)
         .then((res) => {
           if (res.status === "success") {
             dispatch({
@@ -223,7 +223,7 @@ export const getAllPadiOrderListAction = () => {
 
     export const getAllUnpaidBulkOrderListAction = () => {
       return (dispatch) => {
-          return ApiGet(`/api/admin/get-bulk-order/unpaid`)
+          return ApiGet(`/admin/get-bulk-order/unpaid`)
         .then((res) => {
           if (res.status === "success") {
             dispatch({
@@ -244,7 +244,7 @@ export const getAllPadiOrderListAction = () => {
     
     export const getAllPaidBulkOrderListAction = () => {
         return (dispatch) => {
-            return ApiGet(`/api/admin/get-bulk-order/paid`)
+            return ApiGet(`/admin/get-bulk-order/paid`)
           .then((res) => {
             if (res.status === "success") {
               dispatch({

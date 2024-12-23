@@ -14,7 +14,7 @@ import { GET_FOOD_ITEM, ADD_CATEGORY, GET_CATEGORY, ADD_ITEM, GET_ITEM,  ADD_FOO
 
 export const getAllFoodCategoryAction = () => {
     return (dispatch) => {
-        return ApiGet(`/api/admin/foods`)
+        return ApiGet(`/admin/foods`)
       .then((res) => {
         if (res.status === "success") {
           dispatch({
@@ -35,7 +35,7 @@ export const getAllFoodCategoryAction = () => {
 
 export const getAllPrePackageFoodCategoryAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/prePackageFoods`)
+      return ApiGet(`/admin/prePackageFoods`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -57,7 +57,7 @@ export const getAllPrePackageFoodCategoryAction = () => {
 
 export const getBulkOrderFoodCategoryAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/bulkOrderCategories`)
+      return ApiGet(`/admin/bulkOrderCategories`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -78,7 +78,7 @@ export const getBulkOrderFoodCategoryAction = () => {
 
 export const getCategoryAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/categories`)
+      return ApiGet(`/admin/categories`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -99,7 +99,7 @@ export const getCategoryAction = () => {
 
 export const getAllServingCategoryAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/servingCategories`)
+      return ApiGet(`/admin/servingCategories`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -121,7 +121,7 @@ export const getAllServingCategoryAction = () => {
 
 export const addFoodCategoryAction = (foodData) => {
   return (dispatch) => {
-      return ApiPostData(`/api/admin/food`, foodData)
+      return ApiPostData(`/admin/food`, foodData)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -142,7 +142,7 @@ export const addFoodCategoryAction = (foodData) => {
 
 export const addPrePackageFoodCategoryAction = (prePackageFoodData) => {
   return (dispatch) => {
-      return ApiPostData(`/api/admin/prePackageFood`, prePackageFoodData)
+      return ApiPostData(`/admin/prePackageFood`, prePackageFoodData)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -163,7 +163,7 @@ export const addPrePackageFoodCategoryAction = (prePackageFoodData) => {
 
 export const addBulkOrderCategoryAction = (bulkOrderFoodData) => {
   return (dispatch) => {
-      return ApiPostData(`/api/admin/bulkOrderCategory`, bulkOrderFoodData)
+      return ApiPostData(`/admin/bulkOrderCategory`, bulkOrderFoodData)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -184,7 +184,7 @@ export const addBulkOrderCategoryAction = (bulkOrderFoodData) => {
 
 export const addCategoryAction = (bulkOrderFoodData) => {
   return (dispatch) => {
-      return ApiPostData(`/api/admin/category`, bulkOrderFoodData)
+      return ApiPostData(`/admin/category`, bulkOrderFoodData)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -205,7 +205,7 @@ export const addCategoryAction = (bulkOrderFoodData) => {
 
 export const addServingCategoryAction = (servingCategoryData) => {
   return (dispatch) => {
-      return ApiPostData(`/api/admin/servingCategory`, servingCategoryData)
+      return ApiPostData(`/admin/servingCategory`, servingCategoryData)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -226,7 +226,7 @@ export const addServingCategoryAction = (servingCategoryData) => {
 export const UpdatePrePackageCategoryNameAction = (id,data) => {
   console.log("id,data",id,data)
   return (dispatch) => {
-      return ApiPut(`/api/admin/prePackageFood/${id}`, data)
+      return ApiPut(`/admin/prePackageFood/${id}`, data)
     .then((res) => {
       if (res.status === "success") {
         return res.data;
@@ -241,7 +241,7 @@ export const UpdatePrePackageCategoryNameAction = (id,data) => {
 export const UpdateBulkOrderCategoryNameAction = (id,data) => {
   console.log("id,data",id,data)
   return (dispatch) => {
-      return ApiPut(`/api/admin/bulkOrderCategory/${id}`, data)
+      return ApiPut(`/admin/bulkOrderCategory/${id}`, data)
     .then((res) => {
       if (res.status === "success") {
         return res.data;
@@ -256,7 +256,7 @@ export const UpdateBulkOrderCategoryNameAction = (id,data) => {
 export const UpdateCategoryAction = (id,data) => {
   console.log("id,data",id,data)
   return (dispatch) => {
-      return ApiPut(`/api/admin/category/${id}`, data)
+      return ApiPut(`/admin/category/${id}`, data)
     .then((res) => {
       if (res.status === "success") {
         return res.data;
@@ -271,7 +271,7 @@ export const UpdateCategoryAction = (id,data) => {
 export const UpdateServingCategoryAction = (id,data) => {
   console.log("id,data",id,data)
   return (dispatch) => {
-      return ApiPut(`/api/admin/servingCategory/${id}`, data)
+      return ApiPut(`/admin/servingCategory/${id}`, data)
     .then((res) => {
       if (res.status === "success") {
         return res.data;
@@ -284,7 +284,7 @@ export const UpdateServingCategoryAction = (id,data) => {
 };
 export const DeleteSelfServingCategoryAction = (id) => {
   return (dispatch) => {
-      return ApiDelete(`/api/admin/food/${id}`)
+      return ApiDelete(`/admin/food/${id}`)
     .then((res) => {
       console.log("sdsgdgg",res)
       if (res.data) {
@@ -299,7 +299,7 @@ export const DeleteSelfServingCategoryAction = (id) => {
 
 export const DeleteBulkOrderCategoryAction = (id) => {
   return (dispatch) => {
-      return ApiDelete(`/api/admin/bulkOrderCategory/${id}`)
+      return ApiDelete(`/admin/bulkOrderCategory/${id}`)
     .then((res) => {
       console.log("sdsgdgg",res)
       if (res.data) {
@@ -314,7 +314,7 @@ export const DeleteBulkOrderCategoryAction = (id) => {
 
 export const DeleteCategoryAction = (id) => {
   return (dispatch) => {
-      return ApiDelete(`/api/admin/category/${id}`)
+      return ApiDelete(`/admin/category/${id}`)
     .then((res) => {
       console.log("sdsgdgg",res)
       if (res.data) {
@@ -331,7 +331,7 @@ export const DeleteCategoryAction = (id) => {
 
 export const DeletePrePackageCategoryAction = (id) => {
   return (dispatch) => {
-      return ApiDelete(`/api/admin/prePackageFood/${id}`)
+      return ApiDelete(`/admin/prePackageFood/${id}`)
     .then((res) => {
       console.log("sdsgdgg",res)
       if (res.data) {
@@ -346,7 +346,7 @@ export const DeletePrePackageCategoryAction = (id) => {
 
 export const DeleteServingCategoryAction = (id) => {
   return (dispatch) => {
-      return ApiDelete(`/api/admin/servingCategory/${id}`)
+      return ApiDelete(`/admin/servingCategory/${id}`)
     .then((res) => {
       console.log("sdsgdgg",res)
       if (res.data) {
@@ -362,7 +362,7 @@ export const DeleteServingCategoryAction = (id) => {
 export const UpdateSelfServicesCategoryNameAction = (id,data) => {
   console.log("id,data",id,data)
   return (dispatch) => {
-      return ApiPut(`/api/admin/food/${id}`, data)
+      return ApiPut(`/admin/food/${id}`, data)
     .then((res) => {
       if (res.status === "success") {
         return res.data;
@@ -376,7 +376,7 @@ export const UpdateSelfServicesCategoryNameAction = (id,data) => {
 
 export const getFoodItemByCategoryIdAction = (foodId) => {
     return (dispatch) => {
-        return ApiGet(`/api/admin/food-item/${foodId}`)
+        return ApiGet(`/admin/food-item/${foodId}`)
       .then((res) => {
         if (res.status === "success") {
           dispatch({
@@ -398,7 +398,7 @@ export const getFoodItemByCategoryIdAction = (foodId) => {
 
 export const getPrePackageFoodItemByCategoryIdAction = (foodId) => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/pre_package_food_item/${foodId}`)
+      return ApiGet(`/admin/pre_package_food_item/${foodId}`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -420,7 +420,7 @@ export const getPrePackageFoodItemByCategoryIdAction = (foodId) => {
 
 export const getBulkOrderItemByCategoryIdAction = (foodId) => {
   return (dispatch) => {
-      return ApiGet(`/api/bulk-order/food-item/${foodId}`)
+      return ApiGet(`/bulk-order/food-item/${foodId}`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -441,7 +441,7 @@ export const getBulkOrderItemByCategoryIdAction = (foodId) => {
 
 export const getItemByCategoryIdAction = (foodId) => {
   return (dispatch) => {
-      return ApiGet(`/api/menu/food-item/${foodId}`)
+      return ApiGet(`/menu/food-item/${foodId}`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -465,7 +465,7 @@ export const getItemByCategoryIdAction = (foodId) => {
 
 export const getServingMethodByCategoryIdAction = (categoryId) => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/serving-method/${categoryId}`)
+      return ApiGet(`/admin/serving-method/${categoryId}`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -486,7 +486,7 @@ export const getServingMethodByCategoryIdAction = (categoryId) => {
 
 export const deleteServingMethodByIdAction = (categoryId) => {
   return () => {
-      return ApiDelete(`/api/admin/food-item/${categoryId}`)
+      return ApiDelete(`/admin/food-item/${categoryId}`)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -499,7 +499,7 @@ export const deleteServingMethodByIdAction = (categoryId) => {
 };
 export const deleteServingSingleMethodByIdAction = (categoryId) => {
   return () => {
-      return ApiDelete(`/api/admin/serving-methods/${categoryId}`)
+      return ApiDelete(`/admin/serving-methods/${categoryId}`)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -513,7 +513,7 @@ export const deleteServingSingleMethodByIdAction = (categoryId) => {
 
 export const deletePrePackageMethodByIdAction = (categoryId) => {
   return () => {
-      return ApiDelete(`/api/admin/pre_package_food_item/${categoryId}`)
+      return ApiDelete(`/admin/pre_package_food_item/${categoryId}`)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -528,7 +528,7 @@ export const deletePrePackageMethodByIdAction = (categoryId) => {
 
 export const deleteBulkOrderMethodByIdAction = (categoryId) => {
   return () => {
-      return ApiDelete(`/api/admin/bulkOrderItem/${categoryId}`)
+      return ApiDelete(`/admin/bulkOrderItem/${categoryId}`)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -542,7 +542,7 @@ export const deleteBulkOrderMethodByIdAction = (categoryId) => {
 
 export const deleteItemByIdAction = (categoryId) => {
   return () => {
-      return ApiDelete(`/api/admin/item/${categoryId}`)
+      return ApiDelete(`/admin/item/${categoryId}`)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -556,7 +556,7 @@ export const deleteItemByIdAction = (categoryId) => {
 
 export const addFoodItemAction = (formData) => {
   return (dispatch) => {
-      return ApiPostData(`/api/admin/food-item`, formData)
+      return ApiPostData(`/admin/food-item`, formData)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -576,7 +576,7 @@ export const addFoodItemAction = (formData) => {
 };
 export const EditSelfFoodItemAction = (id,formData) => {
   return () => {
-      return ApiPostData(`/api/admin/food-item/${id}`, formData)
+      return ApiPostData(`/admin/food-item/${id}`, formData)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -589,7 +589,7 @@ export const EditSelfFoodItemAction = (id,formData) => {
 };
 export const EditServingMethodItemAction = (id,formData) => {
   return () => {
-      return ApiPut(`/api/admin/serving-methods/${id}`, formData)
+      return ApiPut(`/admin/serving-methods/${id}`, formData)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -602,7 +602,7 @@ export const EditServingMethodItemAction = (id,formData) => {
 };
 export const EditPrePackageFoodItemAction = (id,formData) => {
   return () => {
-      return ApiPostData(`/api/admin/pre_package_food_item/${id}`, formData)
+      return ApiPostData(`/admin/pre_package_food_item/${id}`, formData)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -616,7 +616,7 @@ export const EditPrePackageFoodItemAction = (id,formData) => {
 
 export const EditBulkOrderItemAction = (id,formData) => {
   return () => {
-      return ApiPut(`/api/admin/bulkOrderItem/${id}`, formData)
+      return ApiPut(`/admin/bulkOrderItem/${id}`, formData)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -631,7 +631,7 @@ export const EditBulkOrderItemAction = (id,formData) => {
 
 export const EditMenuItemAction = (id,formData) => {
   return () => {
-      return ApiPut(`/api/admin/item/${id}`, formData)
+      return ApiPut(`/admin/item/${id}`, formData)
     .then((res) => {
       if (res.data) {
         return res.data;
@@ -646,7 +646,7 @@ export const EditMenuItemAction = (id,formData) => {
 
 export const addPrePackageFoodItemAction = (formData) => {
   return (dispatch) => {
-      return ApiPostData(`/api/admin/pre_package_food_item`, formData)
+      return ApiPostData(`/admin/pre_package_food_item`, formData)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -667,7 +667,7 @@ export const addPrePackageFoodItemAction = (formData) => {
 
 export const addBulkOrderFoodItemAction = (formData) => {
   return (dispatch) => {
-      return ApiPostData(`/api/admin/pre_package_food_item`, formData)
+      return ApiPostData(`/admin/pre_package_food_item`, formData)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -689,7 +689,7 @@ export const addBulkOrderFoodItemAction = (formData) => {
 
 export const addServingMethodAction = (formData) => {
   return (dispatch) => {
-      return ApiPostData(`/api/admin/serving-method`, formData)
+      return ApiPostData(`/admin/serving-method`, formData)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -711,7 +711,7 @@ export const addServingMethodAction = (formData) => {
 
 export const addMenuItemAction = (formData) => {
   return (dispatch) => {
-      return ApiPostData(`/api/admin/item`, formData)
+      return ApiPostData(`/admin/item`, formData)
     .then((res) => {
       if (res.status === "success") {
         dispatch({

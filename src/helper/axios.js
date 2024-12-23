@@ -2,7 +2,7 @@ import axios from "axios";
 import auth from "../config/auth";
 
 
-export const BaseURL = "http://localhost:3000/mp";
+export const BaseURL = "https://server.grafizen.in/api/v2/mp";
 // export const BaseURL = "https://backend.ybgo.in/mp";
 
 

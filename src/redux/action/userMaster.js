@@ -13,7 +13,7 @@ import { ADD_ADMIN_USER, ADD_USER, DELETE_ADMIN_USER, DELETE_USER, EDIT_ADMIN_US
 
 export const addUserAction = (userData) => {
     return (dispatch) => {
-        return ApiPostData(`/api/user/add_user`, userData)
+        return ApiPostData(`/user/add_user`, userData)
       .then((res) => {
         console.log("asghdfhga",res)
         if (res.status === "success") {
@@ -36,7 +36,7 @@ export const addUserAction = (userData) => {
 
 export const getAdminUserAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/get_all_user`)
+      return ApiGet(`/admin/get_all_user`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -58,7 +58,7 @@ export const getAdminUserAction = () => {
 
 export const addAdminUserAction = (userData) => {
     return (dispatch) => {
-        return ApiPostData(`/api/admin/add_user`, userData)
+        return ApiPostData(`/admin/add_user`, userData)
       .then((res) => {
        
         if (res.status === "success") {
@@ -80,7 +80,7 @@ export const addAdminUserAction = (userData) => {
 
 export const addEditUserAction = (userId,userData) => {
     return (dispatch) => {
-        return ApiPut(`/api/admin/edit_user/${userId}`, userData)
+        return ApiPut(`/admin/edit_user/${userId}`, userData)
       .then((res) => {
        
         if (res) {
@@ -102,7 +102,7 @@ export const addEditUserAction = (userId,userData) => {
 
 export const deleteAdminUserAction = (userId) => {
     return (dispatch) => {
-        return ApiDelete(`/api/admin/delete_user/${userId}`)
+        return ApiDelete(`/admin/delete_user/${userId}`)
       .then((res) => {
        
         if (res) {
@@ -124,7 +124,7 @@ export const deleteAdminUserAction = (userId) => {
 
 export const editUserAction = (id,userData) => {
     return (dispatch) => {
-        return ApiPut(`/api/user/edit_user/${id}`, userData)
+        return ApiPut(`/user/edit_user/${id}`, userData)
       .then((res) => {
         if (res) {
           dispatch({
@@ -145,7 +145,7 @@ export const editUserAction = (id,userData) => {
 
 export const loginAdminAction = (userData) => {
     return (dispatch) => {
-        return ApiPostData(`/api/admin/login`, userData)
+        return ApiPostData(`/admin/login`, userData)
       .then((res) => {
         console.log("dsfsf",res)
         if (res.token) {
@@ -168,7 +168,7 @@ export const loginAdminAction = (userData) => {
 
 export const getUserAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/user/get_all_user`)
+      return ApiGet(`/user/get_all_user`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -190,7 +190,7 @@ export const getUserAction = () => {
 
 export const DeleteUserMasterAction = (id) => {
   return (dispatch) => {
-      return ApiDelete(`/api/user/delete_user/${id}`)
+      return ApiDelete(`/user/delete_user/${id}`)
     .then((res) => {
       console.log("dgsrsjdtedreh",res)
       if (res) {

@@ -12,7 +12,7 @@ import { ADD_PRAVRUTI, UPDATE_PRAVRUTI, GET_PRAVRUTI,ADD_KSHETRA,GET_KSHETRA,UPD
 
 export const addPravrutiAction = (pravrutiData) => {
     return (dispatch) => {
-        return ApiPost(`/api/admin/add_pravruti`, pravrutiData)
+        return ApiPost(`/admin/add_pravruti`, pravrutiData)
       .then((res) => {
         if (res.data.status === "success") {
           dispatch({
@@ -33,7 +33,7 @@ export const addPravrutiAction = (pravrutiData) => {
 
 export const addKshetraAction = (kshetraData) => {
     return (dispatch) => {
-        return ApiPost(`/api/admin/add_kshetra`, kshetraData)
+        return ApiPost(`/admin/add_kshetra`, kshetraData)
       .then((res) => {
         if (res.data.status === "success") {
           dispatch({
@@ -54,7 +54,7 @@ export const addKshetraAction = (kshetraData) => {
 
 export const addDesignationAction = (designationData) => {
     return (dispatch) => {
-        return ApiPost(`/api/admin/add_designation`, designationData)
+        return ApiPost(`/admin/add_designation`, designationData)
       .then((res) => {
         if (res.data.status === "success") {
           dispatch({
@@ -75,7 +75,7 @@ export const addDesignationAction = (designationData) => {
 
 export const getPravrutiAction = () => {
   return (dispatch) => {
-      return ApiGet(`/api/admin/get_all_pravruti`)
+      return ApiGet(`/admin/get_all_pravruti`)
     .then((res) => {
       if (res.status === "success") {
         dispatch({
@@ -96,7 +96,7 @@ export const getPravrutiAction = () => {
 
 export const getKshetraAction = () => {
     return (dispatch) => {
-        return ApiGet(`/api/admin/get_all_kshetra`)
+        return ApiGet(`/admin/get_all_kshetra`)
       .then((res) => {
         if (res.status === "success") {
           dispatch({
@@ -117,7 +117,7 @@ export const getKshetraAction = () => {
 
   export const getDesignationAction = () => {
     return (dispatch) => {
-        return ApiGet(`/api/admin/get_all_designation`)
+        return ApiGet(`/admin/get_all_designation`)
       .then((res) => {
         if (res.status === "success") {
           dispatch({
@@ -138,7 +138,7 @@ export const getKshetraAction = () => {
 
 export const updatePravrutiAction = (updatePravrutiData) => {
     return (dispatch) => {
-        return ApiPut(`/api/admin/edit_pravruti/${updatePravrutiData._id}`, updatePravrutiData)
+        return ApiPut(`/admin/edit_pravruti/${updatePravrutiData._id}`, updatePravrutiData)
       .then((res) => {
         if (res.status === "success") {
           console.log("saddsadafa",res.data)
@@ -160,7 +160,7 @@ export const updatePravrutiAction = (updatePravrutiData) => {
 
 export const updateKshetraAction = (updateKshetraData) => {
     return (dispatch) => {
-        return ApiPut(`/api/admin/edit_kshetra/${updateKshetraData._id}`, updateKshetraData)
+        return ApiPut(`/admin/edit_kshetra/${updateKshetraData._id}`, updateKshetraData)
       .then((res) => {
         console.log("sdfdsres",res)
         if (res.status === "success") {
@@ -182,7 +182,7 @@ export const updateKshetraAction = (updateKshetraData) => {
 
 export const updateDesignationAction = (updateDesignationData) => {
     return (dispatch) => {
-        return ApiPut(`/api/admin/edit_designation/${updateDesignationData._id}`, updateDesignationData)
+        return ApiPut(`/admin/edit_designation/${updateDesignationData._id}`, updateDesignationData)
       .then((res) => {
         if (res.status === "success") {
           dispatch({
@@ -204,7 +204,7 @@ export const updateDesignationAction = (updateDesignationData) => {
 
 export const DeletePravrutiAction = (id) => {
   return (dispatch) => {
-      return ApiDelete(`/api/admin/delete_pravruti/${id}`)
+      return ApiDelete(`/admin/delete_pravruti/${id}`)
     .then((res) => {
       console.log("dgsrsjdtedreh",res)
       if (res) {
@@ -227,7 +227,7 @@ export const DeletePravrutiAction = (id) => {
 
 export const DeleteKshetraAction = (id) => {
   return (dispatch) => {
-      return ApiDelete(`/api/admin/delete_kshetra/${id}`)
+      return ApiDelete(`/admin/delete_kshetra/${id}`)
     .then((res) => {
       console.log("dgsrsjdtedreh",res)
       if (res) {
@@ -250,7 +250,7 @@ export const DeleteKshetraAction = (id) => {
 
 export const DeleteDesignationsAction = (id) => {
   return (dispatch) => {
-      return ApiDelete(`/api/admin/delete_designation/${id}`)
+      return ApiDelete(`/admin/delete_designation/${id}`)
     .then((res) => {
       console.log("dgsrsjdtedreh",res)
       if (res) {
