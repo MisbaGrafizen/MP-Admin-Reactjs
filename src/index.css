@@ -15,7 +15,7 @@
 }
 
 .customres {
-bottom: 13.2% !important;
+bottom: 13.1% !important;
 }
 
 @media only screen and (max-height: 760px) and (min-height: 500px) {
@@ -26,6 +26,6 @@ bottom: 13.2% !important;
 
 @media only screen and (max-height: 1000px) and (min-height: 800px) {
     .customres {
-        bottom: 14.9% !important;
+        bottom: 14.4% !important;
     }
 }

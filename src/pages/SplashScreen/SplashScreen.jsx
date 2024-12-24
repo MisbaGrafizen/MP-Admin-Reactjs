@@ -142,7 +142,7 @@ export default function Home() {
                 </div>
 
                 <div
-                  className=" border-t-[1.5px] customres bg-white active:bg-[#00984B] active:text-[#fff] border-r-[1.5px] border-l-[1.5px]  fixed mx-auto px-[15px]  md150:w-[220px] justify-center text-center z-[5]   bottom-[11.9%]  left-0 right-0  rounded-tl-[10px] cursor-pointer  rounded-tr-[10px] py-[7px]  text-[#00984B] font-[600] custom-font text-[18px] w-[190px] md150:text-[25px]  border-[#00984B]"
+                  className=" border-t-[1.5px] customres bg-white active:bg-[#00984B] active:text-[#fff] border-r-[1.5px] border-l-[1.5px]  fixed mx-auto px-[15px]  md150:w-[220px] justify-center text-center z-[5]   left-0 right-0  rounded-tl-[10px] cursor-pointer  rounded-tr-[10px] py-[7px]  text-[#00984B] font-[600] custom-font text-[18px] w-[190px] md150:text-[25px]  border-[#00984B]"
                   onClick={handelImgSubmit}
                 >
                   <p>Save the changes</p>

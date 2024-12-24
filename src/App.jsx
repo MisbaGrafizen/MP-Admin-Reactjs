@@ -21,7 +21,7 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={token ? <Navigate to="/master-management" /> : <Login />}
+          element={token ? <Navigate to="/dashboard" /> : <Login />}
         />
 
         {/* Protected routes */}
