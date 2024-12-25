@@ -1,4 +1,4 @@
-import  { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "../../Components/header/Header";
 // import userpng from "../../../public/img/AdminSpalsh/user 3.png";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 export default function Feedback() {
   const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState("All");
-  const [filterActiveButton, setFilterActiveButton] = useState("");
+  const [filterActiveButton, setFilterActiveButton] = useState("today");
+
   const [checkAll, setCheckAll] = useState(false);
   const [checkedItems, setCheckedItems] = useState([]);
   const [displayedData, setDisplayedData] = useState([]);
@@ -22,10 +23,22 @@ export default function Feedback() {
   const [currentPage, setCurrentPage] = useState(1);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const paginationDropdownRef = useRef(null);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const [value, setValue] = useState(dayjs());
-
   const totalPages = Math.ceil(displayedData?.length / itemsPerPage);
+
+
+  const goToPage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    setDropdownOpen(false);
+  };
+  
+  const currentPageData = displayedData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -56,18 +69,12 @@ export default function Feedback() {
     };
   }, []);
 
-  const goToPage = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    setDropdownOpen(false);
-  };
 
 
   // const currentPageData = displayedData.slice(
   //   (currentPage - 1) * itemsPerPage,
   //   currentPage * itemsPerPage
   // );
-
-
 
 
 
@@ -91,25 +98,23 @@ export default function Feedback() {
     "Shradhdha": "/shradhdha-park/feedbacks",
     "Kalawad": "/kalawad-road/feedbacks",
     "Mavdi": "/mavdi/feedbacks",
-    "All":"/all-feedbacks"
-};
+    "All": "/all-feedbacks"
+  };
   useEffect(() => {
     const fetchData = async () => {
-      setFilterActiveButton("")
       try {
         const apiUrl = apiUrlMapping[activeButton];
-          const response = await ApiGet(`/v1${apiUrl}`);
-        const fetchedData =activeButton === "All"?  response.data :response;
-        console.log("fetchedData",fetchedData)
+        const response = await ApiGet(`/api/v1${apiUrl}`);
+        const fetchedData = activeButton === "All" ? response.data : response;
         setDisplayedData(fetchedData);
-        setMainData(fetchedData)
+        setMainData(fetchedData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-      console.log("activeButton",activeButton)
     };
-   if(activeButton) fetchData();
+    if (activeButton) fetchData();
   }, [activeButton]);
+
 
   const handleCheckAll = () => {
     setCheckAll(!checkAll);
@@ -139,40 +144,35 @@ export default function Feedback() {
   //   setFilteredData(
   //     branch === "All" ? displayedData : displayedData.filter((item) => item.branch === branch)
   //   );
-  // };
+  // };\
 
-  useEffect(()=>{
-    // if(displayedData && filterActiveButton === "today"){
-    //   const today = new Date().toISOString().split('T')[0];
-    //   const filteredData = displayedData.filter(item => item.date.split('T')[0] === today);
-    //   setDisplayedData(filteredData)
-    // }else if( displayedData && filterActiveButton === "select_date" && value){
-    //   const selectedDate = value.toISOString().split("T")[0];
-    //   const filteredData = displayedData.filter(item => {
-    //     const itemDate = item.date.split('T')[0]; 
-    //     return itemDate === selectedDate; 
-    //   });
-    //   setDisplayedData(filteredData.length > 0 && filteredData)
-    //   console.log("filteredDatas",filteredData)
-    // }
-    if (displayedData) {
+
+  useEffect(() => {
+    if (mainData.length > 0) {
       let filteredData = [...mainData];
-    
+
       if (filterActiveButton === "today") {
-        const today = new Date().toISOString().split('T')[0];
-        filteredData = filteredData.filter(item => item.date.split('T')[0] === today);
-      }
-    
-      if (filterActiveButton === "select_date" && value) {
+        // Show only today's data
+        const today = new Date().toISOString().split("T")[0];
+        filteredData = filteredData.filter(
+          (item) => item.date.split("T")[0] === today
+        );
+      } else if (filterActiveButton === "till_date") {
+        // Show ALL data (or all data up to today's date, depending on your requirement)
+        // For simply "all data":
+        filteredData = [...mainData];
+      } else if (filterActiveButton === "select_date" && value) {
+        // Show data for the date selected in DatePicker
         const selectedDate = value.toISOString().split("T")[0];
-        filteredData = filteredData.filter(item => item.date.split('T')[0] === selectedDate);
+        filteredData = filteredData.filter(
+          (item) => item.date.split("T")[0] === selectedDate
+        );
       }
-    
+
       setDisplayedData(filteredData);
-      
     }
-    
-  },[filterActiveButton,value])
+  }, [filterActiveButton, value, mainData]);
+
   return (
     <>
       <div className="    w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0      py-[34px] md150:py-[48px]     px-[30px] md150:px-[40px]  mx-auto   my-auto ">
@@ -195,7 +195,7 @@ export default function Feedback() {
             </div>
             <div className="w-[100%] flex gap-[20px]">
               <div
-                className={`w-[80px] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Today"
+                className={`w-[80px] justify-center items-center cursor-pointer flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${filterActiveButton === "today"
                     ? "text-[#fff] bg-[#F28C28]"
                     : "text-[#000] border-[#F28C28] border-[1.9px]"
                   }`}
@@ -204,7 +204,7 @@ export default function Feedback() {
                 <p>Today</p>
               </div>
               <div
-                className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Kalawad"
+                className={`w-[12%] justify-center items-center cursor-pointer flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${filterActiveButton === "till_date"
                     ? "text-[#fff] bg-[#F28C28]"
                     : "text-[#000] border-[#F28C28] border-[1.9px]"
                   }`}
@@ -212,19 +212,19 @@ export default function Feedback() {
               >
                 <p>Till Date</p>
               </div>
-              <div className="flex border-[1.4px] gap-[10px] items-center px-[10px] h-[35px] w-[160px] border-[#F28C28] rounded-[6px]">
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer
-                          components={["DatePicker", "DatePicker"]}
-                        >
-                          <DatePicker
-                            value={value}
-                            onChange={(newValue) => {setValue(newValue);setFilterActiveButton("select_date")}}
-                            
-                          />
-                        </DemoContainer>
-                      </LocalizationProvider>
-                    </div>
+              <div className="flex border-[1.4px] gap-[10px] items-center cursor-pointer px-[10px] h-[35px] w-[160px] border-[#F28C28] rounded-[6px]">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer
+                    components={["DatePicker", "DatePicker"]}
+                  >
+                    <DatePicker
+                      value={value}
+                      onChange={(newValue) => { setValue(newValue); setFilterActiveButton("select_date") }}
+
+                    />
+                  </DemoContainer>
+                </LocalizationProvider>
+              </div>
             </div>
 
             <div>
@@ -241,63 +241,63 @@ export default function Feedback() {
                 <div className="w-full h-full mx-auto mb-3 scroll-d-none">
                   <div className="w-[100%] flex gap-[20px] mb-[20px]">
                     <div
-                      className={`w-[80px] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "All"
-                          ? "text-[#fff] bg-[#F28C28]"
-                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                      className={`w-[80px] justify-center items-center flex text-[15px] font-Poppins py-[5px] cursor-pointer rounded-[7px] ${activeButton === "All"
+                        ? "text-[#fff] bg-[#F28C28]"
+                        : "text-[#000] border-[#F28C28] border-[1.9px]"
                         }`}
                       onClick={() => setActiveButton("All")}
                     >
                       <p>All</p>
                     </div>
                     <div
-                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Kalawad"
-                          ? "text-[#fff] bg-[#F28C28]"
-                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                      className={`w-[12%] justify-center items-center flex text-[15px] cursor-pointer font-Poppins py-[5px] rounded-[7px] ${activeButton === "Kalawad"
+                        ? "text-[#fff] bg-[#F28C28]"
+                        : "text-[#000] border-[#F28C28] border-[1.9px]"
                         }`}
                       onClick={() => setActiveButton("Kalawad")}
                     >
                       <p>Kalawad</p>
                     </div>
                     <div
-                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Shradhdha"
-                          ? "text-[#fff] bg-[#F28C28]"
-                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                      className={`w-[12%] justify-center items-center flex text-[15px] cursor-pointer font-Poppins py-[5px] rounded-[7px] ${activeButton === "Shradhdha"
+                        ? "text-[#fff] bg-[#F28C28]"
+                        : "text-[#000] border-[#F28C28] border-[1.9px]"
                         }`}
                       onClick={() => setActiveButton("Shradhdha")}
                     >
                       <p>Shradhdha</p>
                     </div>
                     <div
-                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "PramukhVatika"
-                          ? "text-[#fff] bg-[#F28C28]"
-                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                      className={`w-[12%] justify-center items-center flex text-[15px] cursor-pointer font-Poppins py-[5px] rounded-[7px] ${activeButton === "PramukhVatika"
+                        ? "text-[#fff] bg-[#F28C28]"
+                        : "text-[#000] border-[#F28C28] border-[1.9px]"
                         }`}
                       onClick={() => setActiveButton("PramukhVatika")}
                     >
                       <p>Pramukh Vatika</p>
                     </div>
                     <div
-                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Dholakiya"
-                          ? "text-[#fff] bg-[#F28C28]"
-                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                      className={`w-[12%] justify-center items-center flex text-[15px]  cursor-pointer font-Poppins py-[5px] rounded-[7px] ${activeButton === "Dholakiya"
+                        ? "text-[#fff] bg-[#F28C28]"
+                        : "text-[#000] border-[#F28C28] border-[1.9px]"
                         }`}
                       onClick={() => setActiveButton("Dholakiya")}
                     >
                       <p>Dholakiya</p>
                     </div>
                     <div
-                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "Tirupati"
-                          ? "text-[#fff] bg-[#F28C28]"
-                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                      className={`w-[12%] justify-center items-center flex text-[15px] cursor-pointer font-Poppins py-[5px] rounded-[7px] ${activeButton === "Tirupati"
+                        ? "text-[#fff] bg-[#F28C28]"
+                        : "text-[#000] border-[#F28C28] border-[1.9px]"
                         }`}
                       onClick={() => setActiveButton("Tirupati")}
                     >
                       <p>Tirupati</p>
                     </div>
                     <div
-                      className={`w-[12%] justify-center items-center flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${activeButton === "SorathiyaVadi"
-                          ? "text-[#fff] bg-[#F28C28]"
-                          : "text-[#000] border-[#F28C28] border-[1.9px]"
+                      className={`w-[12%] justify-center items-center flex text-[15px] cursor-pointer font-Poppins py-[5px] rounded-[7px] ${activeButton === "SorathiyaVadi"
+                        ? "text-[#fff] bg-[#F28C28]"
+                        : "text-[#000] border-[#F28C28] border-[1.9px]"
                         }`}
                       onClick={() => setActiveButton("SorathiyaVadi")}
                     >
@@ -375,8 +375,7 @@ export default function Feedback() {
                           </p>
                         </div>
                       </div>
-                      {Array.isArray(displayedData) &&
-                        displayedData.length > 0 ? (
+                      {Array.isArray(currentPageData) && currentPageData.length > 0 ? (
                         displayedData.map((item, index) => (
                           <div key={item._id} className="flex justify-between">
                             <div className="flex justify-center text-center py-[7px] items-center border-r border-b border-black gap-[7px] px-3 min-w-[4%] max-w-[4%]">
@@ -470,6 +469,7 @@ export default function Feedback() {
                     {dropdownOpen && (
                       <div className="border-[1.7px] flex flex-col bg-[#fff] min-h-[100%] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute">
                         {Array.from({ length: totalPages }, (_, i) => (
+
                           <div
                             key={i + 1}
                             className={`w-[100%] text-[14px] border-b-[1.7px] rounded-[6px] border-[#847e7e] py-[6px] font-[600] flex justify-center items-center cursor-pointer 
