@@ -57,7 +57,7 @@ export default function Login() {
           Cookies.remove("Password");
         }
         Cookies.set("authToken", response.token);
-        navigate("/splash-screen");
+        navigate("/dashboard");
       } else {
         console.log("dsfsdhdgfsh", response.message);
         if (response.message) {

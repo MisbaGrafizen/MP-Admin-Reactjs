@@ -376,7 +376,7 @@ export default function Feedback() {
                         </div>
                       </div>
                       {Array.isArray(currentPageData) && currentPageData.length > 0 ? (
-                        displayedData.map((item, index) => (
+                        currentPageData.map((item, index) => (
                           <div key={item._id} className="flex justify-between">
                             <div className="flex justify-center text-center py-[7px] items-center border-r border-b border-black gap-[7px] px-3 min-w-[4%] max-w-[4%]">
                               <input
@@ -386,7 +386,7 @@ export default function Feedback() {
                                 style={{ width: "10px", height: "10px" }}
                               />
                               <p className="w-fit md150:text-[15px] text-[13px] font-[500] text-[#000] font-Outfit">
-                                {index + 1}
+                              {(currentPage - 1) * itemsPerPage + index + 1}
                               </p>
                             </div>
                             <div className="flex justify-start text-center py-[6px] border-r border-b border-black px-3 min-w-[8%] max-w-[8%]">

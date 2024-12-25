@@ -19,12 +19,21 @@ function App() {
   return (
     <>
       <Routes>
+   
         <Route
           path="/"
           element={token ? <Navigate to="/dashboard" /> : <Login />}
         />
 
         {/* Protected routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/splash-screen"
           element={
@@ -89,14 +98,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+  
       </Routes>
     </>
   );

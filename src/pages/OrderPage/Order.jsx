@@ -610,7 +610,7 @@ export default function OrderManagement() {
                           >
                             <div className="flex gap-[10px] items-center">
                               <img
-                                className="w-[80px] rounded-[8px]"
+                                className="w-[80px] rounded-[8px] h-[80px]"
                                 src={
                                   item?.foodItem?.photo ||
                                   "../../../public/img/Foodsection/newBhaji.png"
@@ -639,7 +639,7 @@ export default function OrderManagement() {
                             >
                               <div className="flex gap-[10px] items-center">
                                 <img
-                                  className="w-[80px] rounded-[8px]"
+                                  className="w-[80px] rounded-[8px] h-[80px]"
                                   src={
                                     item?.servingMethod?.photo ||
                                     "../../../public/img/Foodsection/newBhaji.png"
@@ -904,7 +904,7 @@ export default function OrderManagement() {
                           >
                             <div className="flex gap-[10px] items-center">
                               <img
-                                className="w-[80px] rounded-[8px]"
+                                className="w-[80px] rounded-[8px] h-[80px]"
                                 src={
                                   item?.foodItem?.photo ||
                                   "../../../public/img/Foodsection/newBhaji.png"
@@ -1159,7 +1159,7 @@ export default function OrderManagement() {
                           >
                             <div className="flex gap-[10px] items-center">
                               <img
-                                className="w-[80px] rounded-[8px]"
+                                className="w-[80px] rounded-[8px] h-[80px]"
                                 src={
                                   item?.foodItem?.photo ||
                                   "../../../public/img/Foodsection/newBhaji.png"
@@ -1435,7 +1435,7 @@ export default function OrderManagement() {
                   >
                     <div className="flex gap-[10px] items-center">
                       <img
-                        className="w-[80px]"
+                        className="w-[80px] h-[80px] rounded-[8px]"
                         src={
                           item?.foodItem?.photo ||
                           "../../../public/img/Foodsection/newBhaji.png"
@@ -1460,7 +1460,7 @@ export default function OrderManagement() {
                     >
                       <div className="flex gap-[10px] items-center">
                         <img
-                          className="w-[80px] rounded-[8px]"
+                          className="w-[80px] rounded-[8px] h-[80px]"
                           src={
                             item?.servingMethod?.photo ||
                             "../../../public/img/Foodsection/newBhaji.png"
