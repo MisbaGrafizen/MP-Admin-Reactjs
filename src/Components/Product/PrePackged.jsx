@@ -3,6 +3,7 @@ import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 import { addFoodCategoryAction, addFoodItemAction, addPrePackageFoodCategoryAction, addPrePackageFoodItemAction, DeletePrePackageCategoryAction, deletePrePackageMethodByIdAction, EditPrePackageFoodItemAction, getAllFoodCategoryAction, getAllPrePackageFoodCategoryAction, getFoodItemByCategoryIdAction, getPrePackageFoodItemByCategoryIdAction, UpdatePrePackageCategoryNameAction } from '../../redux/action/productMaster';
 import { useDispatch, useSelector } from 'react-redux';
 import cloudinaryUpload from '../../helper/cloudinaryUpload';
+import axios from 'axios';
 
 export default function PrePackged({ methodType }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -13,7 +14,7 @@ export default function PrePackged({ methodType }) {
     const [isDelOpen, setIsDelOpen] = useState(false);
     const [deleteData, setDeleteData] = useState("")
     const [selectedButton, setSelectedButton] = useState(0);
-    const [foodItemInput, setFoodItemInput] = useState({ name: '', price: '', description: '', photo: '',foodId: '' });
+    const [foodItemInput, setFoodItemInput] = useState({ name: '', price: '', description: '', photo: '', foodId: '' });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [editingCategory, setEditingCategory] = useState(null);
@@ -28,7 +29,10 @@ export default function PrePackged({ methodType }) {
     const [isCategoryDelete, setIsCategoryDelete] = useState("")
     const [categoriesDeleteId, setCategoriesDeleteId] = useState("")
     const [selectedImage, setSelectedImage] = useState(null);
-    const [cloudImage,setCloudImage] = useState("");
+    const [cloudImage, setCloudImage] = useState("");
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedItemFile, setSeelctedItemFile] = useState(null);
+
     useEffect(() => {
         const fetchCategories = async () => {
             if (methodType === "PRE-PACKGED") {
@@ -140,8 +144,8 @@ export default function PrePackged({ methodType }) {
         if (isUpdateData) {
             const updatedFoodItemInput = {
                 ...foodItemInput,
-                photo: cloudImage, 
-              };
+                photo: cloudImage,
+            };
             dispatch(EditPrePackageFoodItemAction(foodItemInput._id, updatedFoodItemInput))
                 .then(response => {
                     setFoodItems(prev =>
@@ -149,7 +153,7 @@ export default function PrePackged({ methodType }) {
                             item._id === foodItemInput._id ? response : item
                         )
                     );
-                    setFoodItemInput({ name: '', price: '', description: '', photo: null,foodId:'' });
+                    setFoodItemInput({ name: '', price: '', description: '', photo: null, foodId: '' });
                     setImagePreview(null);
                     onOpenChange(false);
                 })
@@ -175,28 +179,13 @@ export default function PrePackged({ methodType }) {
 
     };
 
-    // const handleFileChange = (event) => {
-    //     const file = event.target.files[0];
-    //     setImageFile(file);
-
-    //     const reader = new FileReader();
-    //     reader.onloadend = () => {
-    //         setImagePreview(reader.result);
-    //     };
-    //     if (file) {
-    //         reader.readAsDataURL(file);
-    //     } else {
-    //         setImagePreview(null);
-    //     }
-    // };
-
-    const handleFileChange = async(event) => {
+    const handleImageChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
             const cloudImg = await cloudinaryUpload(file)
             setCloudImage(cloudImg)
             const imageUrl = URL.createObjectURL(file);
-            setSelectedImage(imageUrl); 
+            setSelectedImage(imageUrl);
         }
     };
     const [textareaValue, setTextareaValue] = useState(() => {
@@ -301,7 +290,7 @@ export default function PrePackged({ methodType }) {
                 description: item?.description,
                 photo: null,
                 _id: item?._id,
-                foodId:selectedFoodCategory?._id
+                foodId: selectedFoodCategory?._id
             });
             setSelectedImage(item?.photo)
         }
@@ -337,6 +326,64 @@ export default function PrePackged({ methodType }) {
                 });
         }
     }
+
+    
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        setSelectedFile(file);
+    };
+
+    const handleUploadExcel = async () => {
+        if (!selectedFile) {
+            alert('Please select an Excel file first.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        try {
+            const response = await axios.post('http://localhost:3000/api/v2/mp/admin/upload/prePackageFood', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log('response', response)
+            window.location.reload();
+            } catch (error) {
+            console.error('Error uploading Excel file:', error);
+            alert('Failed to upload the Excel file. Please try again.');
+        }
+    };
+
+    const handleItemFileChange = (event) => {
+        const file = event.target.files[0];
+        setSeelctedItemFile(file);
+    };
+
+    const handleUploadItemExcel = async () => {
+        if (!selectedItemFile) {
+            alert('Please select an Excel file first.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', selectedItemFile);
+
+        try {
+            const response = await axios.post('http://localhost:3000/api/v2/mp/admin/pre_package_food-items/excel', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log('response', response)
+            window.location.reload();
+            } catch (error) {
+            console.error('Error uploading Excel file:', error);
+            alert('Failed to upload the Excel file. Please try again.');
+        }
+    };
+
     return (
         <>
             <div className="w-[100%] py-[5px] px-[5px]">
@@ -388,11 +435,30 @@ export default function PrePackged({ methodType }) {
                                 )}
                             </div>
                         ))}
+                          <div className="upload-section">
+                            <input
+                                type="file"
+                                accept=".xlsx, .xls"
+                                onChange={handleFileChange}
+                            />
+
+                            <button onClick={handleUploadExcel}>Preview Excel</button>
+                        </div>
                     </div>
 
+                    <div className="upload-section">
+                            <input
+                                type="file"
+                                accept=".xlsx, .xls"
+                                onChange={handleItemFileChange}
+                            />
+
+                            <button onClick={handleUploadItemExcel}>Preview Excel</button>
+                        </div>
+
                     <div className=" flex-wrap  flex rlative  gap-[20px] ">
-                        <div className="border-[1px]  h-[100%] border-dashed border-[#F28C28] rounded-[8px]  w-[180px] cursor-pointer"  
-                        onClick={() =>{setSelectedImage("");setCloudImage();setFoodItemInput({});onOpen();}} >
+                        <div className="border-[1px]  h-[100%] border-dashed border-[#F28C28] rounded-[8px]  w-[180px] cursor-pointer"
+                            onClick={() => { setSelectedImage(""); setCloudImage(); setFoodItemInput({}); onOpen(); }} >
                             <div className="flex justify-center h-[140px] items-center pt-[10px]">
                                 <i className="text-[70px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
                             </div>
@@ -465,20 +531,20 @@ export default function PrePackged({ methodType }) {
                                     <div className=" w-[100%] flex gap-[29px] flex-col">
                                         <div className="w-[100%] flex gap-[16px]">
                                             <div className="border-[1px] border-dashed max-h-[170px]  border-[#F28C28] rounded-[8px] flex justify-center items-center w-[167px] cursor cursor-pointer" onClick={onOpen}>
-                                            <label htmlFor="imageUpload" className="cursor-pointer flex justify-center !w-[560px]">
-                                                      {selectedImage ? (
-                                                    <img src={selectedImage} alt="Selected" className="h-[160px] w-[600px] rounded-[8px]" />
-                                                ) : (
-                                                    <i className="text-[60px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
-                                                )}
-                                                <input
-                                                    type="file"
-                                                    id="imageUpload"
-                                                    name="photo"
-                                                    className="hidden"
-                                                    onChange={handleFileChange}
-                                                    accept="image/*"
-                                                />
+                                                <label htmlFor="imageUpload" className="cursor-pointer flex justify-center !w-[560px]">
+                                                    {selectedImage ? (
+                                                        <img src={selectedImage} alt="Selected" className="h-[160px] w-[600px] rounded-[8px]" />
+                                                    ) : (
+                                                        <i className="text-[60px] flex font-[800] text-[#feaa00] fa-solid fa-plus"></i>
+                                                    )}
+                                                    <input
+                                                        type="file"
+                                                        id="imageUpload"
+                                                        name="photo"
+                                                        className="hidden"
+                                                        onChange={handleImageChange}
+                                                        accept="image/*"
+                                                    />
                                                 </label>
 
                                             </div>

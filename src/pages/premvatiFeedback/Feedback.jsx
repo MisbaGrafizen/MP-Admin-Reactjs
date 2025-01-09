@@ -32,7 +32,7 @@ export default function Feedback() {
     setCurrentPage(pageNumber);
     setDropdownOpen(false);
   };
-  
+
   const currentPageData = displayedData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -45,38 +45,15 @@ export default function Feedback() {
         paginationDropdownRef.current &&
         !paginationDropdownRef.current.contains(event.target)
       ) {
-        setDropdownOpen(false); // Close pagination dropdown on outside click
+        setDropdownOpen(false);
       }
     };
-
-    // const branches = [
-    //   "All",
-    //   "Kalawad",
-    //   "Shradhdha",
-    //   "PramukhVatika",
-    //   "Dholakiya",
-    //   "Mavdi",
-    //   "Tirupati",
-    //   "SorathiyaVadi",
-    // ];
-
-
-
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-
-
-  // const currentPageData = displayedData.slice(
-  //   (currentPage - 1) * itemsPerPage,
-  //   currentPage * itemsPerPage
-  // );
-
-
 
   const handleBack = () => {
     navigate(-1);
@@ -105,7 +82,10 @@ export default function Feedback() {
       try {
         const apiUrl = apiUrlMapping[activeButton];
         const response = await ApiGet(`/api/v1${apiUrl}`);
-        const fetchedData = activeButton === "All" ? response.data : response;
+        // const fetchedData = activeButton === "All" ? response.data : response;
+        const fetchedData = Array.isArray(activeButton === "All" ? response.data : response)
+          ? activeButton === "All" ? response.data : response
+          : []; 
         setDisplayedData(fetchedData);
         setMainData(fetchedData);
       } catch (error) {
@@ -114,6 +94,7 @@ export default function Feedback() {
     };
     if (activeButton) fetchData();
   }, [activeButton]);
+
 
 
   const handleCheckAll = () => {
@@ -196,8 +177,8 @@ export default function Feedback() {
             <div className="w-[100%] flex gap-[20px]">
               <div
                 className={`w-[80px] justify-center items-center cursor-pointer flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${filterActiveButton === "today"
-                    ? "text-[#fff] bg-[#F28C28]"
-                    : "text-[#000] border-[#F28C28] border-[1.9px]"
+                  ? "text-[#fff] bg-[#F28C28]"
+                  : "text-[#000] border-[#F28C28] border-[1.9px]"
                   }`}
                 onClick={() => setFilterActiveButton("today")}
               >
@@ -205,8 +186,8 @@ export default function Feedback() {
               </div>
               <div
                 className={`w-[12%] justify-center items-center cursor-pointer flex text-[15px] font-Poppins py-[5px] rounded-[7px] ${filterActiveButton === "till_date"
-                    ? "text-[#fff] bg-[#F28C28]"
-                    : "text-[#000] border-[#F28C28] border-[1.9px]"
+                  ? "text-[#fff] bg-[#F28C28]"
+                  : "text-[#000] border-[#F28C28] border-[1.9px]"
                   }`}
                 onClick={() => setFilterActiveButton("till_date")}
               >
@@ -386,7 +367,7 @@ export default function Feedback() {
                                 style={{ width: "10px", height: "10px" }}
                               />
                               <p className="w-fit md150:text-[15px] text-[13px] font-[500] text-[#000] font-Outfit">
-                              {(currentPage - 1) * itemsPerPage + index + 1}
+                                {(currentPage - 1) * itemsPerPage + index + 1}
                               </p>
                             </div>
                             <div className="flex justify-start text-center py-[6px] border-r border-b border-black px-3 min-w-[8%] max-w-[8%]">

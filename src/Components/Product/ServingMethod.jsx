@@ -3,6 +3,7 @@ import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 import { addServingCategoryAction, addServingMethodAction, DeleteServingCategoryAction, deleteServingSingleMethodByIdAction, EditServingMethodItemAction, getAllServingCategoryAction, getServingMethodByCategoryIdAction } from '../../redux/action/productMaster';
 import { useDispatch, useSelector } from 'react-redux';
 import cloudinaryUpload from '../../helper/cloudinaryUpload';
+import axios from 'axios';
 
 export default function ServingMethod() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -26,7 +27,9 @@ export default function ServingMethod() {
     const [servingCategories,setServingCategories] = useState([])
     const [servingMethods,setServingMethods] = useState([])
     const [isCategoryDelete,setIsCategoryDelete] = useState("")
-    const [categoriesDeleteId,setCategoriesDeleteId] = useState("")
+    const [categoriesDeleteId,setCategoriesDeleteId] = useState("");
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedItemFile, setSeelctedItemFile] = useState(null);
 
     // const servingCategories = useSelector((state) => state?.productMasterState?.getServingCategory);
     // const servingMethods = useSelector((state) => state?.productMasterState?.getServingMethod);
@@ -105,7 +108,7 @@ export default function ServingMethod() {
         });
     };
 
-    const handleFileChange = async(event) => {
+    const handleImageChange = async(event) => {
         const file = event.target.files[0];
         if (file) {
             const cloudImg = await cloudinaryUpload(file)
@@ -313,7 +316,67 @@ export default function ServingMethod() {
             console.error('Error updating item:', error);
             });
         }
-    }
+    };
+
+    
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        setSelectedFile(file);
+    };
+
+    const handleUploadExcel = async () => {
+        if (!selectedFile) {
+            alert('Please select an Excel file first.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        try {
+            const response = await axios.post('http://localhost:3000/api/v2/mp/admin/upload/servingCategory', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log('response', response)
+            window.location.reload();
+
+            } catch (error) {
+            console.error('Error uploading Excel file:', error);
+            alert('Failed to upload the Excel file. Please try again.');
+        }
+    };
+
+    const handleItemFileChange = (event) => {
+        const file = event.target.files[0];
+        setSeelctedItemFile(file);
+    };
+
+    const handleUploadItemExcel = async () => {
+        if (!selectedItemFile) {
+            alert('Please select an Excel file first.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', selectedItemFile);
+
+        try {
+            const response = await axios.post('http://localhost:3000/api/v2/mp/admin/upload/serving-methods', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log('response', response);
+            window.location.reload();
+
+            } catch (error) {
+            console.error('Error uploading Excel file:', error);
+            alert('Failed to upload the Excel file. Please try again.');
+        }
+    };
+
     return (
         <>
             <div className="w-[100%] p-[5px]">
@@ -366,8 +429,26 @@ export default function ServingMethod() {
                                 )}
                             </div>
                         ))}
+                         <div className="upload-section">
+                            <input
+                                type="file"
+                                accept=".xlsx, .xls"
+                                onChange={handleFileChange}
+                            />
+
+                            <button onClick={handleUploadExcel}>Preview Excel</button>
+                        </div>
                     </div>
 
+                    <div className="upload-section">
+                            <input
+                                type="file"
+                                accept=".xlsx, .xls"
+                                onChange={handleItemFileChange}
+                            />
+
+                            <button onClick={handleUploadItemExcel}>Preview Excel</button>
+                        </div>
 
                     <div className="flex flex-wrap gap-[20px] ">
 
@@ -451,7 +532,7 @@ export default function ServingMethod() {
                                                     id="imageUpload"
                                                     name="photo"
                                                     className="hidden"
-                                                    onChange={handleFileChange}
+                                                    onChange={handleImageChange}
                                                     accept="image/*"
                                                 />
                                                 </label>
