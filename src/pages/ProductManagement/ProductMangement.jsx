@@ -95,7 +95,7 @@ export default function ProductMangement() {
               <div
                 className={`md150:w-[160px] md11:w-[130px] flex items-center md150:text-[18px] text-[16px] justify-center  rounded-tr-[10px] rounded-tl-[10px]  border-r-[1px] font-[600]  border-l-[1px]  border-t-[1px]  ${
                   activeForm === "SERVING"
-                    ? "bg-[#00984b] text-[#fff] border-[#00984b]"
+                    ? "bg-[#F28C28] text-[#fff]"
                     : "text-[#FEAA00] border-[#F28C28]  bg-white "
                 } md150:h-[40px] md11:h-[35px] cursor-pointer`}
                 onClick={() => handleActiveFormChange("SERVING")}

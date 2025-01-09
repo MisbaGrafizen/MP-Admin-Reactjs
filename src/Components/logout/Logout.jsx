@@ -15,7 +15,7 @@ export default function Logout() {
       className="absolute bottom-[14px] right-[15px] text-[#fff] rounded-[7px] w-[100px] font-[500] font-Poppins text-center py-[7px] text-[16px] bg-[#ff0000] cursor-pointer transition-all duration-200 ease-in-out hover:bg-[#cc0000] active:scale-95"
       onClick={handleLogout}
     >
-      <p>Logout</p>
+      <p className=" flex justify-center font-Montserrat">Logout</p>
     </div>
   );
 }
