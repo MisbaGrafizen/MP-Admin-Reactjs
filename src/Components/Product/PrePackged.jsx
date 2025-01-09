@@ -327,60 +327,55 @@ export default function PrePackged({ methodType }) {
         }
     }
 
+    const handleUploadExcel = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const formData = new FormData();
+          formData.append("file", file);
     
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        setSelectedFile(file);
-    };
-
-    const handleUploadExcel = async () => {
-        if (!selectedFile) {
-            alert('Please select an Excel file first.');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-
-        try {
-            const response = await axios.post('http://localhost:3000/api/v2/mp/admin/upload/prePackageFood', formData, {
+          try {
+            const response = await axios.post(
+              "https://server.grafizen.in/api/v2/mp/admin/upload/prePackageFood",
+              formData,
+              {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                  "Content-Type": "multipart/form-data",
                 },
-            });
-            console.log('response', response)
+              }
+            );
+            console.log("File uploaded successfully:", response);
+            alert("File uploaded successfully!");
             window.location.reload();
-            } catch (error) {
-            console.error('Error uploading Excel file:', error);
-            alert('Failed to upload the Excel file. Please try again.');
+          } catch (error) {
+            console.error("Error uploading the file:", error);
+            alert("Failed to upload the file. Please try again.");
+          }
         }
     };
 
-    const handleItemFileChange = (event) => {
+    const handleUploadItemExcel = async (event) => {
         const file = event.target.files[0];
-        setSeelctedItemFile(file);
-    };
-
-    const handleUploadItemExcel = async () => {
-        if (!selectedItemFile) {
-            alert('Please select an Excel file first.');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('file', selectedItemFile);
-
-        try {
-            const response = await axios.post('http://localhost:3000/api/v2/mp/admin/pre_package_food-items/excel', formData, {
+        if (file) {
+          const formData = new FormData();
+          formData.append("file", file);
+    
+          try {
+            const response = await axios.post(
+              "https://server.grafizen.in/api/v2/mp/admin/pre_package_food_items/excel",
+              formData,
+              {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                  "Content-Type": "multipart/form-data",
                 },
-            });
-            console.log('response', response)
+              }
+            );
+            console.log("File uploaded successfully:", response);
+            alert("File uploaded successfully!");
             window.location.reload();
-            } catch (error) {
-            console.error('Error uploading Excel file:', error);
-            alert('Failed to upload the Excel file. Please try again.');
+          } catch (error) {
+            console.error("Error uploading the file:", error);
+            alert("Failed to upload the file. Please try again.");
+          }
         }
     };
 
@@ -435,26 +430,36 @@ export default function PrePackged({ methodType }) {
                                 )}
                             </div>
                         ))}
-                          <div className="upload-section">
-                            <input
-                                type="file"
-                                accept=".xlsx, .xls"
-                                onChange={handleFileChange}
-                            />
-
-                            <button onClick={handleUploadExcel}>Preview Excel</button>
-                        </div>
+                                                     <div
+                                className="w-[200px] bg-[#F28C28] text-white gap-[6px] border-[0.5px] border-[#000] font-[600] md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px] flex justify-center items-center rounded-[8px] cursor-pointer"
+                                onClick={() => document.getElementById("excelFileInput").click()}
+                            >
+                                <input
+                                    id="excelFileInput"
+                                    type="file"
+                                    accept=".xlsx, .xls"
+                                    className="hidden"
+                                    onChange={handleUploadExcel}
+                                />
+                                <i className="fa-solid fa-plus"></i>
+                                <p>Add Excel</p>
+                            </div>
                     </div>
 
-                    <div className="upload-section">
-                            <input
-                                type="file"
-                                accept=".xlsx, .xls"
-                                onChange={handleItemFileChange}
-                            />
-
-                            <button onClick={handleUploadItemExcel}>Preview Excel</button>
-                        </div>
+                    <div
+                                className="w-[200px] bg-[#F28C28] text-white gap-[6px] border-[0.5px] border-[#000] font-[600] md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px] flex justify-center items-center rounded-[8px] cursor-pointer"
+                                onClick={() => document.getElementById("excelFileInput2").click()}
+                            >
+                                <input
+                                    id="excelFileInput2"
+                                    type="file"
+                                    accept=".xlsx, .xls"
+                                    className="hidden"
+                                    onChange={handleUploadItemExcel}
+                                />
+                                <i className="fa-solid fa-plus"></i>
+                                <p>Add Excel</p>
+                            </div>
 
                     <div className=" flex-wrap  flex rlative  gap-[20px] ">
                         <div className="border-[1px]  h-[100%] border-dashed border-[#F28C28] rounded-[8px]  w-[180px] cursor-pointer"

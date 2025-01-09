@@ -3,6 +3,7 @@ import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 import { addCategoryAction, addMenuItemAction, addPrePackageFoodCategoryAction, deleteItemByIdAction, DeleteCategoryAction, EditMenuItemAction, getAllFoodCategoryAction, getAllPrePackageFoodCategoryAction, getCategoryAction, getItemByCategoryIdAction, getFoodItemByCategoryIdAction, getPrePackageFoodItemByCategoryIdAction, UpdateCategoryAction } from '../../redux/action/productMaster';
 import { useDispatch, useSelector } from 'react-redux';
 import cloudinaryUpload from '../../helper/cloudinaryUpload';
+import axios from 'axios';
 
 
 export default function Menu({ methodType }) {
@@ -344,7 +345,60 @@ export default function Menu({ methodType }) {
                     console.error('Error updating item:', error);
                 });
         }
-    }
+    };
+
+    const handleUploadExcel = async (event) => {
+
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await axios.post(
+                    "https://server.grafizen.in/api/v2/mp/admin/category/excel",
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                );
+                console.log("File uploaded successfully:", response);
+                alert("File uploaded successfully!");
+                window.location.reload();
+            } catch (error) {
+                console.error("Error uploading the file:", error);
+                alert("Failed to upload the file. Please try again.");
+            }
+        }
+    };
+
+    const handleUploadItemExcel = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await axios.post(
+                    "https://server.grafizen.in/api/v2/mp/admin/item/excel",
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                );
+                console.log("File uploaded successfully:", response);
+                alert("File uploaded successfully!");
+                window.location.reload();
+            } catch (error) {
+                console.error("Error uploading the file:", error);
+                alert("Failed to upload the file. Please try again.");
+            }
+        }
+    };
     return (
         <>
             <div className="w-[100%] py-[5px] px-[5px]">
@@ -396,7 +450,36 @@ export default function Menu({ methodType }) {
                                 )}
                             </div>
                         ))}
+                                                    <div
+                                className="w-[200px] bg-[#F28C28] text-white gap-[6px] border-[0.5px] border-[#000] font-[600] md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px] flex justify-center items-center rounded-[8px] cursor-pointer"
+                                onClick={() => document.getElementById("excelFileInput").click()}
+                            >
+                                <input
+                                    id="excelFileInput"
+                                    type="file"
+                                    accept=".xlsx, .xls"
+                                    className="hidden"
+                                    onChange={handleUploadExcel}
+                                />
+                                <i className="fa-solid fa-plus"></i>
+                                <p>Add Excel</p>
+                            </div>
                     </div>
+
+                    <div
+                                className="w-[200px] bg-[#F28C28] text-white gap-[6px] border-[0.5px] border-[#000] font-[600] md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px] flex justify-center items-center rounded-[8px] cursor-pointer"
+                                onClick={() => document.getElementById("excelFileInput2").click()}
+                            >
+                                <input
+                                    id="excelFileInput2"
+                                    type="file"
+                                    accept=".xlsx, .xls"
+                                    className="hidden"
+                                    onChange={handleUploadItemExcel}
+                                />
+                                <i className="fa-solid fa-plus"></i>
+                                <p>Add Excel</p>
+                            </div>
 
                     <div className=" flex-wrap  flex rlative  gap-[20px] ">
                         <div className=" h-[100%]  rounded-[8px]  w-[180px] cursor-pointer"
