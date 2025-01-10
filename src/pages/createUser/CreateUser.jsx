@@ -87,6 +87,14 @@ export default function CreateUser() {
   };
 
 
+  // const toggleKhestraDropdown = () => {
+  //   setIsKshetraDropdownOpen(!isKshetraDropdownOpen);
+  // };
+  // const toggleDesgnationDropdown = () => {
+  //   setIsDesigDropdownOpen(!isDesigDropdownOpen);
+  // };
+
+
   const handleSelectPravruti = (pravruti) => {
     setSelectedPravruti({ id: pravruti?._id, name: pravruti.name });
     setUserData((prevData) => {
@@ -107,12 +115,54 @@ export default function CreateUser() {
   };
 
   const handleSelectDesignation = (designation) => {
+    console.log("Selected Designation:", designation);
+
     setSelectedDesignation({
       id: designation._id,
       name: designation.name,
     });
-    setIsDesigDropdownOpen(false); // Close the dropdown
+
+    setUserData((prevData) => ({
+      ...prevData,
+      designation: designation._id,
+    }));
+
+    setIsDesigDropdownOpen(false);
   };
+
+
+  useEffect(() => {
+    if (designations.length > 0 && !selectedDesignation.id) {
+      console.log("Setting default designation:", designations[0]);
+      setSelectedDesignation({
+        id: designations[0]._id,
+        name: designations[0].name,
+      });
+
+      setUserData((prevData) => ({
+        ...prevData,
+        designation: designations[0]._id,
+      }));
+    }
+  }, [designations]);
+
+
+  useEffect(() => {
+    if (kshetras.length > 0 && !selectedKshetra.id) {
+      console.log("Setting default kshetra:", kshetras[0]);
+      setSelectedKshetra({
+        id: kshetras[0]._id,
+        name: kshetras[0].name,
+      });
+
+      setUserData((prevData) => ({
+        ...prevData,
+        kshetra: kshetras[0]._id,
+      }));
+    }
+  }, [kshetras]);
+
+
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -144,7 +194,7 @@ export default function CreateUser() {
     name: '',
     pravruti: '',
     kshetra: '',
-    designation: '',
+    designation: designations[0]?._id || '',
     phoneNumber: '',
     mondalName: '',
     password: ''
@@ -245,11 +295,11 @@ export default function CreateUser() {
             </div>
           </div>
           <div
-            className={`border-t-[1.5px] font-[600] cursor-pointer border-l-[1.5px] border-r-[1.5px] text-[#FEAA00] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px] active:bg-[#F28C28] active:text-[#fff] md150:top-[5.8%] right-[6%] w-[160px] flex items-center justify-center rounded-tl-[10px] absolute border-[#F28C28] rounded-tr-[10px] ro ${isUserListActive ? 'bg-[#F28C28] text-white' : ''
+            className={`border-t-[1.5px] font-[600] cursor-pointer border-l-[1.5px] border-r-[1.5px] text-[#FEAA00] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px] active:bg-[#F28C28] active:text-[#fff] md150:top-[5.8%] right-[22%] w-[160px] flex items-center justify-center rounded-tl-[10px] absolute border-[#F28C28] rounded-tr-[10px] ro
               }`}
             onClick={handleToggleUserList}
           >
-            <p>{isUserListActive ? 'User List' : 'Create User'}</p>
+            <p> Create User</p>
           </div>
 
           {/* Button to activate Premvati User */}
@@ -489,7 +539,7 @@ export default function CreateUser() {
                               />
                             </div>
 
-                            <div className="flex relative md150:mt-[4px] items-center gap-[40px]">
+                            <div className="flex relative   md150:mt-[4px] items-center gap-[40px]">
                               <div
                                 ref={pravrutiDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
@@ -523,7 +573,7 @@ export default function CreateUser() {
                                 </div>
                               )}
                             </div>
-                            <div className="flex relative items-center gap-[40px]">
+                            {/* <div className="flex relative items-center gap-[40px]">
                               <div
                                 ref={kshetraDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
@@ -552,6 +602,49 @@ export default function CreateUser() {
                                         }`}
                                     >
                                       <p>{kshetra.name}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div> */}
+
+<div
+                              className="dropdown-container"
+                              onClick={(e) => {
+                                e.stopPropagation();x 
+                              }}
+                            >
+                              <div
+                                className="dropdown-trigger flex items-center w-[100%] justify-between pr-[5px] border-b-[1px]"
+                                onClick={() => {
+                                  console.log("Trigger Clicked");
+                                  setIsKshetraDropdownOpen((prev) => !prev);
+                                }}
+                              >
+                                <p>{selectedKshetra?.name || "Select Designation"}</p>
+                                <i
+                                  className={`fa-solid fa-angle-up ${isKshetraDropdownOpen
+                                    ? "fa-rotate-0"
+                                    : "fa-rotate-180"
+                                    }`}
+                                ></i>
+                              </div>
+
+                              {isKshetraDropdownOpen && (
+                                <div className="dropdown-items">
+                                  {kshetras?.map((kshetra) => (
+                                    <div
+                                     className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] md11:text-[13px] md150:text-[16px] rounded-[5px]  cursor-pointer ${kshetra._id === selectedPravruti.id
+                                        ? "bg-[#F28C28] text-white"
+                                        : "hover:bg-[#f5e7ca]"
+                                        }`}
+                                      key={kshetra._id}
+                                      onClick={() => {
+                                        console.log("Item Clicked:", kshetra);
+                                        handleSelectKshetra(kshetra);
+                                      }}
+                                    >
+                                      {kshetra.name}
                                     </div>
                                   ))}
                                 </div>
@@ -596,7 +689,7 @@ export default function CreateUser() {
                               )}
                             </div> */}
 
-                            <div className="flex relative   md150:mt-[4px] items-center gap-[40px]">
+                            {/* <div className="flex relative   md150:mt-[4px] items-center gap-[40px]">
                               <div
                                 ref={designationDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
@@ -605,19 +698,21 @@ export default function CreateUser() {
                                 <p>{selectedDesignation.name}</p>
                                 <i
                                   className={`fa-solid fa-angle-up ${isDesigDropdownOpen
-                                    ? "fa-rotate-0"
-                                    : "fa-rotate-180"
+                                      ? "fa-rotate-0"
+                                      : "fa-rotate-180"
                                     }`}
                                 ></i>
                               </div>
 
                               {isDesigDropdownOpen && (
-                                <div className="border-[1.5px] w-[100%] md150:w-[110%] left-[-3px] z-[10] top-[29px] h-[100%] min-h-[130px] overflow-y-auto bg-white absolute rounded-[10px] py-[2px] flex flex-col">
+                                <div className="border-[1.5px] w-[100%] md150:w-[110%] left-[-3px] z-[10] top-[29px]  min-h-[100%] overflow-y-auto bg-white absolute rounded-[10px] py-[2px] flex flex-col">
                                   {designations?.map((designation) => (
                                     <div
                                       key={designation._id}
-                                      onClick={() => handleSelectDesignation(designation)} // Handle selection
-                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] rounded-[5px] md11:text-[13px] md150:text-[16px] cursor-pointer ${designation._id === selectedDesignation.id
+                                      onClick={() =>
+                                        handleSelectDesignation(designation)
+                                      }
+                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] md11:text-[13px] md150:text-[16px] rounded-[5px]  cursor-pointer ${designation._id === selectedDesignation.id
                                           ? "bg-[#F28C28] text-white"
                                           : "hover:bg-[#f5e7ca]"
                                         }`}
@@ -627,8 +722,51 @@ export default function CreateUser() {
                                   ))}
                                 </div>
                               )}
-                            </div>
+                            </div> */}
 
+                            <div
+                              className="dropdown-container"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                console.log("Dropdown Container Clicked");
+                              }}
+                            >
+                              <div
+                                className="dropdown-trigger flex items-center w-[100%] justify-between pr-[5px] border-b-[1px]"
+                                onClick={() => {
+                                  console.log("Trigger Clicked");
+                                  setIsDesigDropdownOpen((prev) => !prev);
+                                }}
+                              >
+                                <p>{selectedDesignation?.name || "Select Designation"}</p>
+                                <i
+                                  className={`fa-solid fa-angle-up ${isDesigDropdownOpen
+                                    ? "fa-rotate-0"
+                                    : "fa-rotate-180"
+                                    }`}
+                                ></i>
+                              </div>
+
+                              {isDesigDropdownOpen && (
+                                <div className="dropdown-items">
+                                  {designations?.map((designation) => (
+                                    <div
+                                     className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] md11:text-[13px] md150:text-[16px] rounded-[5px]  cursor-pointer ${designation._id === selectedPravruti.id
+                                        ? "bg-[#F28C28] text-white"
+                                        : "hover:bg-[#f5e7ca]"
+                                        }`}
+                                      key={designation._id}
+                                      onClick={() => {
+                                        console.log("Item Clicked:", designation);
+                                        handleSelectDesignation(designation);
+                                      }}
+                                    >
+                                      {designation.name}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                             <div className="flex items-center md11:mt-[3px] md150:mt-[0px]  gap-[40px]">
                               <input
                                 className="px-[5px] text-[14px] w-[100%] font-[400] outline-none border-b-[1px]"
