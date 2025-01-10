@@ -13,17 +13,11 @@ import PremvatiUser from '../../Components/premvatiUser/PremvatiUser';
 
 export default function CreateUser() {
   const [isPremvatiUserActive, setIsPremvatiUserActive] = useState(false);
-  const [isUserListActive, setIsUserListActive] = useState(true); 
-
+  const [isUserListActive, setIsUserListActive] = useState(true);
 
   const handleSwitchToPremvatiUser = () => {
     setIsPremvatiUserActive(true);
     setIsUserListActive(false); // When "Premvati user" is active, the "User List" button is disabled
-  };
-
-  const handleBackToCreateUser = () => {
-    setIsPremvatiUserActive(false);
-    setIsUserListActive(true); // When "User List" is active, the "Premvati user" button is disabled
   };
 
   const handleToggleUserList = () => {
@@ -33,10 +27,7 @@ export default function CreateUser() {
     setIsUserListActive(!isUserListActive);
   };
 
-
-  
-
-  const { isOpen, onOpen, onOpenChange,onClose } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const [checkAll, setCheckAll] = useState(false);
@@ -53,38 +44,38 @@ export default function CreateUser() {
   const dropdownRef = useRef(null);
   const kshetraDropdownRef = useRef(null);
   const designationDropdownRef = useRef(null);
-  const paginationDropdownRef = useRef(null); 
+  const paginationDropdownRef = useRef(null);
   const pravrutiDropdownRef = useRef(null);
-  
- 
-
   const users = useSelector((state) => state?.userMasterState?.getUser) || [];
   const pravruties = useSelector((state) => state?.mastermanagementState?.getPravruti) || [];
   const kshetras = useSelector((state) => state?.mastermanagementState?.getKshetra) || [];
   const designations = useSelector((state) => state?.mastermanagementState?.getDesignation) || [];
   const itemsPerPage = 5;
   const totalPages = Math.ceil(users.length / itemsPerPage);
-  const paginatedUsers = users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  const [deleteRecordId,setDeleteRecordId] = useState();
+  // const paginatedUsers = users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const [deleteRecordId, setDeleteRecordId] = useState();
   const goToPage = (pageNumber) => {
     setCurrentPage(pageNumber);
     setDropdownOpen(false);
   };
 
+  const paginatedUsers = Array.isArray(users)
+    ? users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    : [];
+
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
   const toggleKshetraDropdown = () => setIsKshetraDropdownOpen((prev) => !prev);
-  const toggleDesigDropdown = () => setIsDesigDropdownOpen((prev) => !prev); 
-  const togglePaginationDropdown = () => setDropdownOpen((prev) => !prev); 
+  const toggleDesigDropdown = () => setIsDesigDropdownOpen((prev) => !prev);
+  const togglePaginationDropdown = () => setDropdownOpen((prev) => !prev);
   const togglePraDropdown = () => setDropdownOpen((prev) => !prev);
-  
 
   const [isDelOpen, setIsDelOpen] = useState(false);
-  const [isEditData,setIsEditData] = useState(false)
+  const [isEditData, setIsEditData] = useState(false)
   const handleDelete = (item) => {
     setDeleteRecordId(item?._id)
     setIsDelOpen(true);
   };
-  const handelEdit = (item) =>{
+  const handelEdit = (item) => {
     setIsEditData(true)
     setUserData(item)
     handleSelectPravruti(item?.pravruti)
@@ -93,17 +84,6 @@ export default function CreateUser() {
   }
   const closeDeleteModal = () => {
     setIsDelOpen(false);
-  };
- 
-
-  // const toggleDropdown = () => {
-  //   setIsDropdownOpen(!isDropdownOpen);
-  // };
-  const toggleKhestraDropdown = () => {
-    setIsKshetraDropdownOpen(!isKshetraDropdownOpen);
-  };
-  const toggleDesgnationDropdown = () => {
-    setIsDesigDropdownOpen(!isDesigDropdownOpen);
   };
 
 
@@ -115,18 +95,23 @@ export default function CreateUser() {
     });
     setIsDropdownOpen(false);
   };
-  
+
 
   const handleSelectKshetra = (kshetra) => {
     setSelectedKshetra({ id: kshetra?._id, name: kshetra.name });
-    setUserData(prevData => ({ ...prevData, kshetra: kshetra._id })); 
+    setUserData((prevData) => {
+      const newData = { ...prevData, kshetra: kshetra._id };
+      return newData;
+    });
     setIsKshetraDropdownOpen(false);
   };
-  
+
   const handleSelectDesignation = (designation) => {
-    setSelectedDesignation({ id: designation?._id, name: designation?.name });
-    setUserData(prevData => ({ ...prevData, designation: designation._id })); 
-    setIsDesigDropdownOpen(false);
+    setSelectedDesignation({
+      id: designation._id,
+      name: designation.name,
+    });
+    setIsDesigDropdownOpen(false); // Close the dropdown
   };
 
   // Close dropdowns when clicking outside
@@ -135,17 +120,17 @@ export default function CreateUser() {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
-      if (kshetraDropdownRef.current && !kshetraDropdownRef.current.contains(event.target)) { 
+      if (kshetraDropdownRef.current && !kshetraDropdownRef.current.contains(event.target)) {
         setIsKshetraDropdownOpen(false);
       }
       if (designationDropdownRef.current && !designationDropdownRef.current.contains(event.target)) {
         setIsDesigDropdownOpen(false);
       }
       if (paginationDropdownRef.current && !paginationDropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);  // Close pagination dropdown on outside click
+        setDropdownOpen(false);
       }
       if (pravrutiDropdownRef.current && !pravrutiDropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);  // Close pagination dropdown on outside click
+        setDropdownOpen(false);
       }
     };
 
@@ -174,41 +159,37 @@ export default function CreateUser() {
 
 
   const handleChange = (e) => {
-    setUserData({ ...userData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setUserData({ ...userData, [name]: value });
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(isEditData && userData){
-      dispatch(editUserAction(userData._id,userData))
-    }else {
+
+    if (isEditData && userData) {
+      dispatch(editUserAction(userData._id, userData))
+    } else {
       dispatch(addUserAction(userData));
     }
 
     onOpenChange(false);
 
-
     setUserData({
-      name: '',
-      pravruti: '',
-      kshetra: '',
-      designation: '',
-      phoneNumber: '',
-      password: ''
+      ...userData,
+      kshetra: kshetras[0]?._id || '',
+      designation: designations[0]?._id || '',
     });
+
+
 
     setSelectedPravruti({ id: '', name: 'Select Pravruti' });
     setSelectedKshetra({ id: '', name: 'Select Kshetra' });
     setSelectedDesignation({ id: '', name: 'Select Designation' });
   };
 
-
-
-
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev); // Toggle the password visibility
   };
-  
+
   const handleBack = () => {
     navigate(-1)
   }
@@ -232,23 +213,19 @@ export default function CreateUser() {
     });
   };
 
-  const handleDeleteRecord = async() =>{
+  const handleDeleteRecord = async () => {
     if (deleteRecordId) {
-      await dispatch(DeleteUserMasterAction(deleteRecordId)).then((response)=>{
-          setDeleteRecordId(""); 
-         setIsDelOpen(false);
-
+      await dispatch(DeleteUserMasterAction(deleteRecordId)).then((response) => {
+        setDeleteRecordId("");
+        setIsDelOpen(false);
       })
-  }
-  }
-  const handelAddData = async () =>{
-    setIsEditData(false)
+    }
   }
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(currentPage - 1);
     }
-  }, [users,totalPages]); 
+  }, [users, totalPages]);
   return (
     <>
       <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto ">
@@ -268,193 +245,191 @@ export default function CreateUser() {
             </div>
           </div>
           <div
-          className={`border-t-[1.5px] font-[600] cursor-pointer border-l-[1.5px] border-r-[1.5px] text-[#FEAA00] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px] active:bg-[#F28C28] active:text-[#fff] md150:top-[5.8%] right-[22%] w-[160px] flex items-center justify-center rounded-tl-[10px] absolute border-[#F28C28] rounded-tr-[10px] ro ${
-            isUserListActive ? 'bg-[#F28C28] text-white' : ''
-          }`}
-          onClick={handleToggleUserList}
-        >
-          <p>{isUserListActive ? 'User List' : 'Create User'}</p>
-        </div>
+            className={`border-t-[1.5px] font-[600] cursor-pointer border-l-[1.5px] border-r-[1.5px] text-[#FEAA00] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px] active:bg-[#F28C28] active:text-[#fff] md150:top-[5.8%] right-[22%] w-[160px] flex items-center justify-center rounded-tl-[10px] absolute border-[#F28C28] rounded-tr-[10px] ro ${isUserListActive ? 'bg-[#F28C28] text-white' : ''
+              }`}
+            onClick={handleToggleUserList}
+          >
+            <p>{isUserListActive ? 'User List' : 'Create User'}</p>
+          </div>
 
-        {/* Button to activate Premvati User */}
-        <div
+          {/* Button to activate Premvati User */}
+          {/*<div
           className={`border-t-[1.5px] font-[600] cursor-pointer border-l-[1.5px] border-r-[1.5px] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px] md150:top-[5.8%] right-[8%] w-[160px] flex items-center justify-center rounded-tl-[10px] absolute border-[#F28C28] rounded-tr-[10px] ro ${
             isPremvatiUserActive ? 'bg-[#F28C28] text-white' : ''
           }`}
           onClick={handleSwitchToPremvatiUser}
         >
           <p>Premvati User</p>
-        </div>
+        </div>*/}
 
-        <Logout />
+          <Logout />
 
           <div className=" md11:py-[69px] md150:py-[90px] flex md11:w-[98%] md150:w-[97%] md11:gap-[15px]  md150:gap-[20px]">
             <Header />
             {!isPremvatiUserActive ? (
-            <div className="  py-[20px] px-[20px]  md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
-              <div className="flex justify-between w-full gap-[20px]">
-                <div className="w-full h-full mx-auto mb-3 scroll-d-none">
-                  <div className="w-full h-full mx-auto rounded-[10px] border border-black overflow-x-hidden relative">
-                    <div className="box-border w-full">
-                      <div className="sticky top-0 flex bg-[#F28C28] border-black w-full">
-                        <div className="flex justify-center text-center gap-[7px] py-[10px] border-r border-b border-black items-center px-3 min-w-[6%] max-w-[6%]">
-                          <input
-                            type="checkbox"
-                            id="check-all"
-                            checked={checkAll}
-                            onChange={handleCheckAll}
-                            style={{ width: "15px", height: "15px" }}
-                          />
-                          <p className="w-fit  md11:text-[14px] md150:text-[18px] font-[600] text-[#fff] font-Outfit">
-                            Sr.
-                          </p>
-                        </div>
-
-                        <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
-                          <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
-                            Name
-                          </p>
-                        </div>
-                        <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
-                          <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
-                            Pravruti
-                          </p>
-                        </div>
-                        <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
-                          <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
-                            Kshetra
-                          </p>
-                        </div>
-                        <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[15%]">
-                          <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff] ">
-                            Designation
-                          </p>
-                        </div>
-                        <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[11%] max-w-[11%]">
-                          <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
-                            Phone no.
-                          </p>
-                        </div>
-                        <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[14%] max-w-[14%]">
-                          <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
-                            Mondal name
-                          </p>
-                        </div>
-                        <div className="flex justify-center text-center py-2 border-b border-black px-3 min-w-[9%] max-w-[9%]">
-                          <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
-                            Actions
-                          </p>
-                        </div>
-                      </div>
-
-                      {Array.isArray(users) && users.length > 0 ? (
-                        paginatedUsers.map((item, index) => (
-                          <div key={index} className="flex justify-between">
-                            <div className="flex justify-center items-center text-center py-[10px] border-r border-b border-black gap-[7px] px-3 min-w-[6%] max-w-[6%]">
-                              <input
-                                type="checkbox"
-                                checked={checkedItems.includes(index)}
-                                onChange={() => handleCheckboxChange(index + 1)}
-                                style={{ width: "15px", height: "15px" }}
-                                className="ml-[-25%]"
-                              />
-                              <p className="font-[600] md11:text-[15px] md150:text-[17px] md11:mt-[5%] md150:mt-[2%]">
-                                {index + 1 + (currentPage - 1) * itemsPerPage}
-                              </p>
-                            </div>
-
-                            <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
-                              <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
-                                {" "}
-                                {item?.name}
-                              </p>
-                            </div>
-                            <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
-                              <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
-                                {item?.pravruti?.name}
-                              </p>
-                            </div>
-                            <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
-                              <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit">
-                                {item?.kshetra?.name}
-                              </p>
-                            </div>
-                            <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[15%]">
-                              <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
-                                {item?.designation?.name}
-                              </p>
-                            </div>
-                            <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[11%] max-w-[11%]">
-                              <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
-                                {item?.phoneNumber}
-                              </p>
-                            </div>
-                            <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[14%] max-w-[14%]">
-                              <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit "></p>
-                            </div>
-                            <div className="flex justify-center items-center gap-[15px] text-center py-2 border-b  border-black min-w-[9%] max-w-[9%]">
-                              <img
-                                onClick={() => {
-                                  onOpen();
-                                  handelEdit(item);
-                                }}
-                                className="w-[20px] cursor-pointer"
-                                src={Editimg}
-                              />
-                              <i
-                                className="text-[18px] mt-[1px] text-[#ff0b0b] cursor-pointer fa-solid fa-trash-can"
-                                onClick={() => handleDelete(item)}
-                              ></i>
-                            </div>
+              <div className="  py-[20px] px-[20px]  md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
+                <div className="flex justify-between w-full gap-[20px]">
+                  <div className="w-full h-full mx-auto mb-3 scroll-d-none">
+                    <div className="w-full h-full mx-auto rounded-[10px] border border-black overflow-x-hidden relative">
+                      <div className="box-border w-full">
+                        <div className="sticky top-0 flex bg-[#F28C28] border-black w-full">
+                          <div className="flex justify-center text-center gap-[7px] py-[10px] border-r border-b border-black items-center px-3 min-w-[6%] max-w-[6%]">
+                            <input
+                              type="checkbox"
+                              id="check-all"
+                              checked={checkAll}
+                              onChange={handleCheckAll}
+                              style={{ width: "15px", height: "15px" }}
+                            />
+                            <p className="w-fit  md11:text-[14px] md150:text-[18px] font-[600] text-[#fff] font-Outfit">
+                              Sr.
+                            </p>
                           </div>
-                        ))
-                      ) : (
-                        <p>No users found</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="flex absolute bottom-3 right-6 font-Poppins items-center gap-[10px]"
-                  ref={paginationDropdownRef}
-                >
-                  <div>
-                    <p className="text-[15px] font-[600] text-[#2565df]">
-                      Total pages - {totalPages}
-                    </p>
-                  </div>
-                  <div>
-                    <div
-                      className="flex justify-center border-[1.7px] border-[#000] cursor-pointer py-[5px] px-[24px] rounded-[10px] text-[14px] font-[600]"
-                      onClick={() => setDropdownOpen(!dropdownOpen)}
-                    >
-                      <p>{currentPage}</p>
-                    </div>
-                  </div>
-                  {dropdownOpen && (
-                    <div className="border-[1.7px] flex flex-col bg-[#fff] min-h-[100%] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute">
-                      {Array.from({ length: totalPages }, (_, i) => (
-                        <div
-                          key={i + 1}
-                          className={`w-[100%] text-[14px] border-b-[1.7px] rounded-[6px] border-[#847e7e] py-[6px] font-[600] flex justify-center items-center cursor-pointer 
-                        ${
-                          currentPage === i + 1
-                            ? "bg-[#F28C28] text-[#fff]"
-                            : "hover:bg-[#e1ab3e] hover:text-[#fff]"
-                        }`}
-                          onClick={() => goToPage(i + 1)}
-                        >
-                          <p>{i + 1}</p>
+
+                          <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
+                            <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
+                              Name
+                            </p>
+                          </div>
+                          <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
+                            <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
+                              Pravruti
+                            </p>
+                          </div>
+                          <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
+                            <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
+                              Kshetra
+                            </p>
+                          </div>
+                          <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[15%]">
+                            <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff] ">
+                              Designation
+                            </p>
+                          </div>
+                          <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[11%] max-w-[11%]">
+                            <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
+                              Phone no.
+                            </p>
+                          </div>
+                          <div className="flex justify-start text-center py-[10px] border-r border-b border-black px-3 min-w-[14%] max-w-[14%]">
+                            <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
+                              Mondal name
+                            </p>
+                          </div>
+                          <div className="flex justify-center text-center py-2 border-b border-black px-3 min-w-[9%] max-w-[9%]">
+                            <p className=" md11:text-[14px] md150:text-[18px] font-[600] font-Outfit text-[#fff]">
+                              Actions
+                            </p>
+                          </div>
                         </div>
-                      ))}
+
+                        {Array.isArray(users) && users.length > 0 ? (
+                          paginatedUsers.map((item, index) => (
+                            <div key={index} className="flex justify-between">
+                              <div className="flex justify-center items-center text-center py-[10px] border-r border-b border-black gap-[7px] px-3 min-w-[6%] max-w-[6%]">
+                                <input
+                                  type="checkbox"
+                                  checked={checkedItems.includes(index)}
+                                  onChange={() => handleCheckboxChange(index + 1)}
+                                  style={{ width: "15px", height: "15px" }}
+                                  className="ml-[-25%]"
+                                />
+                                <p className="font-[600] md11:text-[15px] md150:text-[17px] md11:mt-[5%] md150:mt-[2%]">
+                                  {index + 1 + (currentPage - 1) * itemsPerPage}
+                                </p>
+                              </div>
+
+                              <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
+                                <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
+                                  {" "}
+                                  {item?.name}
+                                </p>
+                              </div>
+                              <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
+                                <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
+                                  {item?.pravruti?.name}
+                                </p>
+                              </div>
+                              <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[88%]">
+                                <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit">
+                                  {item?.kshetra?.name}
+                                </p>
+                              </div>
+                              <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[15%] max-w-[15%]">
+                                <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
+                                  {item?.designation?.name}
+                                </p>
+                              </div>
+                              <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[11%] max-w-[11%]">
+                                <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit ">
+                                  {item?.phoneNumber}
+                                </p>
+                              </div>
+                              <div className="flex justify-start md11:items-center text-center py-[10px] border-r border-b border-black px-3 min-w-[14%] max-w-[14%]">
+                                <p className="md11:text-[14px] md150:text-[18px] font-[300] font-Outfit "></p>
+                              </div>
+                              <div className="flex justify-center items-center gap-[15px] text-center py-2 border-b  border-black min-w-[9%] max-w-[9%]">
+                                <img
+                                  onClick={() => {
+                                    onOpen();
+                                    handelEdit(item);
+                                  }}
+                                  className="w-[20px] cursor-pointer"
+                                  src={Editimg}
+                                />
+                                <i
+                                  className="text-[18px] mt-[1px] text-[#ff0b0b] cursor-pointer fa-solid fa-trash-can"
+                                  onClick={() => handleDelete(item)}
+                                ></i>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p>No users found</p>
+                        )}
+                      </div>
                     </div>
-                  )}
+                  </div>
+                  <div
+                    className="flex absolute bottom-3 right-6 font-Poppins items-center gap-[10px]"
+                    ref={paginationDropdownRef}
+                  >
+                    <div>
+                      <p className="text-[15px] font-[600] text-[#2565df]">
+                        Total pages - {totalPages}
+                      </p>
+                    </div>
+                    <div>
+                      <div
+                        className="flex justify-center border-[1.7px] border-[#000] cursor-pointer py-[5px] px-[24px] rounded-[10px] text-[14px] font-[600]"
+                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                      >
+                        <p>{currentPage}</p>
+                      </div>
+                    </div>
+                    {dropdownOpen && (
+                      <div className="border-[1.7px] flex flex-col bg-[#fff] min-h-[100%] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute">
+                        {Array.from({ length: totalPages }, (_, i) => (
+                          <div
+                            key={i + 1}
+                            className={`w-[100%] text-[14px] border-b-[1.7px] rounded-[6px] border-[#847e7e] py-[6px] font-[600] flex justify-center items-center cursor-pointer 
+                        ${currentPage === i + 1
+                                ? "bg-[#F28C28] text-[#fff]"
+                                : "hover:bg-[#e1ab3e] hover:text-[#fff]"
+                              }`}
+                            onClick={() => goToPage(i + 1)}
+                          >
+                            <p>{i + 1}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-          <PremvatiUser /> // Render PremvatiUser component when isPremvatiUserActive is true
-        )}
+            ) : (
+              <PremvatiUser /> // Render PremvatiUser component when isPremvatiUserActive is true
+            )}
 
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
               <ModalContent className="md150:w-[390px] md11:w-[360px] rounded-[10px] relative md150:h-[510px] md11:h-[460px]">
@@ -514,7 +489,7 @@ export default function CreateUser() {
                               />
                             </div>
 
-                            <div className="flex relative   md150:mt-[4px] items-center gap-[40px]">
+                            <div className="flex relative md150:mt-[4px] items-center gap-[40px]">
                               <div
                                 ref={pravrutiDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
@@ -522,11 +497,10 @@ export default function CreateUser() {
                               >
                                 <p>{selectedPravruti.name}</p>
                                 <i
-                                  className={`fa-solid fa-angle-up ${
-                                    isDropdownOpen
-                                      ? "fa-rotate-0"
-                                      : "fa-rotate-180"
-                                  }`}
+                                  className={`fa-solid fa-angle-up ${isDropdownOpen
+                                    ? "fa-rotate-0"
+                                    : "fa-rotate-180"
+                                    }`}
                                 ></i>
                               </div>
 
@@ -538,11 +512,10 @@ export default function CreateUser() {
                                       onClick={() =>
                                         handleSelectPravruti(pravruti)
                                       }
-                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] md11:text-[13px] md150:text-[16px] rounded-[5px]  cursor-pointer ${
-                                        pravruti._id === selectedPravruti.id
-                                          ? "bg-[#F28C28] text-white"
-                                          : "hover:bg-[#f5e7ca]"
-                                      }`}
+                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] md11:text-[13px] md150:text-[16px] rounded-[5px]  cursor-pointer ${pravruti._id === selectedPravruti.id
+                                        ? "bg-[#F28C28] text-white"
+                                        : "hover:bg-[#f5e7ca]"
+                                        }`}
                                     >
                                       <p>{pravruti.name}</p>
                                     </div>
@@ -554,15 +527,14 @@ export default function CreateUser() {
                               <div
                                 ref={kshetraDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
-                                onClick={toggleKhestraDropdown}
+                                onClick={toggleKshetraDropdown}
                               >
                                 <p>{selectedKshetra.name}</p>
                                 <i
-                                  className={`fa-solid fa-angle-up ${
-                                    isKshetraDropdownOpen
-                                      ? "fa-rotate-0"
-                                      : "fa-rotate-180"
-                                  }`}
+                                  className={`fa-solid fa-angle-up ${isKshetraDropdownOpen
+                                    ? "fa-rotate-0"
+                                    : "fa-rotate-180"
+                                    }`}
                                 ></i>
                               </div>
 
@@ -574,11 +546,10 @@ export default function CreateUser() {
                                       onClick={() =>
                                         handleSelectKshetra(kshetra)
                                       }
-                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] rounded-[5px] md11:text-[13px] md150:text-[16px]   cursor-pointer ${
-                                        kshetra._id === selectedKshetra.id
-                                          ? "bg-[#F28C28] text-white"
-                                          : "hover:bg-[#f5e7ca]"
-                                      }`}
+                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] rounded-[5px] md11:text-[13px] md150:text-[16px]   cursor-pointer ${kshetra._id === selectedKshetra.id
+                                        ? "bg-[#F28C28] text-white"
+                                        : "hover:bg-[#f5e7ca]"
+                                        }`}
                                     >
                                       <p>{kshetra.name}</p>
                                     </div>
@@ -587,11 +558,11 @@ export default function CreateUser() {
                               )}
                             </div>
 
-                            <div className="flex relative items-center gap-[40px]">
+                            {/* <div className="flex relative items-center gap-[40px]">
                               <div
                                 ref={designationDropdownRef}
                                 className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
-                                onClick={toggleDesgnationDropdown}
+                                onClick={toggleDesigDropdown}
                               >
                                 <p>{selectedDesignation.name}</p>
                                 <i
@@ -605,20 +576,53 @@ export default function CreateUser() {
 
                               {isDesigDropdownOpen && (
                                 <div className="border-[1.5px] w-[110%] left-[-3px] z-[10] top-[29px] h-[100%] min-h-[130px] overflow-y-auto bg-white absolute rounded-[10px] py-[2px] flex flex-col">
-                                  {designations?.map((designations) => (
+                                  {designations?.map((designation) => (
                                     <div
-                                      key={designations._id}
+                                      key={designation._id}
                                       onClick={() =>
-                                        handleSelectDesignation(designations)
+                                        handleSelectDesignation(designation)
                                       }
                                       className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] rounded-[5px] md11:text-[13px] md150:text-[16px]  cursor-pointer ${
-                                        designations._id ===
+                                        designation._id ===
                                         selectedDesignation.id
                                           ? "bg-[#F28C28] text-white"
                                           : "hover:bg-[#f5e7ca]"
                                       }`}
                                     >
-                                      <p>{designations.name}</p>
+                                      <p>{designation.name}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div> */}
+
+                            <div className="flex relative   md150:mt-[4px] items-center gap-[40px]">
+                              <div
+                                ref={designationDropdownRef}
+                                className="px-[5px] flex justify-between items-center md11:text-[14px] md150:text-[16px] w-[100%] border-b-[1px] cursor-pointer"
+                                onClick={toggleDesigDropdown}
+                              >
+                                <p>{selectedDesignation.name}</p>
+                                <i
+                                  className={`fa-solid fa-angle-up ${isDesigDropdownOpen
+                                    ? "fa-rotate-0"
+                                    : "fa-rotate-180"
+                                    }`}
+                                ></i>
+                              </div>
+
+                              {isDesigDropdownOpen && (
+                                <div className="border-[1.5px] w-[100%] md150:w-[110%] left-[-3px] z-[10] top-[29px] h-[100%] min-h-[130px] overflow-y-auto bg-white absolute rounded-[10px] py-[2px] flex flex-col">
+                                  {designations?.map((designation) => (
+                                    <div
+                                      key={designation._id}
+                                      onClick={() => handleSelectDesignation(designation)} // Handle selection
+                                      className={`px-[8px] py-[5px] border-b-[1.7px] border-[#000] rounded-[5px] md11:text-[13px] md150:text-[16px] cursor-pointer ${designation._id === selectedDesignation.id
+                                          ? "bg-[#F28C28] text-white"
+                                          : "hover:bg-[#f5e7ca]"
+                                        }`}
+                                    >
+                                      <p>{designation.name}</p>
                                     </div>
                                   ))}
                                 </div>
@@ -658,9 +662,8 @@ export default function CreateUser() {
                                 onChange={handleChange}
                               />
                               <i
-                                className={`fa-regular ${
-                                  showPassword ? "fa-eye " : "fa-eye-slash"
-                                }`}
+                                className={`fa-regular ${showPassword ? "fa-eye " : "fa-eye-slash"
+                                  }`}
                                 onClick={togglePasswordVisibility}
                                 style={{
                                   cursor: "pointer",
