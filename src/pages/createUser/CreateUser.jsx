@@ -245,7 +245,7 @@ export default function CreateUser() {
             </div>
           </div>
           <div
-            className={`border-t-[1.5px] font-[600] cursor-pointer border-l-[1.5px] border-r-[1.5px] text-[#FEAA00] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px] active:bg-[#F28C28] active:text-[#fff] md150:top-[5.8%] right-[22%] w-[160px] flex items-center justify-center rounded-tl-[10px] absolute border-[#F28C28] rounded-tr-[10px] ro ${isUserListActive ? 'bg-[#F28C28] text-white' : ''
+            className={`border-t-[1.5px] font-[600] cursor-pointer border-l-[1.5px] border-r-[1.5px] text-[#FEAA00] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px] active:bg-[#F28C28] active:text-[#fff] md150:top-[5.8%] right-[6%] w-[160px] flex items-center justify-center rounded-tl-[10px] absolute border-[#F28C28] rounded-tr-[10px] ro ${isUserListActive ? 'bg-[#F28C28] text-white' : ''
               }`}
             onClick={handleToggleUserList}
           >
