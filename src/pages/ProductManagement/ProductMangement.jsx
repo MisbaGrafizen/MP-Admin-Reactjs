@@ -134,7 +134,7 @@ export default function ProductMangement() {
                 <p>Menu</p>
               </div>
             </div>
-              <div className="   md150:py-[20px] md150:px-[20px] md11:px-[15px] md11:py-[15px]  md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
+              <div className="   md150:py-[20px] md150:px-[20px] md11:px-[15px] md11:py-[15px]  md150:h-[70vh] md11:h-[73vh]  overflow-y-auto  h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
                 {renderForm()}
               </div>
             </div>
