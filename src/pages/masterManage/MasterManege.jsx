@@ -32,7 +32,7 @@ export default function MasterManage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const navigate = useNavigate();
   const pravruties =
     useSelector((state) => state?.mastermanagementState?.getPravruti) || [];
@@ -739,7 +739,7 @@ export default function MasterManage() {
        <Logout />
           <div className="    py-[69px] md150:py-[90px] flex     w-[98%] md150:w-[97%]     gap-[15px]  md150:gap-[20px]">
             <Header />
-            <div className="  md150:py-[20px] md150:px-[20px]     px-[15px]     py-[15px]  md150:h-[70vh]     h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
+            <div className="  md150:py-[20px] md150:px-[20px]     px-[15px]     py-[15px]  md150:h-[70vh]     h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[rgb(0,0,0)]">
               {renderForm()}
             </div>
           </div>

@@ -50,7 +50,7 @@ export default function CreateUser() {
   const pravruties = useSelector((state) => state?.mastermanagementState?.getPravruti) || [];
   const kshetras = useSelector((state) => state?.mastermanagementState?.getKshetra) || [];
   const designations = useSelector((state) => state?.mastermanagementState?.getDesignation) || [];
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(users.length / itemsPerPage);
   // const paginatedUsers = users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const [deleteRecordId, setDeleteRecordId] = useState();
@@ -303,21 +303,21 @@ export default function CreateUser() {
           </div>
 
           {/* Button to activate Premvati User */}
-          {/*<div
+          <div
           className={`border-t-[1.5px] font-[600] cursor-pointer border-l-[1.5px] border-r-[1.5px] md11:h-[40px] md150:h-[45px] md11:top-[4.6%] top-[50px] md150:top-[5.8%] right-[8%] w-[160px] flex items-center justify-center rounded-tl-[10px] absolute border-[#F28C28] rounded-tr-[10px] ro ${
             isPremvatiUserActive ? 'bg-[#F28C28] text-white' : ''
           }`}
           onClick={handleSwitchToPremvatiUser}
         >
           <p>Premvati User</p>
-        </div>*/}
+        </div>
 
           <Logout />
 
           <div className=" md11:py-[69px] md150:py-[90px] flex md11:w-[98%] md150:w-[97%] md11:gap-[15px]  md150:gap-[20px]">
             <Header />
             {!isPremvatiUserActive ? (
-              <div className="  py-[20px] px-[20px]  md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
+              <div className="   md150:py-[20px] md150:px-[20px]     px-[15px]     py-[15px]  md150:h-[70vh] md11:h-[73vh]   h-[67vh] bg-white  w-[100%] rounded-[19px] relative   border-[1px]  my-justify-center items-center  border-[#000000]">
                 <div className="flex justify-between w-full gap-[20px]">
                   <div className="w-full h-full mx-auto mb-3 scroll-d-none">
                     <div className="w-full h-full mx-auto rounded-[10px] border border-black overflow-x-hidden relative">

@@ -61,18 +61,7 @@ export default function Header() {
             </div>
           </Link>
 
-          <Link to="/feedback-management">
-            <div className="relative flex items-center">
-              <img className="w-[33px] cursor-pointer" src={feedback} alt="" />
-              {currentPath === "/feedback-management" && (
-                <img
-                  className="absolute left-[-35px] w-[25px]"
-                  src={tick}
-                  alt="Selected"
-                />
-              )}
-            </div>
-          </Link>
+      
 
           <Link to="/master-management">
             <div className="relative flex items-center">
@@ -112,7 +101,18 @@ export default function Header() {
               )}
             </div>
           </Link>
-
+          <Link to="/feedback-management">
+            <div className="relative flex items-center">
+              <img className="w-[33px] cursor-pointer" src={feedback} alt="" />
+              {currentPath === "/feedback-management" && (
+                <img
+                  className="absolute left-[-35px] w-[25px]"
+                  src={tick}
+                  alt="Selected"
+                />
+              )}
+            </div>
+          </Link>
           <Link to="/splash-screen">
             <div className="relative flex items-center">
               <img className="w-[33px] cursor-pointer" src={splash} alt="" />
