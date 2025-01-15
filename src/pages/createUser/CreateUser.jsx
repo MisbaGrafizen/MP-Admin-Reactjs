@@ -212,6 +212,8 @@ export default function CreateUser() {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
   };
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -220,20 +222,18 @@ export default function CreateUser() {
     } else {
       dispatch(addUserAction(userData));
     }
-
+    // dispatch(getUserAction());
     onOpenChange(false);
-
+    
     setUserData({
       ...userData,
       kshetra: kshetras[0]?._id || '',
       designation: designations[0]?._id || '',
     });
-
-
-
     setSelectedPravruti({ id: '', name: 'Select Pravruti' });
     setSelectedKshetra({ id: '', name: 'Select Kshetra' });
     setSelectedDesignation({ id: '', name: 'Select Designation' });
+    window.location.reload();
   };
 
   const togglePasswordVisibility = () => {

@@ -16,7 +16,7 @@ export const addUserAction = (userData) => {
         return ApiPostData(`/user/add_user`, userData)
       .then((res) => {
         console.log("asghdfhga",res)
-        if (res.status === "success") {
+        if (res.data) {
           dispatch({
             type: ADD_USER,
             payload: res.data,

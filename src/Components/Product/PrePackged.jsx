@@ -392,7 +392,7 @@ export default function PrePackged({ methodType }) {
         );
         console.log("File uploaded successfully:", response);
         alert("File uploaded successfully!");
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {
         console.error("Error uploading the file:", error);
         alert("Failed to upload the file. Please try again.");
@@ -408,7 +408,7 @@ export default function PrePackged({ methodType }) {
 
       try {
         const response = await axios.post(
-          "https://server.grafizen.in/api/v2/mp/admin/pre_package_food_items/excel",
+          "https://server.grafizen.in/api/v2/mp/admin/pre_package_food-items/excel",
           formData,
           {
             headers: {
@@ -418,7 +418,7 @@ export default function PrePackged({ methodType }) {
         );
         console.log("File uploaded successfully:", response);
         alert("File uploaded successfully!");
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {
         console.error("Error uploading the file:", error);
         alert("Failed to upload the file. Please try again.");
@@ -498,7 +498,7 @@ export default function PrePackged({ methodType }) {
                   type="file"
                   accept=".xlsx, .xls"
                   className="hidden"
-                  onChange={handleUploadItemExcel}
+                  onChange={handleUploadExcel}
                 />
                 <i className="fa-solid fa-plus"></i>
                 <p>Add Category</p>
@@ -515,7 +515,7 @@ export default function PrePackged({ methodType }) {
                     type="file"
                     accept=".xlsx, .xls"
                     className="hidden"
-                    onChange={handleUploadExcel}
+                    onChange={handleUploadItemExcel}
                   />
                   <i className="fa-solid fa-plus"></i>
                   <p>Add Items</p>

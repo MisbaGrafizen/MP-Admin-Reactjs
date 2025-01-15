@@ -401,7 +401,7 @@ export default function PrePackged({ methodType }) {
         );
         console.log("File uploaded successfully:", response);
         alert("File uploaded successfully!");
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {
         console.error("Error uploading the file:", error);
         alert("Failed to upload the file. Please try again.");
@@ -427,7 +427,7 @@ export default function PrePackged({ methodType }) {
         );
         console.log("File uploaded successfully:", response);
         alert("File uploaded successfully!");
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {
         console.error("Error uploading the file:", error);
         alert("Failed to upload the file. Please try again.");
