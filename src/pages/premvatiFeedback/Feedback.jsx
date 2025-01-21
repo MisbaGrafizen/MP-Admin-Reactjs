@@ -33,10 +33,9 @@ export default function Feedback() {
     setDropdownOpen(false);
   };
 
-  const currentPageData = displayedData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const currentPageData = Array.isArray(displayedData)
+  ? displayedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  : [];
 
 
   useEffect(() => {
@@ -82,10 +81,7 @@ export default function Feedback() {
       try {
         const apiUrl = apiUrlMapping[activeButton];
         const response = await ApiGet(`/api/v1${apiUrl}`);
-        // const fetchedData = activeButton === "All" ? response.data : response;
-        const fetchedData = Array.isArray(activeButton === "All" ? response.data : response)
-          ? activeButton === "All" ? response.data : response
-          : []; 
+        const fetchedData = activeButton === "All" ? response.data : response.feedbacks;
         setDisplayedData(fetchedData);
         setMainData(fetchedData);
       } catch (error) {
@@ -247,6 +243,15 @@ export default function Feedback() {
                       onClick={() => setActiveButton("Shradhdha")}
                     >
                       <p>Shradhdha</p>
+                    </div>
+                    <div
+                      className={`w-[12%] justify-center items-center flex text-[15px] cursor-pointer font-Poppins py-[5px] rounded-[7px] ${activeButton === "Mavdi"
+                        ? "text-[#fff] bg-[#F28C28]"
+                        : "text-[#000] border-[#F28C28] border-[1.9px]"
+                        }`}
+                      onClick={() => setActiveButton("Mavdi")}
+                    >
+                      <p>Mavdi</p>
                     </div>
                     <div
                       className={`w-[12%] justify-center items-center flex text-[15px] cursor-pointer font-Poppins py-[5px] rounded-[7px] ${activeButton === "PramukhVatika"
