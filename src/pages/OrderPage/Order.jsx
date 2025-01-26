@@ -25,7 +25,6 @@ import {
   getPrePackagePaymentByIdAction,
 } from "../../redux/action/payment";
 import { useNavigate } from "react-router-dom";
-import userpng from "../../../public/img/AdminSpalsh/user 3.png";
 import Logout from "../../Components/logout/Logout";
 
 export default function OrderManagement() {
@@ -81,25 +80,6 @@ export default function OrderManagement() {
   const handleSelectOrder = (orderId) => {
     setSelectedOrder(orderId);
   };
-
-  // const selectedOrderData = useMemo(() => {
-  //   return (
-  //     paidOrderList.find((order) => order._id === selectedOrder) ||
-  //     unpaidOrderList.find((order) => order._id === selectedOrder) ||
-  //     prePackagePaidOrderList.find((order) => order._id === selectedOrder) ||
-  //     prePackageUnpaidOrderList.find((order) => order._id === selectedOrder) ||
-  //     bulkOrderPaidList.find((order) => order._id === selectedOrder) ||
-  //     bulkOrderUnpaidList.find((order) => order._id === selectedOrder)
-  //   );
-  // }, [
-  //   selectedOrder,
-  //   paidOrderList,
-  //   unpaidOrderList,
-  //   prePackagePaidOrderList,
-  //   prePackageUnpaidOrderList,
-  //   bulkOrderPaidList,
-  //   bulkOrderUnpaidList,
-  // ]);
 
 
   const selectedOrderData = useMemo(() => {
@@ -164,14 +144,20 @@ export default function OrderManagement() {
   };
 
   const paidOrderCount =
-    activeTab === "self-serving"
-      ? paidOrderList?.length
-      : prePackagePaidOrderList?.length;
-  const unpaidOrderCount =
-    activeTab === "self-serving"
-      ? unpaidOrderList?.length
-      : prePackageUnpaidOrderList?.length;
-  const allOrderCount = paidOrderCount + unpaidOrderCount;
+  activeTab === "self-serving"
+    ? paidOrderList?.length
+    : activeTab === "premvati"
+    ? bulkOrderPaidList?.length
+    : prePackagePaidOrderList?.length;
+
+const unpaidOrderCount =
+  activeTab === "self-serving"
+    ? unpaidOrderList?.length
+    : activeTab === "premvati"
+    ? bulkOrderUnpaidList?.length
+    : prePackageUnpaidOrderList?.length;
+
+const allOrderCount = paidOrderCount + unpaidOrderCount;
 
   const openReciptModal = () => {
     setReciptModalOpen(true);
@@ -236,6 +222,8 @@ export default function OrderManagement() {
 
   const shouldShowPaid = activeFilter === "all" || activeFilter === "paid";
   const shouldShowUnpaid = activeFilter === "all" || activeFilter === "unpaid";
+
+  console.log('selectedOrderData', selectedOrderData);
 
   useEffect(() => {
     if (activeTab === "self-serving") {
@@ -1022,8 +1010,8 @@ export default function OrderManagement() {
                   </div>
 
                   {shouldShowPaid &&
-                    Array.isArray(prePackagePaidOrderList) &&
-                    prePackagePaidOrderList.map((order) => (
+                    Array.isArray(bulkOrderPaidList) &&
+                    bulkOrderPaidList.map((order) => (
                       <div
                         key={order.id}
                         className={`w-[100%] items-center justify-between rounded-[10px] border-[#00984B] text-[#00984B] flex md11:text-[10px] md150:text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
@@ -1036,9 +1024,9 @@ export default function OrderManagement() {
                           </p>
                           <p>
                             Order for -{" "}
-                            {formatDateAndTime(order?.orderDate?.pickupDate)}
+                            {formatDateAndTime(order?.orderDate)}
                           </p>
-                          <p>Pickup location - {order?.pickupLocation?.name}</p>
+                          <p>Pickup location - {order?.orderId?.userId?.premvati?.name}</p>
                         </div>
                         <div
                           className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
@@ -1053,8 +1041,8 @@ export default function OrderManagement() {
                     ))}
 
                   {shouldShowUnpaid &&
-                    Array.isArray(prePackageUnpaidOrderList) &&
-                    prePackageUnpaidOrderList.map((order) => (
+                    Array.isArray(bulkOrderUnpaidList) &&
+                    bulkOrderUnpaidList.map((order) => (
                       <div
                         key={order.id}
                         className={`w-[100%] items-center justify-between rounded-[10px] border-[#FF0606] text-[#FF0606] flex md11:text-[10px] md150:text-[13px] border-[1.4px] p-[9px] cursor-pointer`}
@@ -1067,9 +1055,9 @@ export default function OrderManagement() {
                           </p>
                           <p>
                             Order for -{" "}
-                            {formatDateAndTime(order.orderDate?.pickupDate)}
+                            {formatDateAndTime(order.orderDate)}
                           </p>
-                          <p>Pickup location - {order.pickupLocation?.name}</p>
+                          <p>Pickup location - {order.orderId?.userId?.premvati?.name}</p>
                         </div>
                         <div
                           className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
@@ -1096,7 +1084,7 @@ export default function OrderManagement() {
                       </div>
                       <div
                         className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center ${
-                          prePackagePaidOrderList.find(
+                          bulkOrderPaidList.find(
                             (order) => order._id === selectedOrder
                           )
                             ? "text-[#00984B]"
@@ -1104,7 +1092,7 @@ export default function OrderManagement() {
                         }`}
                       >
                         <p>
-                          {prePackagePaidOrderList.find(
+                          {bulkOrderPaidList.find(
                             (order) => order._id === selectedOrder
                           )
                             ? "ORDER PAID"
@@ -1129,7 +1117,7 @@ export default function OrderManagement() {
                           <p>
                             Order for -{" "}
                             {formatDateAndTime(
-                              selectedOrderData?.orderDate?.pickupDate
+                              selectedOrderData?.orderDate
                             )}
                           </p>
                         </div>
@@ -1142,7 +1130,7 @@ export default function OrderManagement() {
                         <div className="flex flex-col gap-[5px]">
                           <p className="font-[300]">Delivery Address :</p>
                           <p className="font-[500] ">
-                            {selectedOrderData?.pickupLocation?.name}
+                            {selectedOrderData?.orderId?.userId?.premvati?.name}
                           </p>
                         </div>
                         <div className="flex gap-[6px] pr-[20px]">
@@ -1207,7 +1195,7 @@ export default function OrderManagement() {
                         >
                           <p>Reject Order</p>
                         </div>
-                        {prePackagePaidOrderList.find(
+                        {bulkOrderPaidList.find(
                           (order) => order._id === selectedOrder
                         ) ? (
                           <div
@@ -1257,7 +1245,7 @@ export default function OrderManagement() {
                   <p>
                     Order on -{" "}
                     {formatDateAndTime(
-                      selectedOrderData?.orderDate?.pickupDate
+                      selectedOrderData?.createdAt
                     )}
                   </p>
                 </div>
@@ -1325,7 +1313,7 @@ export default function OrderManagement() {
                   <p>
                     Order on -{" "}
                     {formatDateAndTime(
-                      selectedOrderData?.orderDate?.pickupDate
+                      selectedOrderData?.createdAt
                     )}
                   </p>
                 </div>
