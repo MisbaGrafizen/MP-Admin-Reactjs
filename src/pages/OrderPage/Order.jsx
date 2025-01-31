@@ -101,7 +101,7 @@ export default function OrderManagement() {
     bulkOrderPaidList,
     bulkOrderUnpaidList,
   ]);
-  
+
   function formatDateAndTime(dateInput) {
     const date = new Date(dateInput);
     if (isNaN(date.getTime())) {
@@ -144,20 +144,20 @@ export default function OrderManagement() {
   };
 
   const paidOrderCount =
-  activeTab === "self-serving"
-    ? paidOrderList?.length
-    : activeTab === "premvati"
-    ? bulkOrderPaidList?.length
-    : prePackagePaidOrderList?.length;
+    activeTab === "self-serving"
+      ? paidOrderList?.length
+      : activeTab === "premvati"
+        ? bulkOrderPaidList?.length
+        : prePackagePaidOrderList?.length;
 
-const unpaidOrderCount =
-  activeTab === "self-serving"
-    ? unpaidOrderList?.length
-    : activeTab === "premvati"
-    ? bulkOrderUnpaidList?.length
-    : prePackageUnpaidOrderList?.length;
+  const unpaidOrderCount =
+    activeTab === "self-serving"
+      ? unpaidOrderList?.length
+      : activeTab === "premvati"
+        ? bulkOrderUnpaidList?.length
+        : prePackageUnpaidOrderList?.length;
 
-const allOrderCount = paidOrderCount + unpaidOrderCount;
+  const allOrderCount = paidOrderCount + unpaidOrderCount;
 
   const openReciptModal = () => {
     setReciptModalOpen(true);
@@ -245,17 +245,17 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
         setSelectedOrder(prePackageUnpaidOrderList[0]?._id);
       }
     } else if (activeTab === "premvati") {
-    if (activeFilter === "all") {
-      setSelectedOrder(
-        bulkOrderPaidList[0]?._id || bulkOrderUnpaidList[0]?._id
-      );
-    } else if (activeFilter === "paid") {
-      setSelectedOrder(bulkOrderPaidList[0]?._id);
-    } else if (activeFilter === "unpaid") {
-      setSelectedOrder(bulkOrderUnpaidList[0]?._id);
+      if (activeFilter === "all") {
+        setSelectedOrder(
+          bulkOrderPaidList[0]?._id || bulkOrderUnpaidList[0]?._id
+        );
+      } else if (activeFilter === "paid") {
+        setSelectedOrder(bulkOrderPaidList[0]?._id);
+      } else if (activeFilter === "unpaid") {
+        setSelectedOrder(bulkOrderUnpaidList[0]?._id);
+      }
     }
-  }
-},[
+  }, [
     activeFilter,
     activeTab,
     paidOrderList,
@@ -293,36 +293,36 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
 
   const handlePaymentConfirm = async () => {
     try {
-      if(activeTab === "self-serving"){
-      const result = await dispatch(updateOrderRecieptToPaidAction(selectedOrderData.orderId._id));
-      if (result) {
-        setRejectModalOpen(true);
-        setTimeout (() => {
-          setPaymentModalOpen(false);
-          window.location.reload();
-        } , 2000)
+      if (activeTab === "self-serving") {
+        const result = await dispatch(updateOrderRecieptToPaidAction(selectedOrderData.orderId._id));
+        if (result) {
+          setRejectModalOpen(true);
+          setTimeout(() => {
+            setPaymentModalOpen(false);
+            window.location.reload();
+          }, 2000)
+        }
       }
-    }
-    if(activeTab === "pre-packaged") {
-      const result = await dispatch(updatePrePackageOrderRecieptToPaidAction(selectedOrderData.orderId._id));
-      if (result) {
-        setRejectModalOpen(true);
-        setTimeout (() => {
-          setPaymentModalOpen(false);
-          window.location.reload();
-        } , 2000)
+      if (activeTab === "pre-packaged") {
+        const result = await dispatch(updatePrePackageOrderRecieptToPaidAction(selectedOrderData.orderId._id));
+        if (result) {
+          setRejectModalOpen(true);
+          setTimeout(() => {
+            setPaymentModalOpen(false);
+            window.location.reload();
+          }, 2000)
+        }
       }
-    }
-    if(activeTab === "premvati") {
-      const result = await dispatch(updateBulkOrderRecieptToPaidAction(selectedOrderData.orderId._id));
-      if (result) {
-        setRejectModalOpen(true);
-        setTimeout (() => {
-          setPaymentModalOpen(false);
-          window.location.reload();
-        } , 2000)
+      if (activeTab === "premvati") {
+        const result = await dispatch(updateBulkOrderRecieptToPaidAction(selectedOrderData.orderId._id));
+        if (result) {
+          setRejectModalOpen(true);
+          setTimeout(() => {
+            setPaymentModalOpen(false);
+            window.location.reload();
+          }, 2000)
+        }
       }
-    }
     } catch (error) {
       console.error("Error updating order receipt to paid:", error);
     }
@@ -330,36 +330,36 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
 
   const handleCancelOrder = async () => {
     try {
-      if(activeTab === "self-serving"){
-      const result = await dispatch(updateOrderRecieptToCancelAction(selectedOrderData.orderId._id));
-      if (result) {
-        setRejectModalOpen(true);
-        setTimeout (() => {
-          setRejectModalOpen(false);
-          window.location.reload();
-        } , 2000)
+      if (activeTab === "self-serving") {
+        const result = await dispatch(updateOrderRecieptToCancelAction(selectedOrderData.orderId._id));
+        if (result) {
+          setRejectModalOpen(true);
+          setTimeout(() => {
+            setRejectModalOpen(false);
+            window.location.reload();
+          }, 2000)
+        }
       }
-    }
-    if(activeTab === "pre-packaged") {
-      const result = await dispatch(updatePrePackageOrderRecieptToCancelAction(selectedOrderData.orderId._id));
-      if (result) {
-        setRejectModalOpen(true);
-        setTimeout (() => {
-          setRejectModalOpen(false);
-          window.location.reload();
-        } , 2000)
+      if (activeTab === "pre-packaged") {
+        const result = await dispatch(updatePrePackageOrderRecieptToCancelAction(selectedOrderData.orderId._id));
+        if (result) {
+          setRejectModalOpen(true);
+          setTimeout(() => {
+            setRejectModalOpen(false);
+            window.location.reload();
+          }, 2000)
+        }
       }
-    }
-    if(activeTab === "premvati") {
-      const result = await dispatch(updateBulkOrderRecieptToCancelAction(selectedOrderData.orderId._id));
-      if (result) {
-        setRejectModalOpen(true);
-        setTimeout (() => {
-          setRejectModalOpen(false);
-          window.location.reload();
-        } , 2000)
+      if (activeTab === "premvati") {
+        const result = await dispatch(updateBulkOrderRecieptToCancelAction(selectedOrderData.orderId._id));
+        if (result) {
+          setRejectModalOpen(true);
+          setTimeout(() => {
+            setRejectModalOpen(false);
+            window.location.reload();
+          }, 2000)
+        }
       }
-    }
     } catch (error) {
       console.error("Error updating order receipt to paid:", error);
     }
@@ -387,31 +387,28 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
           <div className="flex absolute md150:top-[5.9%] top-[5%] gap-[10px]  right-[7%] ">
             <div
               onClick={() => setActiveTab("self-serving")}
-              className={`w-[130px] p-[8px]  rounded-tl-[7px] font-[500]  rounded-tr-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${
-                activeTab === "self-serving"
+              className={`w-[130px] p-[8px]  rounded-tl-[7px] font-[500]  rounded-tr-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "self-serving"
                   ? "bg-[#F28C28] text-[#fff]"
                   : "border-t-[1px] border-l-[1px] border-r-[1px]"
-              }`}
+                }`}
             >
               <p>Self Serving</p>
             </div>
             <div
               onClick={() => setActiveTab("pre-packaged")}
-              className={`w-[130px] p-[8px]  rounded-tr-[7px] font-[500]  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${
-                activeTab === "pre-packaged"
+              className={`w-[130px] p-[8px]  rounded-tr-[7px] font-[500]  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "pre-packaged"
                   ? "bg-[#F28C28] text-[#fff]"
                   : "border-t-[1px] border-l-[1px] border-r-[1px]"
-              }`}
+                }`}
             >
               <p>Pre - Packaged</p>
             </div>
             <div
               onClick={() => setActiveTab("premvati")}
-              className={`w-[130px] p-[8px]  rounded-tr-[7px] font-[500]  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${
-                activeTab === "premvati"
+              className={`w-[130px] p-[8px]  rounded-tr-[7px] font-[500]  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "premvati"
                   ? "bg-[#F28C28] text-[#fff]"
                   : "border-t-[1px] border-l-[1px] border-r-[1px]"
-              }`}
+                }`}
             >
               <p>Premvati</p>
             </div>
@@ -424,11 +421,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                 <div className="w-[23%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#F28C28] overflow-y-auto">
                   <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[30px] md11:text-[14px] md150:text-[16px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
                     <div
-                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${
-                        activeFilter === "all"
+                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
                           ? "bg-[#00984B] text-white py-[70px]"
                           : "bg-white text-[#000]"
-                      }`}
+                        }`}
                       onClick={() => setActiveFilter("all")}
                     >
                       <p>All</p>
@@ -437,11 +433,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                       </p>
                     </div>
                     <div
-                      className={`w-[100%] h-[100%] gap-[5px] font-[500] text-center flex items-center justify-center cursor-pointer ${
-                        activeFilter === "paid"
+                      className={`w-[100%] h-[100%] gap-[5px] font-[500] text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
                           ? "bg-[#006198] text-white py-[70px]"
                           : "bg-white text-[#000]"
-                      }`}
+                        }`}
                       onClick={() => setActiveFilter("paid")}
                     >
                       <p>Paid</p>
@@ -450,11 +445,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                       </p>
                     </div>
                     <div
-                      className={`w-[100%] gap-[5px]   font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${
-                        activeFilter === "unpaid"
+                      className={`w-[100%] gap-[5px]   font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
                           ? "bg-[RED] text-white  py-[70px]"
                           : "bg-white text-[#000]"
-                      }`}
+                        }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
                       <p>Unpaid </p>
@@ -483,11 +477,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                           <p>Pickup location - {order?.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
-                            selectedOrder === order._id
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
                               ? "bg-[#00984B] text-white"
                               : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
-                          }`}
+                            }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -513,11 +506,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                           <p>Pickup location - {order.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
-                            selectedOrder === order._id
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
                               ? "bg-[#FF0606] text-white"
                               : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
-                          }`}
+                            }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -536,11 +528,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                         ></i>
                       </div>
                       <div
-                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center  ${
-                          selectedOrder === 0
+                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center  ${selectedOrder === 0
                             ? "text-[#00984B]"
                             : "text-[#FF0606]"
-                        }`}
+                          }`}
                       >
                         <p>
                           {paidOrderList.find(
@@ -552,11 +543,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                       </div>
                     </div>
                     <div
-                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${
-                        selectedOrder === 0
+                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${selectedOrder === 0
                           ? "border-[#00984B]"
                           : "border-[#FF0606]"
-                      }`}
+                        }`}
                     >
                       <div className="w-[100%] flex justify-between">
                         <div className="md150:text-[14px] md11:text-[13px] font-[400]">
@@ -657,6 +647,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                         <p>Total</p>
                         <p>{selectedOrderData?.orderId?.totalAmount.toFixed(2)}</p>
                       </div>
+
+
+
+
                     </div>
 
                     <div className="flex justify-between mt-[8px]">
@@ -713,11 +707,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                 <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#F28C28] overflow-y-auto">
                   <div className="w-[100%] md11:text-[14px] md150:text-[16px] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] text-[14px] flex justify-between border-[#595454]">
                     <div
-                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${
-                        activeFilter === "all"
+                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
                           ? "bg-[#00984B] text-white py-[70px]"
                           : "bg-white text-[#000]"
-                      }`}
+                        }`}
                       onClick={() => setActiveFilter("all")}
                     >
                       <p>All</p>
@@ -727,11 +720,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                       </p>
                     </div>
                     <div
-                      className={`w-[100%] h-[100%] gap-[5px]  font-[500] text-center flex items-center justify-center cursor-pointer ${
-                        activeFilter === "paid"
+                      className={`w-[100%] h-[100%] gap-[5px]  font-[500] text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
                           ? "bg-[#006198] text-white py-[70px]"
                           : "bg-white text-[#000]"
-                      }`}
+                        }`}
                       onClick={() => setActiveFilter("paid")}
                     >
                       <p>Paid</p>
@@ -740,11 +732,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                       </p>
                     </div>
                     <div
-                      className={`w-[100%]  gap-[5px] font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${
-                        activeFilter === "unpaid"
+                      className={`w-[100%]  gap-[5px] font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
                           ? "bg-[RED] text-white  py-[70px]"
                           : "bg-white text-[#000]"
-                      }`}
+                        }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
                       <p>Unpaid</p>
@@ -774,11 +765,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                           <p>Pickup location - {order?.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
-                            selectedOrder === order._id
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
                               ? "bg-[#00984B] text-white"
                               : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
-                          }`}
+                            }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -805,11 +795,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                           <p>Pickup location - {order.pickupLocation?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
-                            selectedOrder === order._id
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
                               ? "bg-[#FF0606] text-white"
                               : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
-                          }`}
+                            }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -828,13 +817,12 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                         ></i>
                       </div>
                       <div
-                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center ${
-                          prePackagePaidOrderList.find(
-                            (order) => order._id === selectedOrder
-                          )
+                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center ${prePackagePaidOrderList.find(
+                          (order) => order._id === selectedOrder
+                        )
                             ? "text-[#00984B]"
                             : "text-[#FF0606]"
-                        }`}
+                          }`}
                       >
                         <p>
                           {prePackagePaidOrderList.find(
@@ -846,11 +834,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                       </div>
                     </div>
                     <div
-                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${
-                        selectedOrder === 0
+                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${selectedOrder === 0
                           ? "border-[#00984B]"
                           : "border-[#FF0606]"
-                      }`}
+                        }`}
                     >
                       <div className="w-[100%] flex justify-between">
                         <div className="md150:text-[14px] md11:text-[13px] font-[400]">
@@ -968,11 +955,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                 <div className="w-[26%] rounded-[10px] gap-[10px] flex flex-col p-[15px] h-[100%] no-scrollbar border-[1.4px] border-[#F28C28] overflow-y-auto">
                   <div className="w-[100%] md11:text-[14px] md150:text-[16px] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] text-[14px] flex justify-between border-[#595454]">
                     <div
-                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${
-                        activeFilter === "all"
+                      className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
                           ? "bg-[#00984B] text-white py-[70px]"
                           : "bg-white text-[#000]"
-                      }`}
+                        }`}
                       onClick={() => setActiveFilter("all")}
                     >
                       <p>All</p>
@@ -982,11 +968,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                       </p>
                     </div>
                     <div
-                      className={`w-[100%] h-[100%] gap-[5px]  font-[500] text-center flex items-center justify-center cursor-pointer ${
-                        activeFilter === "paid"
+                      className={`w-[100%] h-[100%] gap-[5px]  font-[500] text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
                           ? "bg-[#006198] text-white py-[70px]"
                           : "bg-white text-[#000]"
-                      }`}
+                        }`}
                       onClick={() => setActiveFilter("paid")}
                     >
                       <p>Paid</p>
@@ -995,11 +980,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                       </p>
                     </div>
                     <div
-                      className={`w-[100%]  gap-[5px] font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${
-                        activeFilter === "unpaid"
+                      className={`w-[100%]  gap-[5px] font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
                           ? "bg-[RED] text-white  py-[70px]"
                           : "bg-white text-[#000]"
-                      }`}
+                        }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
                       <p>Unpaid</p>
@@ -1029,11 +1013,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                           <p>Pickup location - {order?.orderId?.userId?.premvati?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
-                            selectedOrder === order._id
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
                               ? "bg-[#00984B] text-white"
                               : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
-                          }`}
+                            }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -1060,11 +1043,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                           <p>Pickup location - {order.orderId?.userId?.premvati?.name}</p>
                         </div>
                         <div
-                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${
-                            selectedOrder === order._id
+                          className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
                               ? "bg-[#FF0606] text-white"
                               : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
-                          }`}
+                            }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
                         </div>
@@ -1083,13 +1065,12 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                         ></i>
                       </div>
                       <div
-                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center ${
-                          bulkOrderPaidList.find(
-                            (order) => order._id === selectedOrder
-                          )
+                        className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center ${bulkOrderPaidList.find(
+                          (order) => order._id === selectedOrder
+                        )
                             ? "text-[#00984B]"
                             : "text-[#FF0606]"
-                        }`}
+                          }`}
                       >
                         <p>
                           {bulkOrderPaidList.find(
@@ -1101,11 +1082,10 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                       </div>
                     </div>
                     <div
-                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${
-                        selectedOrder === 0
+                      className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${selectedOrder === 0
                           ? "border-[#00984B]"
                           : "border-[#FF0606]"
-                      }`}
+                        }`}
                     >
                       <div className="w-[100%] flex justify-between">
                         <div className="md150:text-[14px] md11:text-[13px] font-[400]">
@@ -1169,10 +1149,23 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                           </div>
                         ))}
                       </div>
-                      <div className="w-[100%] border-t-[2.3px]"></div>
-                      <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
-                        <p>Total</p>
-                        <p>{selectedOrderData?.orderId?.totalAmount}</p>
+                      <div className="w-[100%] border-t-[1.3px]"></div>
+                      <div className=" flex flex-col gap-[10px]">
+
+
+                        <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
+                          <p>Total Amount</p>
+                          <p>{selectedOrderData?.orderId?.totalAmount}</p>
+                        </div>
+                        <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
+                          <p>Deposite Amount</p>
+                          <p>{selectedOrderData?.orderId?.totalAmount}</p>
+                        </div>
+                        <div className="w-[100%] border-t-[.3px]"></div>
+                        <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
+                          <p>Remaining Amount</p>
+                          <p>{selectedOrderData?.orderId?.totalAmount}</p>
+                        </div>
                       </div>
                     </div>
 
@@ -1207,7 +1200,7 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
                         ) : (
                           <div
                             className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
-                            onClick={handlePaymentConfirm}
+                            // onClick={handlePaymentConfirm}
                           >
                             <p>Accept Order</p>
                           </div>
@@ -1220,7 +1213,7 @@ const allOrderCount = paidOrderCount + unpaidOrderCount;
             )}
 
 
-          <Logout />
+            <Logout />
           </div>
         </div>
       </div>
