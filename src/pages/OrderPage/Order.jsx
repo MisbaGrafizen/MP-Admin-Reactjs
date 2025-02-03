@@ -573,9 +573,12 @@ export default function OrderManagement() {
                             {selectedOrderData?.pickupLocation?.name}
                           </p>
                         </div>
-                        <div className="flex gap-[6px] pr-[20px]">
-                          <i className="fa-sharp-duotone fa-solid fa-circle-check tick text-[17px]"></i>
-                          <p>{selectedOrderData?.orderType}</p>
+                        <div className="flex gap-[6px] items-center pr-[20px]">
+                          <i className={`fa-sharp-duotone fa-solid fa-circle-check tick text-[17px] ${selectedOrderData?.orderType === 'paid' ? 'text-green-500' : 'text-red-500'}
+  `}></i>
+                          <p className={`${selectedOrderData?.orderType === 'paid' ? 'text-green-500' : 'text-red-500'}`}>
+                            {selectedOrderData?.orderType}
+                          </p>
                         </div>
                       </div>
                       <div className="w-[100%] border-t-[1.7px] border-dashed"></div>
@@ -865,8 +868,11 @@ export default function OrderManagement() {
                           </p>
                         </div>
                         <div className="flex gap-[6px] pr-[20px]">
-                          <i className="fa-sharp-duotone fa-solid fa-circle-check tick text-[17px]"></i>
-                          <p>{selectedOrderData?.orderType}</p>
+                          <i className={`fa-sharp-duotone fa-solid fa-circle-check tick text-[17px] ${selectedOrderData?.orderType === 'Paid' ? 'text-green-500' : 'text-red-500'}
+  `}></i>
+                          <p className={`${selectedOrderData?.orderType === 'paid' ? 'text-green-500' : 'text-red-500'}`}>
+                            {selectedOrderData?.orderType}
+                          </p>
                         </div>
                       </div>
                       <div className="w-[100%] border-t-[1.7px] border-dashed"></div>
@@ -1112,10 +1118,14 @@ export default function OrderManagement() {
                             {selectedOrderData?.orderId?.userId?.premvati?.name}
                           </p>
                         </div>
-                        <div className="flex gap-[6px] pr-[20px]">
-                          <i className="fa-sharp-duotone fa-solid fa-circle-check tick text-[17px]"></i>
-                          <p>{selectedOrderData?.orderType}</p>
+                        <div className="flex gap-[6px] items-center pr-[20px]">
+                          <i className={`fa-sharp-duotone fa-solid fa-circle-check tick text-[17px] ${selectedOrderData?.orderType === 'paid' ? 'text-green-500' : 'text-red-500'}
+  `}></i>
+                          <p className={`${selectedOrderData?.orderType === 'paid' ? 'text-green-500' : 'text-red-500'}`}>
+                            {selectedOrderData?.orderType}
+                          </p>
                         </div>
+
                       </div>
                       <div className="w-[100%] border-t-[1.7px] border-dashed"></div>
                       <div className="flex flex-col gap-[14px]">
@@ -1199,13 +1209,14 @@ export default function OrderManagement() {
                             <p>View Receipt</p>
                           </div>
                         ) : (
-                          <div
-                            className={`w-[150px] font-Montserrat cursor-pointer rounded-[5px] flex justify-center py-[6px] font-[500] ${accepted ? "bg-white text-[#00984B] border border-[#00984B]" : "bg-[#00984B] text-white"
-                              }`}
-                            onClick={handlePaymentConfirm}
-                          >
-                            <p>{accepted ? "Order Accepted" : "Accept Order"}</p>
-                          </div>
+                          <>  </>
+                          // <div
+                          //   className={`w-[150px] font-Montserrat cursor-pointer rounded-[5px] flex justify-center py-[6px] font-[500] ${accepted ? "bg-white text-[#00984B] border border-[#00984B]" : "bg-[#00984B] text-white"
+                          //     }`}
+                          //   onClick={handlePaymentConfirm}
+                          // >
+                          //   <p>{accepted ? "Order Accepted" : "Accept Order"}</p>
+                          // </div>
                         )}
                       </div>
                     </div>
