@@ -18,6 +18,7 @@ import {
   getAllPaidBulkOrderListAction,
   updateBulkOrderRecieptToCancelAction,
   updateBulkOrderRecieptToPaidAction,
+  updateBulkOrderRecieptToAcceptAction,
 } from "../../redux/action/orderListing";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -290,12 +291,13 @@ export default function OrderManagement() {
       setLoading(false);
     }
   };
+  console.log('selectedOrderData', selectedOrderData?._id)
 
 
   const handlePaymentConfirm = async () => {
     try {
       if (activeTab === "self-serving") {
-        const result = await dispatch(updateOrderRecieptToPaidAction(selectedOrderData.orderId._id));
+        const result = await dispatch(updateOrderRecieptToPaidAction(selectedOrderData.orderId?._id));
         if (result) {
           setRejectModalOpen(true);
           setTimeout(() => {
@@ -305,7 +307,7 @@ export default function OrderManagement() {
         }
       }
       if (activeTab === "pre-packaged") {
-        const result = await dispatch(updatePrePackageOrderRecieptToPaidAction(selectedOrderData.orderId._id));
+        const result = await dispatch(updatePrePackageOrderRecieptToPaidAction(selectedOrderData.orderId?._id));
         if (result) {
           setRejectModalOpen(true);
           setTimeout(() => {
@@ -315,13 +317,9 @@ export default function OrderManagement() {
         }
       }
       if (activeTab === "premvati") {
-        const result = await dispatch(updateBulkOrderRecieptToPaidAction(selectedOrderData.orderId._id));
+        const result = await dispatch(updateBulkOrderRecieptToAcceptAction(selectedOrderData.orderId?._id));
         if (result) {
-          setRejectModalOpen(true);
-          setTimeout(() => {
-            setPaymentModalOpen(false);
-            window.location.reload();
-          }, 2000)
+          setAccepted(true);
         }
       }
     } catch (error) {
@@ -332,7 +330,7 @@ export default function OrderManagement() {
   const handleCancelOrder = async () => {
     try {
       if (activeTab === "self-serving") {
-        const result = await dispatch(updateOrderRecieptToCancelAction(selectedOrderData.orderId._id));
+        const result = await dispatch(updateOrderRecieptToCancelAction(selectedOrderData.orderId?._id));
         if (result) {
           setRejectModalOpen(true);
           setTimeout(() => {
@@ -342,7 +340,7 @@ export default function OrderManagement() {
         }
       }
       if (activeTab === "pre-packaged") {
-        const result = await dispatch(updatePrePackageOrderRecieptToCancelAction(selectedOrderData.orderId._id));
+        const result = await dispatch(updatePrePackageOrderRecieptToCancelAction(selectedOrderData.orderId?._id));
         if (result) {
           setRejectModalOpen(true);
           setTimeout(() => {
@@ -352,7 +350,7 @@ export default function OrderManagement() {
         }
       }
       if (activeTab === "premvati") {
-        const result = await dispatch(updateBulkOrderRecieptToCancelAction(selectedOrderData.orderId._id));
+        const result = await dispatch(updateBulkOrderRecieptToCancelAction(selectedOrderData.orderId?._id));
         if (result) {
           setRejectModalOpen(true);
           setTimeout(() => {
@@ -1153,19 +1151,18 @@ export default function OrderManagement() {
                       <div className="w-[100%] border-t-[1.3px]"></div>
                       <div className=" flex flex-col gap-[10px]">
 
-
                         <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
                           <p>Total Amount</p>
                           <p>{selectedOrderData?.orderId?.totalAmount}</p>
                         </div>
                         <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
                           <p>Deposite Amount</p>
-                          <p>{selectedOrderData?.orderId?.totalAmount}</p>
+                          <p>{selectedOrderData?.formId?.depositPrice}</p>
                         </div>
                         <div className="w-[100%] border-t-[.3px]"></div>
                         <div className="flex justify-between px-[10px] font-[500] text-[15px] font-mono">
                           <p>Remaining Amount</p>
-                          <p>{selectedOrderData?.orderId?.totalAmount}</p>
+                          <p>{selectedOrderData?.formId?.remainingPrice}</p>
                         </div>
                       </div>
                     </div>
@@ -1183,12 +1180,15 @@ export default function OrderManagement() {
                       </div>
 
                       <div className="flex gap-[10px] items-center">
-                        <div
-                          className="w-[130px] rounded-[5px] flex font-Montserrat justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
-                          onClick={openRejectModal}
-                        >
-                          <p>Reject Order</p>
-                        </div>
+                        {!accepted && (
+                          <div
+                            className="w-[130px] rounded-[5px] flex font-Montserrat justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
+                            onClick={openRejectModal}
+                          >
+                            <p>Reject Order</p>
+                          </div>
+                        )}
+
                         {bulkOrderPaidList.find(
                           (order) => order._id === selectedOrder
                         ) ? (
@@ -1199,21 +1199,13 @@ export default function OrderManagement() {
                             <p>View Receipt</p>
                           </div>
                         ) : (
-
-
-
-
-
-
                           <div
                             className={`w-[150px] font-Montserrat cursor-pointer rounded-[5px] flex justify-center py-[6px] font-[500] ${accepted ? "bg-white text-[#00984B] border border-[#00984B]" : "bg-[#00984B] text-white"
                               }`}
-                            onClick={() => setAccepted(true)}
+                            onClick={handlePaymentConfirm}
                           >
                             <p>{accepted ? "Order Accepted" : "Accept Order"}</p>
                           </div>
-
-
                         )}
                       </div>
                     </div>

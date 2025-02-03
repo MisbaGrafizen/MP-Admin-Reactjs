@@ -7,7 +7,7 @@ import {
     ApiPostNoAuth,
     ApiPut,
 } from '../../helper/axios';
-import { GET_PAID_ORDER_LIST, GET_UNPAID_ORDER_LIST, GET_PAID_BULK_ORDER, GET_BULK_CANCEL_ORDER, GET_PAID_BULK_ORDER_LIST, GET_UNPAID_BULK_ORDER_LIST, GET_PRE_PACKAGE_UNPAID_ORDER_LIST, GET_PRE_PACKAGE_PAID_ORDER_LIST, GET_PAID_ORDER, GET_PRE_PAID_ORDER,GET_CANCEL_ORDER, GET_PRE_CANCEL_ORDER } from '../type';
+import { GET_PAID_ORDER_LIST, GET_UNPAID_ORDER_LIST, ACCEPT_BULK_ORDER, GET_PAID_BULK_ORDER, GET_BULK_CANCEL_ORDER, GET_PAID_BULK_ORDER_LIST, GET_UNPAID_BULK_ORDER_LIST, GET_PRE_PACKAGE_UNPAID_ORDER_LIST, GET_PRE_PACKAGE_PAID_ORDER_LIST, GET_PAID_ORDER, GET_PRE_PAID_ORDER,GET_CANCEL_ORDER, GET_PRE_CANCEL_ORDER } from '../type';
 
 export const getAllUnpadiOrderListAction = () => {
   return (dispatch) => {
@@ -129,6 +129,28 @@ export const getAllPadiOrderListAction = () => {
         .catch((error) => {
           dispatch({
             type: GET_PAID_BULK_ORDER,
+            payload: error,
+          });
+        });
+    };
+    };
+
+    
+    export const updateBulkOrderRecieptToAcceptAction = (orderId) => {
+      return (dispatch) => {
+          return ApiPut(`/bulk-order/order-receipt/accept/${orderId}`)
+        .then((res) => {
+          if (res.status === "success") {
+            dispatch({
+              type: ACCEPT_BULK_ORDER,
+              payload: res?.data,
+            });
+            return res?.data;
+          }
+        })
+        .catch((error) => {
+          dispatch({
+            type: ACCEPT_BULK_ORDER,
             payload: error,
           });
         });
