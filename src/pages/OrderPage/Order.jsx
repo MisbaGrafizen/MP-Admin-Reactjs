@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import Logout from "../../Components/logout/Logout";
 
 export default function OrderManagement() {
+  const [accepted, setAccepted] = useState(false);
   const [activeTab, setActiveTab] = useState("self-serving");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [activeFilter, setActiveFilter] = useState("all");
@@ -388,8 +389,8 @@ export default function OrderManagement() {
             <div
               onClick={() => setActiveTab("self-serving")}
               className={`w-[130px] p-[8px]  rounded-tl-[7px] font-[500]  rounded-tr-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "self-serving"
-                  ? "bg-[#F28C28] text-[#fff]"
-                  : "border-t-[1px] border-l-[1px] border-r-[1px]"
+                ? "bg-[#F28C28] text-[#fff]"
+                : "border-t-[1px] border-l-[1px] border-r-[1px]"
                 }`}
             >
               <p>Self Serving</p>
@@ -397,8 +398,8 @@ export default function OrderManagement() {
             <div
               onClick={() => setActiveTab("pre-packaged")}
               className={`w-[130px] p-[8px]  rounded-tr-[7px] font-[500]  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "pre-packaged"
-                  ? "bg-[#F28C28] text-[#fff]"
-                  : "border-t-[1px] border-l-[1px] border-r-[1px]"
+                ? "bg-[#F28C28] text-[#fff]"
+                : "border-t-[1px] border-l-[1px] border-r-[1px]"
                 }`}
             >
               <p>Pre - Packaged</p>
@@ -406,8 +407,8 @@ export default function OrderManagement() {
             <div
               onClick={() => setActiveTab("premvati")}
               className={`w-[130px] p-[8px]  rounded-tr-[7px] font-[500]  rounded-tl-[7px]  border-[#000] flex items-center justify-center cursor-pointer ${activeTab === "premvati"
-                  ? "bg-[#F28C28] text-[#fff]"
-                  : "border-t-[1px] border-l-[1px] border-r-[1px]"
+                ? "bg-[#F28C28] text-[#fff]"
+                : "border-t-[1px] border-l-[1px] border-r-[1px]"
                 }`}
             >
               <p>Premvati</p>
@@ -422,8 +423,8 @@ export default function OrderManagement() {
                   <div className="w-[100%] overflow-hidden z-[50] bg-[#ffff] h-[30px] md11:text-[14px] md150:text-[16px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] flex justify-between border-[#595454]">
                     <div
                       className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
-                          ? "bg-[#00984B] text-white py-[70px]"
-                          : "bg-white text-[#000]"
+                        ? "bg-[#00984B] text-white py-[70px]"
+                        : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("all")}
                     >
@@ -434,8 +435,8 @@ export default function OrderManagement() {
                     </div>
                     <div
                       className={`w-[100%] h-[100%] gap-[5px] font-[500] text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
-                          ? "bg-[#006198] text-white py-[70px]"
-                          : "bg-white text-[#000]"
+                        ? "bg-[#006198] text-white py-[70px]"
+                        : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("paid")}
                     >
@@ -446,8 +447,8 @@ export default function OrderManagement() {
                     </div>
                     <div
                       className={`w-[100%] gap-[5px]   font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
-                          ? "bg-[RED] text-white  py-[70px]"
-                          : "bg-white text-[#000]"
+                        ? "bg-[RED] text-white  py-[70px]"
+                        : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
@@ -478,8 +479,8 @@ export default function OrderManagement() {
                         </div>
                         <div
                           className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
-                              ? "bg-[#00984B] text-white"
-                              : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
+                            ? "bg-[#00984B] text-white"
+                            : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
                             }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
@@ -507,8 +508,8 @@ export default function OrderManagement() {
                         </div>
                         <div
                           className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
-                              ? "bg-[#FF0606] text-white"
-                              : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
+                            ? "bg-[#FF0606] text-white"
+                            : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
                             }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
@@ -529,8 +530,8 @@ export default function OrderManagement() {
                       </div>
                       <div
                         className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center  ${selectedOrder === 0
-                            ? "text-[#00984B]"
-                            : "text-[#FF0606]"
+                          ? "text-[#00984B]"
+                          : "text-[#FF0606]"
                           }`}
                       >
                         <p>
@@ -544,8 +545,8 @@ export default function OrderManagement() {
                     </div>
                     <div
                       className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${selectedOrder === 0
-                          ? "border-[#00984B]"
-                          : "border-[#FF0606]"
+                        ? "border-[#00984B]"
+                        : "border-[#FF0606]"
                         }`}
                     >
                       <div className="w-[100%] flex justify-between">
@@ -708,8 +709,8 @@ export default function OrderManagement() {
                   <div className="w-[100%] md11:text-[14px] md150:text-[16px] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] text-[14px] flex justify-between border-[#595454]">
                     <div
                       className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
-                          ? "bg-[#00984B] text-white py-[70px]"
-                          : "bg-white text-[#000]"
+                        ? "bg-[#00984B] text-white py-[70px]"
+                        : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("all")}
                     >
@@ -721,8 +722,8 @@ export default function OrderManagement() {
                     </div>
                     <div
                       className={`w-[100%] h-[100%] gap-[5px]  font-[500] text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
-                          ? "bg-[#006198] text-white py-[70px]"
-                          : "bg-white text-[#000]"
+                        ? "bg-[#006198] text-white py-[70px]"
+                        : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("paid")}
                     >
@@ -733,8 +734,8 @@ export default function OrderManagement() {
                     </div>
                     <div
                       className={`w-[100%]  gap-[5px] font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
-                          ? "bg-[RED] text-white  py-[70px]"
-                          : "bg-white text-[#000]"
+                        ? "bg-[RED] text-white  py-[70px]"
+                        : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
@@ -766,8 +767,8 @@ export default function OrderManagement() {
                         </div>
                         <div
                           className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
-                              ? "bg-[#00984B] text-white"
-                              : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
+                            ? "bg-[#00984B] text-white"
+                            : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
                             }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
@@ -796,8 +797,8 @@ export default function OrderManagement() {
                         </div>
                         <div
                           className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
-                              ? "bg-[#FF0606] text-white"
-                              : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
+                            ? "bg-[#FF0606] text-white"
+                            : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
                             }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
@@ -820,8 +821,8 @@ export default function OrderManagement() {
                         className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center ${prePackagePaidOrderList.find(
                           (order) => order._id === selectedOrder
                         )
-                            ? "text-[#00984B]"
-                            : "text-[#FF0606]"
+                          ? "text-[#00984B]"
+                          : "text-[#FF0606]"
                           }`}
                       >
                         <p>
@@ -835,8 +836,8 @@ export default function OrderManagement() {
                     </div>
                     <div
                       className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${selectedOrder === 0
-                          ? "border-[#00984B]"
-                          : "border-[#FF0606]"
+                        ? "border-[#00984B]"
+                        : "border-[#FF0606]"
                         }`}
                     >
                       <div className="w-[100%] flex justify-between">
@@ -956,8 +957,8 @@ export default function OrderManagement() {
                   <div className="w-[100%] md11:text-[14px] md150:text-[16px] overflow-hidden z-[50] bg-[#ffff] h-[35px] py-[20px] rounded-[7px] items-center sticky top-[0px] border-[1px] text-[14px] flex justify-between border-[#595454]">
                     <div
                       className={`w-[100%] gap-[5px] h-[100%] font-[500] text-center flex items-center justify-center   cursor-pointer ${activeFilter === "all"
-                          ? "bg-[#00984B] text-white py-[70px]"
-                          : "bg-white text-[#000]"
+                        ? "bg-[#00984B] text-white py-[70px]"
+                        : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("all")}
                     >
@@ -969,8 +970,8 @@ export default function OrderManagement() {
                     </div>
                     <div
                       className={`w-[100%] h-[100%] gap-[5px]  font-[500] text-center flex items-center justify-center cursor-pointer ${activeFilter === "paid"
-                          ? "bg-[#006198] text-white py-[70px]"
-                          : "bg-white text-[#000]"
+                        ? "bg-[#006198] text-white py-[70px]"
+                        : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("paid")}
                     >
@@ -981,8 +982,8 @@ export default function OrderManagement() {
                     </div>
                     <div
                       className={`w-[100%]  gap-[5px] font-[500] h-[100%] text-center flex items-center justify-center cursor-pointer ${activeFilter === "unpaid"
-                          ? "bg-[RED] text-white  py-[70px]"
-                          : "bg-white text-[#000]"
+                        ? "bg-[RED] text-white  py-[70px]"
+                        : "bg-white text-[#000]"
                         }`}
                       onClick={() => setActiveFilter("unpaid")}
                     >
@@ -1014,8 +1015,8 @@ export default function OrderManagement() {
                         </div>
                         <div
                           className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
-                              ? "bg-[#00984B] text-white"
-                              : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
+                            ? "bg-[#00984B] text-white"
+                            : "bg-white text-[#00984B] border-[1px] border-[#00984B]"
                             }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
@@ -1044,8 +1045,8 @@ export default function OrderManagement() {
                         </div>
                         <div
                           className={`w-[25px] h-[25px] flex justify-center items-center rounded-[5px] ${selectedOrder === order._id
-                              ? "bg-[#FF0606] text-white"
-                              : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
+                            ? "bg-[#FF0606] text-white"
+                            : "bg-white text-[#FF0606] border-[1px] border-[#FF0606]"
                             }`}
                         >
                           <i className="fa-solid fa-angle-up fa-rotate-90"></i>
@@ -1068,8 +1069,8 @@ export default function OrderManagement() {
                         className={`w-[150px] rounded-bl-[7px] font-[500] md150:text-[18px] md11:text-[16px] flex justify-center ${bulkOrderPaidList.find(
                           (order) => order._id === selectedOrder
                         )
-                            ? "text-[#00984B]"
-                            : "text-[#FF0606]"
+                          ? "text-[#00984B]"
+                          : "text-[#FF0606]"
                           }`}
                       >
                         <p>
@@ -1083,8 +1084,8 @@ export default function OrderManagement() {
                     </div>
                     <div
                       className={`w-[100%] h-[79%] no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px] border-[1.4px] font-[500] p-[14px] ${selectedOrder === 0
-                          ? "border-[#00984B]"
-                          : "border-[#FF0606]"
+                        ? "border-[#00984B]"
+                        : "border-[#FF0606]"
                         }`}
                     >
                       <div className="w-[100%] flex justify-between">
@@ -1183,7 +1184,7 @@ export default function OrderManagement() {
 
                       <div className="flex gap-[10px] items-center">
                         <div
-                          className="w-[130px] rounded-[5px] flex justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
+                          className="w-[130px] rounded-[5px] flex font-Montserrat justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
                           onClick={openRejectModal}
                         >
                           <p>Reject Order</p>
@@ -1192,18 +1193,27 @@ export default function OrderManagement() {
                           (order) => order._id === selectedOrder
                         ) ? (
                           <div
-                            className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
+                            className="w-[130px] cursor-pointer font-Montserrat rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
                             onClick={openReciptModal}
                           >
                             <p>View Receipt</p>
                           </div>
                         ) : (
+
+
+
+
+
+
                           <div
-                            className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
-                            // onClick={handlePaymentConfirm}
+                            className={`w-[150px] font-Montserrat cursor-pointer rounded-[5px] flex justify-center py-[6px] font-[500] ${accepted ? "bg-white text-[#00984B] border border-[#00984B]" : "bg-[#00984B] text-white"
+                              }`}
+                            onClick={() => setAccepted(true)}
                           >
-                            <p>Accept Order</p>
+                            <p>{accepted ? "Order Accepted" : "Accept Order"}</p>
                           </div>
+
+
                         )}
                       </div>
                     </div>
