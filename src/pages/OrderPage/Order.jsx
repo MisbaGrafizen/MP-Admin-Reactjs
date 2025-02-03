@@ -70,6 +70,7 @@ export default function OrderManagement() {
     navigate(-1);
   };
 
+
   useEffect(() => {
     dispatch(getAllPadiOrderListAction());
     dispatch(getAllUnpadiOrderListAction());
@@ -317,7 +318,7 @@ export default function OrderManagement() {
         }
       }
       if (activeTab === "premvati") {
-        const result = await dispatch(updateBulkOrderRecieptToAcceptAction(selectedOrderData.orderId?._id));
+        const result = await dispatch(updateBulkOrderRecieptToPaidAction(selectedOrderData.orderId?._id));
         if (result) {
           setAccepted(true);
         }
@@ -691,12 +692,13 @@ export default function OrderManagement() {
                             <p>View Receipt</p>
                           </div>
                         ) : (
-                          <div
-                            className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
-                            onClick={handlePaymentConfirm}
-                          >
-                            <p>Accept Order</p>
-                          </div>
+                          <></>
+                          // <div
+                          //   className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
+                          //   onClick={handlePaymentConfirm}
+                          // >
+                          //   <p>Accept Order</p>
+                          // </div>
                         )}
                       </div>
                     </div>
@@ -942,12 +944,14 @@ export default function OrderManagement() {
                             <p>View Receipt</p>
                           </div>
                         ) : (
-                          <div
-                            className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
-                            onClick={handlePaymentConfirm}
-                          >
-                            <p>Accept Order</p>
-                          </div>
+                          // <div
+                          //   className="w-[130px] cursor-pointer rounded-[5px] flex justify-center py-[6px] text-[#ffffff] font-[500] bg-[#00984B]"
+                          //   onClick={handlePaymentConfirm}
+                          // >
+                          //   <p>Accept Order</p>
+                          // </div>
+                          <>
+                          </>
                         )}
                       </div>
                     </div>
@@ -1375,13 +1379,13 @@ export default function OrderManagement() {
         </ModalContent>
       </NextUIModal>
       <NextUIModal
-        className="md:max-w-[490px] max-w-[563px] overflow-hidden relative  flex justify-center   rounded-[20px] !py-0 mx-auto md:h-[68%] h-[350px]"
+        className="md:max-w-[490px] max-w-[563px] overflow-y-auto relative  flex justify-center   rounded-[20px] !py-0 mx-auto md:h-[500px]  h-[300px]"
         isOpen={isReciptModalOpen}
         backdrop={"blur"}
         onOpenChange={closeReciptModal}
       >
         <ModalContent className="relative ">
-          <ModalBody className="!py-0 border-[1.5px] border-[green] overflow-hidden rounded-[20px]">
+          <ModalBody className="!py-0 border-[1.5px] border-[green] overflow-y-auto rounded-[20px]">
             <div
               className={`w-[100%] h-[100%] absolute overflow-hidden left-0 no-scrollbar flex-col overflow-y-auto gap-[15px] rounded-[10px] flex text-[13px]  font-[500] p-[14px] '
                 }`}
@@ -1411,7 +1415,7 @@ export default function OrderManagement() {
                     {selectedOrderData?.pickupLocation?.name}
                   </p>
                 </div>
-                <div className="flex gap-[6px] pr-[20px]">
+                <div className={`flex gap-[6px]  text-green-500 pr-[20px] ${ ""}`}>
                   <i className="fa-sharp-duotone fa-solid fa-circle-check tick text-[17px]"></i>
                   <p>
                     {selectedOrder === 0
@@ -1421,7 +1425,7 @@ export default function OrderManagement() {
                 </div>
               </div>
               <div className="w-[100%] border-t-[1.7px] border-dashed"></div>
-              <div className="flex flex-col gap-[14px]">
+              <div className="flex flex-col max-h-[300px] overflow-y-auto gap-[14px]">
                 {selectedOrderData?.orderId?.items?.map((item, idx) => (
                   <div
                     key={idx}
@@ -1477,7 +1481,7 @@ export default function OrderManagement() {
                   )
                 )}
               </div>
-              <div className="flex absolute bottom-[80px] w-[99%] left-[2px] flex-col gap-[10px]">
+              <div className="flex absolute bg-white bottom-[80px] w-[99%] left-[2px] flex-col gap-[10px]">
                 <div className="w-[100%] border-t-[2.3px]"></div>
                 <div className="flex justify-between px-[10px] font-[500] text-[19px] font-mono">
                   <p>Total</p>
