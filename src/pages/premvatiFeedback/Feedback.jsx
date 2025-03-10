@@ -5,10 +5,9 @@ import { useNavigate } from "react-router-dom";
 import Logout from "../../Components/logout/Logout";
 import { ApiGet } from "../../helper/axios";
 import dayjs from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from 'antd';
 
 
 export default function Feedback() {
@@ -34,8 +33,8 @@ export default function Feedback() {
   };
 
   const currentPageData = Array.isArray(displayedData)
-  ? displayedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-  : [];
+    ? displayedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    : [];
 
 
   useEffect(() => {
@@ -91,8 +90,9 @@ export default function Feedback() {
     if (activeButton) fetchData();
   }, [activeButton]);
 
-
-
+  const onChange = (date, dateString) => {
+    console.log(date, dateString);
+  };
   const handleCheckAll = () => {
     setCheckAll(!checkAll);
     if (!checkAll) {
@@ -189,8 +189,8 @@ export default function Feedback() {
               >
                 <p>Till Date</p>
               </div>
-              <div className="flex border-[1.4px] gap-[10px] items-center cursor-pointer px-[10px] h-[35px] w-[160px] border-[#F28C28] rounded-[6px]">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <div className="flex border-[1.4px] gap-[10px] items-center cursor-pointer  h-[35px] w-[140px] border-[#F28C28] rounded-[6px]">
+                {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DemoContainer
                     components={["DatePicker", "DatePicker"]}
                   >
@@ -200,7 +200,14 @@ export default function Feedback() {
 
                     />
                   </DemoContainer>
-                </LocalizationProvider>
+                </LocalizationProvider> */}
+
+                <DatePicker
+                  format="DD/MM/YYYY"
+                  value={value}
+                  onChange={(newValue) => { setValue(newValue); setFilterActiveButton("select_date") }}
+                  defaultValue={dayjs()}
+                />
               </div>
             </div>
 
@@ -453,7 +460,7 @@ export default function Feedback() {
                       </div>
                     </div>
                     {dropdownOpen && (
-                      <div className="border-[1.7px] flex flex-col bg-[#fff] min-h-[100%] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute">
+                      <div className="border-[1.7px] flex flex-col bg-[#fff]  max-h-[100px] overflow-y-auto right-[-19px] top-[40px] border-[#000] z-[100] w-[100px] rounded-[10px] absolute">
                         {Array.from({ length: totalPages }, (_, i) => (
 
                           <div
