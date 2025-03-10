@@ -35,3 +35,8 @@ bottom: 13.1% !important;
 
     border: none !important;
 }
+
+
+:where(.css-240cud).ant-picker-outlined {
+    border: none !important;
+}
