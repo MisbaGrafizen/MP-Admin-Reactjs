@@ -15,8 +15,8 @@ import {
   UpdatePrePackageCategoryNameAction,
 } from "../../redux/action/productMaster";
 import { useDispatch, useSelector } from "react-redux";
-import cloudinaryUpload from "../../helper/cloudinaryUpload";
 import axios from "axios";
+import hpanelUpload from "../../helper/hpanelUpload";
 
 export default function PrePackged({ methodType }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -227,7 +227,7 @@ export default function PrePackged({ methodType }) {
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const cloudImg = await cloudinaryUpload(file);
+      const cloudImg = await hpanelUpload(file);
       setCloudImage(cloudImg);
       const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);

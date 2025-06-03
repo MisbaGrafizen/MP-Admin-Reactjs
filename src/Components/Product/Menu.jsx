@@ -7,16 +7,13 @@ import {
   deleteItemByIdAction,
   DeleteCategoryAction,
   EditMenuItemAction,
-  getAllFoodCategoryAction,
   getAllPrePackageFoodCategoryAction,
   getCategoryAction,
   getItemByCategoryIdAction,
-  getFoodItemByCategoryIdAction,
   getPrePackageFoodItemByCategoryIdAction,
   UpdateCategoryAction,
 } from "../../redux/action/productMaster";
-import { useDispatch, useSelector } from "react-redux";
-import cloudinaryUpload from "../../helper/cloudinaryUpload";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 
 export default function Menu({ methodType }) {
@@ -220,15 +217,6 @@ export default function Menu({ methodType }) {
   //     }
   // };
 
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const cloudImg = await cloudinaryUpload(file);
-      setCloudImage(cloudImg);
-      const imageUrl = URL.createObjectURL(file);
-      setSelectedImage(imageUrl);
-    }
-  };
   const [textareaValue, setTextareaValue] = useState(() => {
     return Array.from({ length: 1 }, (_, i) => `${i + 1}. `).join("\n");
   });

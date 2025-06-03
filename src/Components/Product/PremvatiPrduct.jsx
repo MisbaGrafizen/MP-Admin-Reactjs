@@ -16,8 +16,8 @@ import {
   UpdateBulkOrderCategoryNameAction,
 } from "../../redux/action/productMaster";
 import { useDispatch, useSelector } from "react-redux";
-import cloudinaryUpload from "../../helper/cloudinaryUpload";
 import axios from "axios";
+import hpanelUpload from "../../helper/hpanelUpload";
 
 export default function PrePackged({ methodType }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -238,7 +238,7 @@ export default function PrePackged({ methodType }) {
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const cloudImg = await cloudinaryUpload(file);
+      const cloudImg = await hpanelUpload(file);
       setCloudImage(cloudImg);
       const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);
@@ -322,8 +322,8 @@ export default function PrePackged({ methodType }) {
     const centerY = containerRect.top + containerRect.height / 2;
 
     setPopupPosition({
-      top: centerY,
-      left: centerX,
+      top: window.scrollY + containerRect.top, // add scroll
+      left: window.scrollX + containerRect.left + containerRect.width / 2,
     });
   };
 
@@ -369,10 +369,10 @@ export default function PrePackged({ methodType }) {
         }
       );
     } else if (deleteData) {
-      dispatch(deleteBulkOrderMethodByIdAction(deleteData._id))
+      dispatch(deleteBulkOrderMethodByIdAction(deleteData?._id))
         .then((response) => {
           setFoodItems((prev) =>
-            prev.filter((item) => item._id !== response._id)
+            prev.filter((item) => item?._id !== response?._id)
           );
           setDeleteData(null);
           setIsDelOpen(false);
@@ -434,6 +434,18 @@ export default function PrePackged({ methodType }) {
       }
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".popup-menu")) {
+        setPopupVisible(false);
+        setSelectedFoodItem(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <>
       <div className="w-[100%] py-[5px] px-[5px]">
@@ -463,9 +475,8 @@ export default function PrePackged({ methodType }) {
               {foodCategories?.map((category, index) => (
                 <div
                   key={category._id}
-                  className={`border-[0.5px] border-[#000] font-[600] md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px] flex justify-center items-center rounded-[8px] cursor-pointer ${
-                    selectedButton === index ? "bg-[#F28C28] text-white" : ""
-                  }`}
+                  className={`border-[0.5px] border-[#000] font-[600] md150:text-[18px] md11:text-[15px] md150:w-[120px] md11:w-[100px] md150:h-[40px] md11:h-[35px] flex justify-center items-center rounded-[8px] cursor-pointer ${selectedButton === index ? "bg-[#F28C28] text-white" : ""
+                    }`}
                   onClick={() => handleCategoryClick(category, index)}
                   onDoubleClick={() => handleCategoryDoubleClick(category)}
                 >
@@ -532,7 +543,7 @@ export default function PrePackged({ methodType }) {
             </div>
           </div>
 
-          <div className=" flex-wrap  flex rlative  gap-[20px] ">
+          <div className=" flex-wrap  flex relative  gap-[20px] ">
             <div
               className="border-[1px]  h-[100%] border-dashed border-[#F28C28] rounded-[8px]  w-[180px] cursor-pointer"
               onClick={() => {
@@ -556,7 +567,7 @@ export default function PrePackged({ methodType }) {
               foodItems.map((item, index) => (
                 <div
                   key={index}
-                  className="border-[1px] border-dashed h-[100%] border-[#F28C28] rounded-[8px] w-[180px] cursor-pointer"
+                  className="border-[1px] border-dashed  relative h-fit border-[#F28C28] rounded-[8px] w-[180px] cursor-pointer"
                   onDoubleClick={(e) => handleFoodItemDoubleClick(item, e)}
                 >
                   <div className="flex h-[140px] justify-center w-full p-[10px]">
@@ -576,15 +587,15 @@ export default function PrePackged({ methodType }) {
                       <p>{item?.price}/-</p>
                     </div>
                   </div>
-                  {popupVisible && (
+                  {popupVisible && selectedFoodItem?._id === item._id && (
                     <div
-                      className="absolute p-2 bg-white border w-[140px] rounded shadow-lg transition-opacity duration-300 ease-in-out"
-                      style={{
-                        top: `${popupPosition?.top - 140}px`,
-                        left: `${popupPosition?.left - 125}px`,
-                        transform: "translate(-50%, -50%)",
-                      }}
-                      onMouseLeave={handlePopupClose}
+                      className="absolute popup-menu p-2 top-[20px] left-[20px] bg-white border w-[140px]  z-[10]  rounded shadow-lg transition-opacity duration-300 ease-in-out"
+                      // style={{
+                      //   top: `${popupPosition?.top - 140}px`,
+                      //   left: `${popupPosition?.left - 125}px`,
+                      //   transform: "translate(-50%, -50%)",
+                      // }}
+                      // onMouseLeave={handlePopupClose}
                     >
                       <p
                         className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer"

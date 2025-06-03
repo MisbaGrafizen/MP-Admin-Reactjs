@@ -9,9 +9,9 @@ import {
   getAllServingCategoryAction,
   getServingMethodByCategoryIdAction,
 } from "../../redux/action/productMaster";
-import { useDispatch, useSelector } from "react-redux";
-import cloudinaryUpload from "../../helper/cloudinaryUpload";
+import { useDispatch } from "react-redux";
 import axios from "axios";
+import hpanelUpload from "../../helper/hpanelUpload";
 
 export default function ServingMethod() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -123,7 +123,7 @@ export default function ServingMethod() {
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const cloudImg = await cloudinaryUpload(file);
+      const cloudImg = await hpanelUpload(file);
       setCloudImage(cloudImg);
       const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);

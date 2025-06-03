@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import cloudinaryUpload from "../../helper/cloudinaryUpload";
 import userpng from "../../../public/img/AdminSpalsh/user 3.png";
 import Logout from "../../Components/logout/Logout";
+import hpanelUpload from "../../helper/hpanelUpload";
 
 export default function PremvatiManagement() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -155,14 +156,30 @@ export default function PremvatiManagement() {
 const handleFileChange = async (event) => {
   const file = event.target.files[0];
   if (file) {
-    const imageUrl = URL.createObjectURL(file);
-    setPreviewImage(imageUrl); // Set preview image
-    setImage(imageUrl); // Set image for display
+    setPreviewImage(URL.createObjectURL(file));
+    setImage(URL.createObjectURL(file));
 
-    const cloudImg = await cloudinaryUpload(file);
-    setCloudImage(cloudImg); 
+    const uploadedUrl = await hpanelUpload(file);
+    if (uploadedUrl) {
+      setCloudImage(uploadedUrl); // this is the final image URL used in form submission
+    } else {
+      alert("Failed to upload image. Please try again.");
+    }
   }
 };
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".popup-menu")) {
+        setPopupVisible(false);
+        setSelectedFoodItem(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <>
       <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto">
@@ -210,7 +227,7 @@ const handleFileChange = async (event) => {
                   premvatis?.map((item) => (
                     <>
                       <div
-                        className="flex justify-center md150:h-[220px] md11:h-[180px]  md150:w-[200px] md11:w-[150px]  items-center flex-col rounded-[10px] border-[1.5px] border-[#F28C28] border-dashed"
+                        className="flex relative justify-center md150:h-[220px] md11:h-[180px]  md150:w-[200px] md11:w-[150px]  items-center flex-col rounded-[10px] border-[1.5px] border-[#F28C28] border-dashed"
                         onDoubleClick={(e) =>
                           handleFoodItemDoubleClick(item, e)
                         }
@@ -226,15 +243,15 @@ const handleFileChange = async (event) => {
                         <div className="h-[50px] justify-center text-[15px] font-Poppins flex items-center border-t-[1.5px] font-[400] text-[#fff] rounded-[10px] border-[#fffaf5] border-dashed w-[100%] bg-[#F28C28]">
                           <p>{item?.name}</p>
                         </div>
-                        {popupVisible && (
+                  {popupVisible && selectPremvati?._id === item._id && (
                           <div
-                            className="absolute p-2 bg-white border w-[140px] rounded shadow-lg transition-opacity duration-300 ease-in-out"
-                            style={{
-                              top: `${popupPosition?.top - 140}px`,
-                              left: `${popupPosition?.left - 125}px`,
-                              transform: "translate(-50%, -50%)",
-                            }}
-                            onMouseLeave={handlePopupClose}
+                            className="absolute popup-menu top-[20px] left-[0px] p-2 bg-white border w-[140px] rounded shadow-lg transition-opacity duration-300 ease-in-out"
+                            // style={{
+                            //   top: `${popupPosition?.top - 140}px`,
+                            //   left: `${popupPosition?.left - 125}px`,
+                            //   transform: "translate(-50%, -50%)",
+                            // }}
+                            // onMouseLeave={handlePopupClose}
                           >
                             <p
                               className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer"

@@ -14,9 +14,8 @@ import {
   UpdateSelfServicesCategoryNameAction,
 } from "../../redux/action/productMaster";
 import { useDispatch, useSelector } from "react-redux";
-import cloudinaryUpload from "../../helper/cloudinaryUpload";
-import { ApiPost } from "../../helper/axios";
 import axios from "axios";
+import hpanelUpload from "../../helper/hpanelUpload";
 
 export default function SelfServingManage({ methodType }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -416,7 +415,7 @@ export default function SelfServingManage({ methodType }) {
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const cloudImg = await cloudinaryUpload(file);
+      const cloudImg = await hpanelUpload(file);
       setCloudImage(cloudImg);
       const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);
@@ -477,6 +476,20 @@ export default function SelfServingManage({ methodType }) {
     }
   };
 
+
+  
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (!event.target.closest(".popup-menu")) {
+          setPopupVisible(false);
+          setSelectedFoodItem(null);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    
   return (
     <>
       <div className="w-[100%] py-[5px] px-[5px]">
@@ -598,7 +611,7 @@ export default function SelfServingManage({ methodType }) {
               foodItems.map((item, index) => (
                 <div
                   key={index}
-                  className="border-[1px] border-dashed h-[100%] border-[#F28C28] rounded-[8px] w-[180px] cursor-pointer"
+                  className="border-[1px] border-dashed relative h-fit border-[#F28C28] rounded-[8px] w-[180px] cursor-pointer"
                   onDoubleClick={(e) => handleFoodItemDoubleClick(item, e)}
                 >
                   <div className="flex h-[140px] justify-center w-full p-[10px]">
@@ -618,15 +631,15 @@ export default function SelfServingManage({ methodType }) {
                       <p>{item?.price}/-</p>
                     </div>
                   </div>
-                  {popupVisible && (
+                   {popupVisible && selectedFoodItem?._id === item._id && (
                     <div
-                      className="absolute p-2 bg-white border w-[140px] rounded shadow-lg transition-opacity duration-300 ease-in-out"
-                      style={{
-                        top: `${popupPosition?.top - 140}px`,
-                        left: `${popupPosition?.left - 125}px`,
-                        transform: "translate(-50%, -50%)",
-                      }}
-                      onMouseLeave={handlePopupClose}
+                      className="absolute p-2 popup-menu  top-[20px] left-[20px] bg-white border w-[140px] rounded shadow-lg transition-opacity duration-300 ease-in-out"
+                      // style={{
+                      //   top: `${popupPosition?.top - 140}px`,
+                      //   left: `${popupPosition?.left - 125}px`,
+                      //   transform: "translate(-50%, -50%)",
+                      // }}
+                      // onMouseLeave={handlePopupClose}
                     >
                       <p
                         className="text-blue-500 hover:bg-blue-100 pl-[10px] rounded-[5px] font-Poppins cursor-pointer"
