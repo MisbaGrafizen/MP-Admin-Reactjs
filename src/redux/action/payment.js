@@ -11,7 +11,7 @@ export const getPaymentByIdAction = (orderId) => {
   return (dispatch) => {
       return ApiGet(`/self-service/payment/${orderId}`)
     .then((res) => {
-      if (res.status === "success") {
+      if (res.payment) {
         dispatch({
           type: GET_PAYMENT,
           payload: res?.payment,

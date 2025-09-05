@@ -41,6 +41,7 @@ export default function OrderManagement() {
   const [isRejectModalOpen, setRejectModalOpen] = useState(false);
   const [paymentData, setPaymentData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -223,6 +224,50 @@ export default function OrderManagement() {
     paid: false,
   };
 
+  const handleComplete = async () => {
+  if (!selectedOrderData?.orderId?._id) return;
+
+  setIsCompleting(true);
+  try {
+    let ok = false;
+
+    if (activeTab === "self-serving") {
+      ok = await dispatch(
+        updateOrderRecieptToPaidAction(selectedOrderData.orderId._id)
+      );
+    } else if (activeTab === "pre-packaged") {
+      ok = await dispatch(
+        updatePrePackageOrderRecieptToPaidAction(selectedOrderData.orderId._id)
+      );
+    } else if (activeTab === "premvati") {
+      ok = await dispatch(
+        updateBulkOrderRecieptToPaidAction(selectedOrderData.orderId._id)
+      );
+    }
+
+    if (ok) {
+      await Promise.all([
+        dispatch(getAllPadiOrderListAction()),
+        dispatch(getAllUnpadiOrderListAction()),
+        dispatch(getAllPrePackagePadiOrderListAction()),
+        dispatch(getAllPrePackageUnpadiOrderListAction()),
+        dispatch(getAllPaidBulkOrderListAction()),
+        dispatch(getAllUnpaidBulkOrderListAction()),
+      ]);
+
+      setActiveFilter("paid");
+
+      setPaymentModalOpen(true); 
+      setOrderReciptModalOpen(false);
+    }
+  } catch (e) {
+    console.error("Failed to mark order as paid:", e);
+  } finally {
+    setIsCompleting(false);
+  }
+};
+
+
   const shouldShowPaid = activeFilter === "all" || activeFilter === "paid";
   const shouldShowUnpaid = activeFilter === "all" || activeFilter === "unpaid";
 
@@ -269,7 +314,14 @@ export default function OrderManagement() {
     bulkOrderUnpaidList,
   ]);
 
+  const getPaymentFetcher = (tab) => {
+  if (tab === "self-serving") return getPaymentByIdAction;
+  if (tab === "pre-packaged") return getPrePackagePaymentByIdAction;
+  return null; // no per-order payment receipt for "premvati" in current flow
+};
+
   const openOrderModal = async () => {
+
     setLoading(true);
     setError(null);
     try {
@@ -292,8 +344,7 @@ export default function OrderManagement() {
       setLoading(false);
     }
   };
-  console.log('selectedOrderData', selectedOrderData?._id)
-
+  console.log('selectedOrderDataId', selectedOrderData?._id)
 
   const handlePaymentConfirm = async () => {
     try {
@@ -675,6 +726,12 @@ export default function OrderManagement() {
                       </div>
 
                       <div className="flex gap-[10px] items-center">
+                         <div
+                          className="w-[210px] rounded-[5px] flex font-Montserrat justify-center active:bg-[#006198] active:text-[#fff] cursor-pointer py-[6px] text-[#006198] border-[#006198] font-[500] border-[1.7px]"
+                          onClick={openOrderModal}
+                        >
+                          <p>View Payment Recipt</p>
+                        </div>
                         <div
                           className="w-[130px] rounded-[5px] flex justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
                           onClick={openRejectModal}
@@ -1532,17 +1589,17 @@ export default function OrderManagement() {
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Cashier name :</p>
                   <p className=" border-b-[1.5px]  overflow-x-auto w-[60%] border-[#000]">
-                    {paymentData?.cashierName}
+                    {payment?.cashierName}
                   </p>
                 </div>
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Receipt Number :</p>
                   <p className=" border-b-[1.5px] w-[60%] border-[#000]">
-                    {paymentData?.recieptNo}
+                    {payment?.recieptNo}
                   </p>
                 </div>
                 <div className=" border-[1px] rounded-[10px] border-[#00984B] h-[210px] w-[90%] mx-auto">
-                  {paymentData?.recieptImage}
+                  {payment?.recieptImage}
                 </div>
 
 
@@ -1559,13 +1616,15 @@ export default function OrderManagement() {
 
   {/* Confirm Button */}
   <button
-    className="w-[130px] rounded-[5px] flex items-center justify-center gap-2 py-[6px] font-[500] 
-               border-[1.7px] border-[#006198] text-[#006198] bg-white
-               hover:bg-[#f5f5f5] active:bg-[#006198] active:text-white transition"
-  >
-    <i className="fa-solid fa-check"></i>
-    <span>Confirm</span>
-  </button>
+  className="w-[130px] rounded-[5px] flex items-center justify-center gap-2 py-[6px] font-[500] 
+             border-[1.7px] border-[#006198] text-[#006198] bg-white
+             hover:bg-[#f5f5f5] active:bg-[#006198] active:text-white transition disabled:opacity-60"
+  onClick={handleComplete}
+  disabled={isCompleting}
+>
+  <i className="fa-solid fa-check"></i>
+  <span>{isCompleting ? "Confirming..." : "Confirm"}</span>
+</button>
 </div>
 
 
