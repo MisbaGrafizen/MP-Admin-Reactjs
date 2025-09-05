@@ -225,47 +225,47 @@ export default function OrderManagement() {
   };
 
   const handleComplete = async () => {
-  if (!selectedOrderData?.orderId?._id) return;
+    if (!selectedOrderData?.orderId?._id) return;
 
-  setIsCompleting(true);
-  try {
-    let ok = false;
+    setIsCompleting(true);
+    try {
+      let ok = false;
 
-    if (activeTab === "self-serving") {
-      ok = await dispatch(
-        updateOrderRecieptToPaidAction(selectedOrderData.orderId._id)
-      );
-    } else if (activeTab === "pre-packaged") {
-      ok = await dispatch(
-        updatePrePackageOrderRecieptToPaidAction(selectedOrderData.orderId._id)
-      );
-    } else if (activeTab === "premvati") {
-      ok = await dispatch(
-        updateBulkOrderRecieptToPaidAction(selectedOrderData.orderId._id)
-      );
+      if (activeTab === "self-serving") {
+        ok = await dispatch(
+          updateOrderRecieptToPaidAction(selectedOrderData.orderId._id)
+        );
+      } else if (activeTab === "pre-packaged") {
+        ok = await dispatch(
+          updatePrePackageOrderRecieptToPaidAction(selectedOrderData.orderId._id)
+        );
+      } else if (activeTab === "premvati") {
+        ok = await dispatch(
+          updateBulkOrderRecieptToPaidAction(selectedOrderData.orderId._id)
+        );
+      }
+
+      if (ok) {
+        await Promise.all([
+          dispatch(getAllPadiOrderListAction()),
+          dispatch(getAllUnpadiOrderListAction()),
+          dispatch(getAllPrePackagePadiOrderListAction()),
+          dispatch(getAllPrePackageUnpadiOrderListAction()),
+          dispatch(getAllPaidBulkOrderListAction()),
+          dispatch(getAllUnpaidBulkOrderListAction()),
+        ]);
+
+        setActiveFilter("paid");
+
+        setPaymentModalOpen(true);
+        setOrderReciptModalOpen(false);
+      }
+    } catch (e) {
+      console.error("Failed to mark order as paid:", e);
+    } finally {
+      setIsCompleting(false);
     }
-
-    if (ok) {
-      await Promise.all([
-        dispatch(getAllPadiOrderListAction()),
-        dispatch(getAllUnpadiOrderListAction()),
-        dispatch(getAllPrePackagePadiOrderListAction()),
-        dispatch(getAllPrePackageUnpadiOrderListAction()),
-        dispatch(getAllPaidBulkOrderListAction()),
-        dispatch(getAllUnpaidBulkOrderListAction()),
-      ]);
-
-      setActiveFilter("paid");
-
-      setPaymentModalOpen(true); 
-      setOrderReciptModalOpen(false);
-    }
-  } catch (e) {
-    console.error("Failed to mark order as paid:", e);
-  } finally {
-    setIsCompleting(false);
-  }
-};
+  };
 
 
   const shouldShowPaid = activeFilter === "all" || activeFilter === "paid";
@@ -315,10 +315,10 @@ export default function OrderManagement() {
   ]);
 
   const getPaymentFetcher = (tab) => {
-  if (tab === "self-serving") return getPaymentByIdAction;
-  if (tab === "pre-packaged") return getPrePackagePaymentByIdAction;
-  return null; // no per-order payment receipt for "premvati" in current flow
-};
+    if (tab === "self-serving") return getPaymentByIdAction;
+    if (tab === "pre-packaged") return getPrePackagePaymentByIdAction;
+    return null; // no per-order payment receipt for "premvati" in current flow
+  };
 
   const openOrderModal = async () => {
 
@@ -726,12 +726,15 @@ export default function OrderManagement() {
                       </div>
 
                       <div className="flex gap-[10px] items-center">
-                         <div
-                          className="w-[210px] rounded-[5px] flex font-Montserrat justify-center active:bg-[#006198] active:text-[#fff] cursor-pointer py-[6px] text-[#006198] border-[#006198] font-[500] border-[1.7px]"
-                          onClick={openOrderModal}
-                        >
-                          <p>View Payment Recipt</p>
-                        </div>
+                        {!paidOrderList.find((order) => order._id === selectedOrder) && (
+                          <div
+                            className="w-[210px] rounded-[5px] flex font-Montserrat justify-center active:bg-[#006198] active:text-[#fff] cursor-pointer py-[6px] text-[#006198] border-[#006198] font-[500] border-[1.7px]"
+                            onClick={openOrderModal}
+                          >
+                            <p>View Payment Receipt</p>
+                          </div>
+                        )}
+
                         <div
                           className="w-[130px] rounded-[5px] flex justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
                           onClick={openRejectModal}
@@ -1603,29 +1606,29 @@ export default function OrderManagement() {
                 </div>
 
 
-     <div className="flex px-[20px] justify-between font-Poppins items-center gap-4">
-  {/* Cancel Button */}
-  <button
-    className="w-[130px] rounded-[5px] flex items-center justify-center gap-2 py-[6px] font-[500] 
+                <div className="flex px-[20px] justify-between font-Poppins items-center gap-4">
+                  {/* Cancel Button */}
+                  <button
+                    className="w-[130px] rounded-[5px] flex items-center justify-center gap-2 py-[6px] font-[500] 
                border-[1.7px] border-[#ff4d4f] text-[#ff4d4f] bg-white
                hover:bg-[#f5f5f5] active:bg-[#ff4d4f] active:text-white transition"
-  >
-    <i className="fa-solid fa-xmark"></i>
-    <span>Cancel</span>
-  </button>
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                    <span>Cancel</span>
+                  </button>
 
-  {/* Confirm Button */}
-  <button
-  className="w-[130px] rounded-[5px] flex items-center justify-center gap-2 py-[6px] font-[500] 
+                  {/* Confirm Button */}
+                  <button
+                    className="w-[130px] rounded-[5px] flex items-center justify-center gap-2 py-[6px] font-[500] 
              border-[1.7px] border-[#006198] text-[#006198] bg-white
              hover:bg-[#f5f5f5] active:bg-[#006198] active:text-white transition disabled:opacity-60"
-  onClick={handleComplete}
-  disabled={isCompleting}
->
-  <i className="fa-solid fa-check"></i>
-  <span>{isCompleting ? "Confirming..." : "Confirm"}</span>
-</button>
-</div>
+                    onClick={handleComplete}
+                    disabled={isCompleting}
+                  >
+                    <i className="fa-solid fa-check"></i>
+                    <span>{isCompleting ? "Confirming..." : "Confirm"}</span>
+                  </button>
+                </div>
 
 
               </div>
