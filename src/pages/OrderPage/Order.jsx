@@ -368,7 +368,7 @@ export default function OrderManagement() {
 
   return (
     <>
-      <div className="w-[99%] md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto ">
+      <div className="w-[99%]  md11:w-[100%] md150:w-[99%] h-[100vh] flex flex-col items-center  relative overflow-hidden top-0 bottom-0  md11:py-[34px] md150:py-[48px] md11:px-[30px] md150:px-[40px]  mx-auto   my-auto ">
         <div className=" mx-auto flex gap-[30px] w-[100%] md11:h-[92vh] md150:h-[90vh] flex-col relative    rounded-[19px] border-[1px] border-[#F28C28]">
           <div className="flex absolute gap-[10px] left-[3%]  md11:top-[4.1%]  md150:top-[5%] items-center    md11:text-[18px] md150:text-[20px] font-[600]">
             <i
@@ -928,12 +928,21 @@ export default function OrderManagement() {
                       </div>
 
                       <div className="flex gap-[10px] items-center">
+
+                        <div
+                          className="w-[210px] rounded-[5px] flex font-Montserrat justify-center active:bg-[#006198] active:text-[#fff] cursor-pointer py-[6px] text-[#006198] border-[#006198] font-[500] border-[1.7px]"
+                          onClick={openOrderModal}
+                        >
+                          <p>View Payment Recipt</p>
+                        </div>
                         <div
                           className="w-[130px] rounded-[5px] flex justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
                           onClick={openRejectModal}
                         >
                           <p>Reject Order</p>
                         </div>
+
+
                         {prePackagePaidOrderList.find(
                           (order) => order._id === selectedOrder
                         ) ? (
@@ -1201,7 +1210,10 @@ export default function OrderManagement() {
                           >
                             <p>Reject Order</p>
                           </div>
+
+
                         )}
+
 
                         {bulkOrderPaidList.find(
                           (order) => order._id === selectedOrder
@@ -1213,14 +1225,17 @@ export default function OrderManagement() {
                             <p>View Receipt</p>
                           </div>
                         ) : (
-                          <>  </>
-                          // <div
-                          //   className={`w-[150px] font-Montserrat cursor-pointer rounded-[5px] flex justify-center py-[6px] font-[500] ${accepted ? "bg-white text-[#00984B] border border-[#00984B]" : "bg-[#00984B] text-white"
-                          //     }`}
-                          //   onClick={handlePaymentConfirm}
-                          // >
-                          //   <p>{accepted ? "Order Accepted" : "Accept Order"}</p>
-                          // </div>
+                          <>
+                            <div
+                              className={`w-[150px] font-Montserrat cursor-pointer rounded-[5px] flex justify-center py-[6px] font-[500] ${accepted ? "bg-white text-[#00984B] border border-[#00984B]" : "bg-[#00984B] text-white"
+                                }`}
+                              onClick={handlePaymentConfirm}
+                            >
+                              <p>{accepted ? "Order Accepted" : "Accept Order"}</p>
+                            </div>
+
+
+                          </>
                         )}
                       </div>
                     </div>
@@ -1415,7 +1430,7 @@ export default function OrderManagement() {
                     {selectedOrderData?.pickupLocation?.name}
                   </p>
                 </div>
-                <div className={`flex gap-[6px]  text-green-500 pr-[20px] ${ ""}`}>
+                <div className={`flex gap-[6px]  text-green-500 pr-[20px] ${""}`}>
                   <i className="fa-sharp-duotone fa-solid fa-circle-check tick text-[17px]"></i>
                   <p>
                     {selectedOrder === 0
@@ -1496,7 +1511,7 @@ export default function OrderManagement() {
         </ModalContent>
       </NextUIModal>
       <NextUIModal
-        className="md:max-w-[320px]  max-w-[333px] relative  flex justify-center !py-0 mx-auto  rounded-[10px] h-[350px]"
+        className="md:max-w-[420px]  max-w-[533px] relative  flex justify-center !py-0 mx-auto  rounded-[10px] h-[480px]"
         isOpen={isOrderReciptModalOpen}
         backdrop={"blur"}
         onOpenChange={closeOrderModal}
@@ -1516,19 +1531,44 @@ export default function OrderManagement() {
               <div className=" flex flex-col gap-[28px] w-[100%]">
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Cashier name :</p>
-                  <p className=" border-b-[1.5px]  overflow-x-auto w-[50%] border-[#000]">
+                  <p className=" border-b-[1.5px]  overflow-x-auto w-[60%] border-[#000]">
                     {paymentData?.cashierName}
                   </p>
                 </div>
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Receipt Number :</p>
-                  <p className=" border-b-[1.5px] w-[50%] border-[#000]">
+                  <p className=" border-b-[1.5px] w-[60%] border-[#000]">
                     {paymentData?.recieptNo}
                   </p>
                 </div>
-                <div className=" border-[1px] rounded-[10px] border-[#00984B] h-[140px] w-[90%] mx-auto">
+                <div className=" border-[1px] rounded-[10px] border-[#00984B] h-[210px] w-[90%] mx-auto">
                   {paymentData?.recieptImage}
                 </div>
+
+
+     <div className="flex px-[20px] justify-between font-Poppins items-center gap-4">
+  {/* Cancel Button */}
+  <button
+    className="w-[130px] rounded-[5px] flex items-center justify-center gap-2 py-[6px] font-[500] 
+               border-[1.7px] border-[#ff4d4f] text-[#ff4d4f] bg-white
+               hover:bg-[#f5f5f5] active:bg-[#ff4d4f] active:text-white transition"
+  >
+    <i className="fa-solid fa-xmark"></i>
+    <span>Cancel</span>
+  </button>
+
+  {/* Confirm Button */}
+  <button
+    className="w-[130px] rounded-[5px] flex items-center justify-center gap-2 py-[6px] font-[500] 
+               border-[1.7px] border-[#006198] text-[#006198] bg-white
+               hover:bg-[#f5f5f5] active:bg-[#006198] active:text-white transition"
+  >
+    <i className="fa-solid fa-check"></i>
+    <span>Confirm</span>
+  </button>
+</div>
+
+
               </div>
             </div>
           </ModalBody>
