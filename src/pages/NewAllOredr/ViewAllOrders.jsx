@@ -11,6 +11,10 @@ export default function ViewAllOrders() {
     const [orderFormFilter, setOrderFormFilter] = useState("all")
     const [selectedOrderId, setSelectedOrderId] = useState(null)
 
+
+     const handleSubmit =()=>{
+        navigate("/order-details")
+     }
     const [orders] = useState([
         {
             id: "1",
@@ -423,7 +427,7 @@ export default function ViewAllOrders() {
                                                         </td>
                                                         <td className="px-3 py-1 whitespace-nowrap text-center">
                                                             <button
-                                                                onClick={() => handleViewOrder(order.id)}
+                                                                onClick={handleSubmit}
                                                                 className="text-orange-600 hover:text-orange-800 transition-colors p-2 rounded-full hover:bg-orange-50"
                                                                 title="View Order Details"
                                                             >
