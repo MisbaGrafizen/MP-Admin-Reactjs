@@ -13,6 +13,8 @@ import Cookies from "js-cookie";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Feedback from "./pages/premvatiFeedback/Feedback";
 import Dashboard from "./pages/dashboard/Dashboard";
+import ViewAllOrders from "./pages/NewAllOredr/ViewAllOrders";
+import OrderDeatils from "./pages/NewAllOredr/OrderDeatils";
 
 function App() {
   const token = Cookies.get("authToken");
@@ -31,6 +33,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+                <Route
+          path="/all-orders"
+          element={
+            <ProtectedRoute>
+              <ViewAllOrders />
             </ProtectedRoute>
           }
         />
@@ -99,6 +109,14 @@ function App() {
           }
         />
   
+          <Route
+          path="/order-details"
+          element={
+            <ProtectedRoute>
+              <OrderDeatils />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
