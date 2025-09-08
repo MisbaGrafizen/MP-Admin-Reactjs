@@ -110,7 +110,7 @@ function App() {
         />
   
           <Route
-          path="/order-details"
+          path="/order-details/:id"
           element={
             <ProtectedRoute>
               <OrderDeatils />

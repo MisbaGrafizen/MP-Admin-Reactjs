@@ -9,7 +9,7 @@ import {
 } from '../../helper/axios';
 import { GET_PAID_ORDER_LIST, GET_UNPAID_ORDER_LIST, ACCEPT_BULK_ORDER, GET_PAID_BULK_ORDER, GET_BULK_CANCEL_ORDER, GET_PAID_BULK_ORDER_LIST, GET_UNPAID_BULK_ORDER_LIST, GET_PRE_PACKAGE_UNPAID_ORDER_LIST, GET_PRE_PACKAGE_PAID_ORDER_LIST, GET_PAID_ORDER, GET_PRE_PAID_ORDER,GET_CANCEL_ORDER, GET_PRE_CANCEL_ORDER } from '../type';
 
-export const getAllUnpadiOrderListAction = () => {
+export const getAllUnpaidOrderListAction = () => {
   return (dispatch) => {
       return ApiGet(`/admin/get-order/unpaid`)
     .then((res) => {
@@ -30,7 +30,7 @@ export const getAllUnpadiOrderListAction = () => {
 };
 };
 
-export const getAllPadiOrderListAction = () => {
+export const getAllPaidOrderListAction = () => {
     return (dispatch) => {
         return ApiGet(`/admin/get-pre-package-order/paid`)
       .then((res) => {

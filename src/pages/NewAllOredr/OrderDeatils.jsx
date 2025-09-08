@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Logout from '../../Components/logout/Logout';
 import Header from '../../Components/header/Header';
 import { ArrowLeft, Printer, X, AlertTriangle } from "lucide-react"
@@ -13,6 +13,7 @@ export default function OrderDeatils({ orderId, onBack }) {
     }
 
 
+
     const [showPaymentModal, setShowPaymentModal] = useState(false)
     const [showRejectModal, setShowRejectModal] = useState(false)
     const [showKOTModal, setShowKOTModal] = useState(false)
@@ -20,41 +21,16 @@ export default function OrderDeatils({ orderId, onBack }) {
     const [paymentForm, setPaymentForm] = useState({ cashierName: "", receiptNumber: "", notes: "" })
 
     // Sample order data - in real app, this would be fetched based on orderId
-    const [order] = useState({
-        id: "1",
-        orderId: "#68b94fd03e566c9522f56394",
-        orderDate: "04/09/2025",
-        orderTime: "2:07 PM",
-        deliveryDate: "11/09/2025",
-        deliveryTime: "5:30 AM",
-        totalPayment: 170.0,
-        paidAmount: 170.0,
-        pendingAmount: 0,
-        paymentStatus: "paid",
-        orderForm: "self-serving",
-        customerName: "Swamibapa",
-        deliveryAddress: "Mavdi",
-        contactNumber: "+91 9876543210",
-        items: [
-            {
-                name: "BISC. FARALI NANKHATAI",
-                quantity: 2,
-                price: 85.0,
-                totalPrice: 170.0,
-                image: food1,
-            },
-            {
-                name: "test",
-                quantity: 1,
-                price: 4.0,
-                totalPrice: 4.0,
-                image: food1,
-            },
-        ],
-        paidDate: "04/09/2025",
-        billNumber: "481",
-        orderStatus: "confirmed",
-    })
+     const { state } = useLocation();
+   const order = state?.order;
+
+   if (!order) {
+     return (
+       <div className="p-6 text-red-600 font-semibold">
+         ⚠️ No order details found. Please go back to the orders list.
+       </div>
+     );
+   }
 
     const handlePaymentSubmit = () => {
         console.log("Payment submitted:", paymentForm)
@@ -98,6 +74,8 @@ export default function OrderDeatils({ orderId, onBack }) {
                 return "bg-gray-500"
         }
     }
+
+    console.log('order', order)
 
     return (
         <>
@@ -162,18 +140,18 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                     <p className="text-sm">
                                                         <span className="font-medium text-gray-600">Order Date:</span>{" "}
                                                         <span className="text-gray-900">
-                                                            {order.orderDate} - {order.orderTime}
+                                                            {order.orderDate} 
                                                         </span>
                                                     </p>
                                                     <p className="text-sm">
                                                         <span className="font-medium text-gray-600">Delivery Date:</span>{" "}
                                                         <span className="text-gray-900">
-                                                            {order.deliveryDate} - {order.deliveryTime}
+                                                            {order.deliveryDate}
                                                         </span>
                                                     </p>
                                                     <p className="text-sm">
                                                         <span className="font-medium text-gray-600">Bill Number:</span>{" "}
-                                                        <span className="text-gray-900">{order.billNumber}</span>
+                                                        <span className="text-gray-900">{order.orderId}</span>
                                                     </p>
                                                 </div>
                                             </div>
@@ -237,7 +215,7 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                 <div className="col-span-2">Unit Price</div>
                                                 <div className="col-span-1">Total</div>
                                             </div>
-                                            {order.items.map((item, index) => (
+                                            {order.items?.map((item, index) => (
                                                 <div key={index} className="grid grid-cols-12 gap-4 p-2 border-b border-gray-200 items-center">
                                                     <div className="col-span-1 text-sm font-medium text-gray-900">{index + 1}</div>
                                                     <div className="col-span-2">
@@ -248,15 +226,15 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                         />
                                                     </div>
                                                     <div className="col-span-4">
-                                                        <h4 className="font-semibold text-gray-900">{item.name}</h4>
+                                                        <h4 className="font-semibold text-gray-900">{item.name || item.foodItem?.name}</h4>
                                                     </div>
                                                     <div className="col-span-2 text-sm text-gray-700">
                                                         <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
                                                             Qty: {item.quantity}
                                                         </span>
                                                     </div>
-                                                    <div className="col-span-2 text-sm font-semibold text-gray-900">₹{item.price.toFixed(2)}</div>
-                                                    <div className="col-span-1 text-sm font-bold text-gray-900">₹{item.totalPrice.toFixed(2)}</div>
+                                                    <div className="col-span-2 text-sm font-semibold text-gray-900">₹{item.foodItem?.price}</div>
+                                                    <div className="col-span-1 text-sm font-bold text-gray-900">₹{item.totalPrice}</div>
                                                 </div>
                                             ))}
                                         </div>

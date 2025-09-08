@@ -6,10 +6,10 @@ import {
   ModalContent,
 } from "@nextui-org/react";
 import {
-  getAllPadiOrderListAction,
+  getAllPaidOrderListAction,
   getAllPrePackagePadiOrderListAction,
   getAllPrePackageUnpadiOrderListAction,
-  getAllUnpadiOrderListAction,
+  getAllUnpaidOrderListAction,
   updateOrderRecieptToCancelAction,
   updateOrderRecieptToPaidAction,
   updatePrePackageOrderRecieptToCancelAction,
@@ -73,8 +73,8 @@ export default function OrderManagement() {
 
 
   useEffect(() => {
-    dispatch(getAllPadiOrderListAction());
-    dispatch(getAllUnpadiOrderListAction());
+    dispatch(getAllPaidOrderListAction());
+    dispatch(getAllUnpaidOrderListAction());
     dispatch(getAllPrePackagePadiOrderListAction());
     dispatch(getAllPrePackageUnpadiOrderListAction());
     dispatch(getAllPaidBulkOrderListAction());

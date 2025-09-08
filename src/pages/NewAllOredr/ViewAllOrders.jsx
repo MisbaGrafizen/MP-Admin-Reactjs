@@ -1,8 +1,19 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Logout from '../../Components/logout/Logout'
 import Header from '../../Components/header/Header'
 import { useNavigate } from 'react-router-dom';
 import { Eye, Calendar, Filter } from "lucide-react"
+import { useDispatch, useSelector } from "react-redux";
+
+import {
+    getAllUnpaidOrderListAction,
+    getAllPaidOrderListAction,
+    getAllPrePackageUnpadiOrderListAction,
+    getAllPrePackagePadiOrderListAction,
+    getAllUnpaidBulkOrderListAction,
+    getAllPaidBulkOrderListAction,
+} from "../../redux/action/orderListing";
+
 
 
 export default function ViewAllOrders() {
@@ -10,108 +21,77 @@ export default function ViewAllOrders() {
     const [statusFilter, setStatusFilter] = useState("all")
     const [orderFormFilter, setOrderFormFilter] = useState("all")
     const [selectedOrderId, setSelectedOrderId] = useState(null)
+    const [currentPage, setCurrentPage] = useState(1)
+    const rowsPerPage = 8
 
 
-     const handleSubmit =()=>{
-        navigate("/order-details")
-     }
-    const [orders] = useState([
-        {
-            id: "1",
-            orderId: "#68b94fd03e566",
-            orderDate: "04/09/2025",
-            deliveryDate: "11/09/2025",
-            totalPayment: 170.0,
-            paidAmount: 170.0,
-            pendingAmount: 0,
-            paymentStatus: "paid",
-            orderForm: "self-serving",
-            customerName: "Swamibapa",
-            deliveryAddress: "Mavdi",
-            items: [
-                {
-                    name: "BISC. FARALI NANKHATAI",
-                    quantity: 2,
-                    price: 85.0,
-                    image: "/placeholder.svg?height=60&width=60&text=Food",
-                },
-                { name: "test", quantity: 1, price: 4.0, image: "/placeholder.svg?height=60&width=60&text=Product" },
-            ],
-            paidDate: "04/09/2025",
-        },
-        {
-            id: "2",
-            orderId: "#68b961cd",
-            orderDate: "04/09/2025",
-            deliveryDate: "15/09/2025",
-            totalPayment: 89.0,
-            paidAmount: 0,
-            pendingAmount: 89.0,
-            paymentStatus: "unpaid",
-            orderForm: "pre-packaged",
-            customerName: "Swamibapa",
-            deliveryAddress: "Mavdi",
-            items: [
-                {
-                    name: "BISC. FARALI NANKHATAI",
-                    quantity: 1,
-                    price: 85.0,
-                    image: "/placeholder.svg?height=60&width=60&text=Food",
-                },
-                { name: "test", quantity: 1, price: 4.0, image: "/placeholder.svg?height=60&width=60&text=Product" },
-            ],
-        },
-        {
-            id: "3",
-            orderId: "#68b962573e5",
-            orderDate: "04/09/2025",
-            deliveryDate: "04/09/2025",
-            totalPayment: 125.5,
-            paidAmount: 50.0,
-            pendingAmount: 75.5,
-            paymentStatus: "partial",
-            orderForm: "premvati",
-            customerName: "Ravi Kumar",
-            deliveryAddress: "Pramukhvatika",
-            items: [
-                { name: "Special Thali", quantity: 1, price: 125.5, image: "/placeholder.svg?height=60&width=60&text=Thali" },
-            ],
-            paidDate: "04/09/2025",
-        },
-        {
-            id: "4",
-            orderId: "#68b963453",
-            orderDate: "05/09/2025",
-            deliveryDate: "10/09/2025",
-            totalPayment: 250.0,
-            paidAmount: 100.0,
-            pendingAmount: 150.0,
-            paymentStatus: "partial",
-            orderForm: "self-serving",
-            customerName: "Amit Patel",
-            deliveryAddress: "Rajkot",
-            items: [
-                { name: "Gujarati Thali", quantity: 2, price: 125.0, image: "/placeholder.svg?height=60&width=60&text=Thali" },
-            ],
-            paidDate: "05/09/2025",
-        },
-        {
-            id: "5",
-            orderId: "#68b964563e566",
-            orderDate: "06/09/2025",
-            deliveryDate: "12/09/2025",
-            totalPayment: 180.0,
-            paidAmount: 0,
-            pendingAmount: 180.0,
-            paymentStatus: "unpaid",
-            orderForm: "pre-packaged",
-            customerName: "Priya Shah",
-            deliveryAddress: "Ahmedabad",
-            items: [
-                { name: "Snack Box", quantity: 3, price: 60.0, image: "/placeholder.svg?height=60&width=60&text=Snacks" },
-            ],
-        },
-    ])
+const handleSubmit = (order) => {
+  navigate(`/order-details/${order.id}`, { state: { order } });
+};
+
+
+    const dispatch = useDispatch();
+    const {
+        getPaidOrderList,
+        getUnpaidOrderList,
+        getPrePackagePaidOrderList,
+        getPrePackageUnpaidOrderList,
+        getBulkPaidOrderList,
+        getBulkUnpaidOrderList,
+    } = useSelector((state) => state.orderListingState);
+
+    const orders = useMemo(() => {
+  const normalize = (list, form) =>
+    (list || []).map((o) => ({
+      id: o._id,
+      orderId: o?.orderId?._id || o?._id,
+      orderDate: o?.orderId?.createdAt
+        ? new Date(o.orderId.createdAt).toLocaleDateString("en-GB")
+        : "-",
+      deliveryDate: o?.orderDate?.pickupDate
+        ? new Date(o.orderDate.pickupDate).toLocaleDateString("en-GB")
+        : "-",
+      totalPayment: o?.orderId?.totalAmount || 0,
+      paidAmount: o?.paidAmount || 0,
+      pendingAmount: (o?.orderId?.totalAmount || 0) - (o?.paidAmount || 0),
+      paymentStatus: o?.orderType || "unpaid", // "paid", "unpaid", "pending"
+      orderForm: form,
+      customerName: o?.orderId?.userId?.name || "Unknown",
+      deliveryAddress: o?.pickupLocation?.name || "-",
+      items: o?.orderId?.items || [],
+      paidDate: o?.updatedAt
+        ? new Date(o.updatedAt).toLocaleDateString("en-GB")
+        : null,
+    }));
+
+  return [
+    ...normalize(getPaidOrderList, "self-serving"),
+    ...normalize(getUnpaidOrderList, "self-serving"),
+    ...normalize(getPrePackagePaidOrderList, "pre-packaged"),
+    ...normalize(getPrePackageUnpaidOrderList, "pre-packaged"),
+    ...normalize(getBulkPaidOrderList, "premvati"),
+    ...normalize(getBulkUnpaidOrderList, "premvati"),
+  ];
+}, [
+  getPaidOrderList,
+  getUnpaidOrderList,
+  getPrePackagePaidOrderList,
+  getPrePackageUnpaidOrderList,
+  getBulkPaidOrderList,
+  getBulkUnpaidOrderList,
+]);
+
+
+    useEffect(() => {
+        dispatch(getAllPaidOrderListAction());
+        dispatch(getAllUnpaidOrderListAction());
+        dispatch(getAllPrePackagePadiOrderListAction());
+        dispatch(getAllPrePackageUnpadiOrderListAction());
+        dispatch(getAllPaidBulkOrderListAction());
+        dispatch(getAllUnpaidBulkOrderListAction());
+    }, [dispatch]);
+
+
 
     const filteredOrders = useMemo(() => {
         let filtered = orders
@@ -145,6 +125,8 @@ export default function ViewAllOrders() {
 
         return filtered
     }, [orders, statusFilter, orderFormFilter, dateRange])
+
+    console.log('orders', orders)
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -396,9 +378,9 @@ export default function ViewAllOrders() {
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200">
-                                                {filteredOrders.map((order, index) => (
+                                                {filteredOrders.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map((order, index) => (
                                                     <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                                                        <td className="px-3 py-1 whitespace-nowrap text-sm font-medium text-gray-900">{index + 1}</td>
+                                                        <td className="px-3 py-1 whitespace-nowrap text-sm font-medium text-gray-900">{(currentPage - 1) * rowsPerPage + index + 1}</td>
                                                         <td className="px-3 py-1 whitespace-nowrap text-[12px] text-gray-900 font-mono">{order.orderId}</td>
                                                         <td className="px-3 py-1 whitespace-nowrap">
                                                             <div>
@@ -427,7 +409,7 @@ export default function ViewAllOrders() {
                                                         </td>
                                                         <td className="px-3 py-1 whitespace-nowrap text-center">
                                                             <button
-                                                                onClick={handleSubmit}
+                                                                 onClick={() => handleSubmit(order)}  
                                                                 className="text-orange-600 hover:text-orange-800 transition-colors p-2 rounded-full hover:bg-orange-50"
                                                                 title="View Order Details"
                                                             >
@@ -458,23 +440,30 @@ export default function ViewAllOrders() {
                                 {filteredOrders.length > 0 && (
                                     <div className="flex items-center justify-between mt-6">
                                         <div className="text-sm text-gray-700">
-                                            Showing <span className="font-medium">1</span> to{" "}
-                                            <span className="font-medium">{filteredOrders.length}</span> of{" "}
+                                            Showing <span className="font-medium"> {(currentPage - 1) * rowsPerPage + 1}</span> to{" "}
+                                            <span className="font-medium">{Math.min(currentPage * rowsPerPage, filteredOrders.length)}</span> of{" "}
                                             <span className="font-medium">{filteredOrders.length}</span> results
                                         </div>
                                         <div className="flex space-x-2">
                                             <button
                                                 className="px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
-                                                disabled
+                                                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                                                disabled={currentPage === 1}
                                             >
-                                                Previous
+                                  <i className="fa-solid fa-chevron-left"></i>
                                             </button>
-                                            <button className="px-3 py-2 text-sm bg-orange-500 text-white rounded-lg">1</button>
+                                            <button className="px-3 py-2 min-w-[40px] text-sm bg-orange-500 text-white rounded-lg">   {currentPage}</button>
                                             <button
                                                 className="px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
-                                                disabled
+                                                onClick={() =>
+                                                    setCurrentPage((p) =>
+                                                        p < Math.ceil(filteredOrders.length / rowsPerPage) ? p + 1 : p
+                                                    )
+                                                }
+                                                disabled={currentPage === Math.ceil(filteredOrders.length / rowsPerPage)}
                                             >
-                                                Next
+                                   <i className="fa-solid fa-chevron-right"></i>
+
                                             </button>
                                         </div>
                                     </div>
