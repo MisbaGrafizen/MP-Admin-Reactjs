@@ -1,9 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import Logout from '../../Components/logout/Logout';
 import Header from '../../Components/header/Header';
 import { ArrowLeft, Printer, X, AlertTriangle } from "lucide-react"
 import food1 from "../../../public/img/Foodsection/image 5.png"
+import { useDispatch, useSelector } from 'react-redux';
+import { getPaperUtilityClass } from '@mui/material';
+import { getPaymentByIdAction, getPrePackagePaymentByIdAction } from '../../redux/action/payment';
+import {
+    updateOrderRecieptToPaidAction,
+    updatePrePackageOrderRecieptToPaidAction,
+    updateBulkOrderRecieptToPaidAction,
+     updateOrderRecieptToCancelAction,
+  updatePrePackageOrderRecieptToCancelAction,
+  updateBulkOrderRecieptToCancelAction
+} from "../../redux/action/orderListing";
+import { toast } from 'react-toastify';
+
 
 export default function OrderDeatils({ orderId, onBack }) {
     const navigate = useNavigate();
@@ -18,32 +31,91 @@ export default function OrderDeatils({ orderId, onBack }) {
     const [showRejectModal, setShowRejectModal] = useState(false)
     const [showKOTModal, setShowKOTModal] = useState(false)
     const [showPOTModal, setShowPOTModal] = useState(false)
-    const [paymentForm, setPaymentForm] = useState({ cashierName: "", receiptNumber: "", notes: "" })
+    const [paymentForm, setPaymentForm] = useState({ cashierName: "", recieptNo: "", notes: "" })
 
     // Sample order data - in real app, this would be fetched based on orderId
-     const { state } = useLocation();
-   const order = state?.order;
+    const { state } = useLocation();
+    const order = state?.order;
 
-   if (!order) {
-     return (
-       <div className="p-6 text-red-600 font-semibold">
-         ⚠️ No order details found. Please go back to the orders list.
-       </div>
-     );
-   }
+    const dispatch = useDispatch();
+    const { getPayment, getPrePackagePayment, bulkPayment } = useSelector(
+        (state) => state.paymentState
+    );
+
+    // Load payment when modal opens
+    useEffect(() => {
+        if (showPaymentModal && order?.id) {
+            if (order.orderForm === "self-serving") {
+                dispatch(getPaymentByIdAction(order.id));
+            } else if (order.orderForm === "pre-packaged") {
+                dispatch(getPrePackagePaymentByIdAction(order.id));
+            } else if (order.orderForm === "premvati") {
+                dispatch(getBulkPaymentByIdAction(order.id));
+            }
+        }
+    }, [showPaymentModal, order?.orderId]);
+
+    // Select correct payment data
+    const paymentData =
+        order?.orderForm === "self-serving"
+            ? getPayment
+            : order?.orderForm === "pre-packaged"
+                ? getPrePackagePayment
+                : bulkPayment;
+
+    console.log('paymentData', paymentData)
+
+
+    if (!order) {
+        return (
+            <div className="p-6 text-red-600 font-semibold">
+                ⚠️ No order details found. Please go back to the orders list.
+            </div>
+        );
+    }
 
     const handlePaymentSubmit = () => {
-        console.log("Payment submitted:", paymentForm)
-        setShowPaymentModal(false)
-        setPaymentForm({ cashierName: "", receiptNumber: "", notes: "" })
-    }
+        if (!order?.orderId) return;
+
+        let action;
+
+        if (order.orderForm === "self-serving") {
+            action = updateOrderRecieptToPaidAction;
+        } else if (order.orderForm === "pre-packaged") {
+            action = updatePrePackageOrderRecieptToPaidAction;
+        } else if (order.orderForm === "premvati") {
+            action = updateBulkOrderRecieptToPaidAction;
+        }
+
+        if (action) {
+            dispatch(action(order.orderId))
+                .then(() => {
+                    toast.success("Order marked as Paid ✅");
+                    setShowPaymentModal(false);
+                })
+                .catch(() => {
+                    toast.error("Failed to update payment ❌");
+                });
+        }
+    };
+
 
     const handleRejectOrder = () => {
-        console.log("Order rejected:", order.orderId)
-        setShowRejectModal(false)
-        // In real app, update order status and navigate back
-        if (onBack) onBack()
-    }
+  if (!order?.orderId) return;
+
+  if (order.orderForm === "self-serving") {
+    dispatch(updateOrderRecieptToCancelAction(order.orderId));
+  } else if (order.orderForm === "pre-packaged") {
+    dispatch(updatePrePackageOrderRecieptToCancelAction(order.orderId));
+  } else if (order.orderForm === "premvati") {
+    dispatch(updateBulkOrderRecieptToCancelAction(order.orderId));
+  }
+
+  setShowRejectModal(false);
+
+  // Optionally navigate back or refresh
+  if (onBack) onBack();
+};
 
     const printReceipt = () => {
         window.print()
@@ -140,7 +212,7 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                     <p className="text-sm">
                                                         <span className="font-medium text-gray-600">Order Date:</span>{" "}
                                                         <span className="text-gray-900">
-                                                            {order.orderDate} 
+                                                            {order.orderDate}
                                                         </span>
                                                     </p>
                                                     <p className="text-sm">
@@ -149,10 +221,10 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                             {order.deliveryDate}
                                                         </span>
                                                     </p>
-                                                    <p className="text-sm">
+                                                    {/* <p className="text-sm">
                                                         <span className="font-medium text-gray-600">Bill Number:</span>{" "}
                                                         <span className="text-gray-900">{order.orderId}</span>
-                                                    </p>
+                                                    </p> */}
                                                 </div>
                                             </div>
 
@@ -251,12 +323,17 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                 </div>
                                                 <div className="text-center p-4 bg-white rounded-lg shadow-sm">
                                                     <p className="text-sm text-gray-600 mb-1">Paid Amount</p>
-                                                    <p className="text-2xl font-bold text-green-600">₹{order.paidAmount.toFixed(2)}</p>
+                                                    <p className="text-2xl font-bold text-green-600">₹
+                                                        {order.paymentStatus === "paid"
+                                                            ? order.totalPayment?.toFixed(2)
+                                                            : order.paymentStatus === "pending"
+                                                                ? order.paidAmount?.toFixed(2)
+                                                                : 0}</p>
                                                     {order.paidDate && <p className="text-xs text-gray-500 mt-1">Paid on {order.paidDate}</p>}
                                                 </div>
                                                 <div className="text-center p-4 bg-white rounded-lg shadow-sm">
                                                     <p className="text-sm text-gray-600 mb-1">Pending Amount</p>
-                                                    <p className="text-2xl font-bold text-red-600">₹{order.pendingAmount.toFixed(2)}</p>
+                                                    <p className="text-2xl font-bold text-red-600">₹{order.pendingAmount.toFixed(2) || 0}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -312,8 +389,8 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                 <label className="block text-sm font-semibold mb-2 text-gray-700">Cashier name :</label>
                                                 <input
                                                     type="text"
-                                                    value={paymentForm.cashierName}
-                                                    onChange={(e) => setPaymentForm({ ...paymentForm, cashierName: e.target.value })}
+                                                    value={paymentData?.cashierName}
+                                                    // onChange={(e) => setPaymentForm({ ...paymentForm, cashierName: e.target.value })}
                                                     className="w-full px-3 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none transition-colors"
                                                     placeholder="Enter cashier name"
                                                 />
@@ -323,38 +400,51 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                 <label className="block text-sm font-semibold mb-2 text-gray-700">Receipt Number :</label>
                                                 <input
                                                     type="text"
-                                                    value={paymentForm.receiptNumber}
-                                                    onChange={(e) => setPaymentForm({ ...paymentForm, receiptNumber: e.target.value })}
+                                                    value={paymentData?.recieptNo}
+                                                    // onChange={(e) => setPaymentForm({ ...paymentForm, recieptNo: e.target.value })}
                                                     className="w-full px-3 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none transition-colors"
                                                     placeholder="Enter receipt number"
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-sm font-semibold mb-2 text-gray-700">Notes :</label>
-                                                <textarea
-                                                    value={paymentForm.notes}
-                                                    onChange={(e) => setPaymentForm({ ...paymentForm, notes: e.target.value })}
-                                                    className="w-full px-3 py-2 border-2 border-green-300 rounded-lg focus:border-green-500 outline-none h-32 resize-none transition-colors"
-                                                    placeholder="Additional notes..."
-                                                />
+                                                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                                                    Receipt Image :
+                                                </label>
+                                                {paymentForm.receiptImage ? (
+                                                    <img
+                                                        src={paymentForm.receiptImage}
+                                                        alt="Receipt"
+                                                        className="w-full h-48 object-contain border-2 border-green-300 rounded-lg"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-48 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+                                                        <span className="text-gray-400 text-sm"></span>
+                                                    </div>
+                                                )}
                                             </div>
+
+
                                         </div>
 
-                                        <div className="flex space-x-4 mt-6">
-                                            <button
-                                                onClick={() => setShowPaymentModal(false)}
-                                                className="flex-1 px-4 py-2 border-2 border-red-300 text-red-700 rounded-lg font-semibold hover:bg-red-50 transition-colors"
-                                            >
-                                                ✗ Cancel
-                                            </button>
-                                            <button
-                                                onClick={handlePaymentSubmit}
-                                                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                                            >
-                                                ✓ Confirm
-                                            </button>
-                                        </div>
+                                        {/* Show buttons only if NOT already paid */}
+                                        {order.paymentStatus !== "paid" && (
+                                            <div className="flex space-x-4 mt-6">
+                                                <button
+                                                    onClick={() => setShowPaymentModal(false)}
+                                                    className="flex-1 px-4 py-2 border-2 border-red-300 text-red-700 rounded-lg font-semibold hover:bg-red-50 transition-colors"
+                                                >
+                                                    ✗ Cancel
+                                                </button>
+                                                <button
+                                                    onClick={handlePaymentSubmit}
+                                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                                                >
+                                                    ✓ Confirm
+                                                </button>
+                                            </div>
+                                        )}
+
                                     </div>
                                 </div>
                             )}
@@ -402,7 +492,7 @@ export default function OrderDeatils({ orderId, onBack }) {
                                             <div className="mb-4">
                                                 <p className="font-semibold">Bill No - {order.billNumber}</p>
                                                 <p className="text-sm text-gray-600">
-                                                    Order on - {order.orderDate} - {order.orderTime}
+                                                    Order on - {order.orderDate}
                                                 </p>
                                             </div>
 
@@ -415,7 +505,7 @@ export default function OrderDeatils({ orderId, onBack }) {
                                             {order.items.map((item, index) => (
                                                 <div key={index} className="grid grid-cols-3 gap-4 py-2 border-b border-gray-200 text-sm">
                                                     <span className="font-medium">{String(index + 1).padStart(2, "0")}</span>
-                                                    <span>{item.name}</span>
+                                                    <span>{item.foodItem?.name}</span>
                                                     <span>{item.quantity}</span>
                                                 </div>
                                             ))}
@@ -452,32 +542,49 @@ export default function OrderDeatils({ orderId, onBack }) {
                                             <div className="mb-4">
                                                 <p className="font-semibold">Bill No - {order.billNumber}</p>
                                                 <p className="text-sm text-gray-600">
-                                                    Order on - {order.orderDate} - {order.orderTime}
+                                                    Order on - {order.orderDate}
                                                 </p>
                                             </div>
 
+                                            {/* Table Header */}
                                             <div className="bg-green-600 text-white p-2 grid grid-cols-3 gap-4 mb-4 rounded">
                                                 <span className="font-semibold text-sm">No.</span>
                                                 <span className="font-semibold text-sm">Items</span>
                                                 <span className="font-semibold text-sm">Quantity</span>
                                             </div>
 
-                                            {order.items.map((item, index) => (
-                                                <div key={index} className="grid grid-cols-3 gap-4 py-2 border-b border-gray-200 text-sm">
-                                                    <span className="font-medium">{String(index + 1).padStart(2, "0")}</span>
-                                                    <span>{item.name}</span>
+                                            {/* Serving Methods Only */}
+                                            {order.orderId?.servingMethodId?.map((item, index) => (
+                                                <div
+                                                    key={`serving-${index}`}
+                                                    className="grid grid-cols-3 gap-4 py-2 border-b border-gray-200 text-sm"
+                                                >
+                                                    <span className="font-medium">
+                                                        {String(index + 1).padStart(2, "0")}
+                                                    </span>
+                                                    <span>{item.servingMethod?.name}</span>
                                                     <span>{item.quantity}</span>
                                                 </div>
                                             ))}
 
+                                            {/* Totals */}
                                             <div className="border-t-2 border-dashed border-gray-400 mt-4 pt-2">
                                                 <div className="flex justify-between font-semibold text-sm">
-                                                    <span>Items : {order.items.length}</span>
-                                                    <span>Qty : {order.items.reduce((sum, item) => sum + item.quantity, 0)}</span>
+                                                    <span>
+                                                        Items : {order.orderId?.servingMethodId?.length || 0}
+                                                    </span>
+                                                    <span>
+                                                        Qty :{" "}
+                                                        {order.orderId?.servingMethodId?.reduce(
+                                                            (sum, item) => sum + item.quantity,
+                                                            0
+                                                        ) || 0}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
 
+                                        {/* Print Button */}
                                         <button
                                             onClick={() => setShowPOTModal(false)}
                                             className="w-full bg-blue-600 text-white p-4 font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center"
@@ -488,6 +595,7 @@ export default function OrderDeatils({ orderId, onBack }) {
                                     </div>
                                 </div>
                             )}
+
                         </div>
                     </div>
                 </div>
