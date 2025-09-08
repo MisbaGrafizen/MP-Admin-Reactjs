@@ -25,6 +25,20 @@ export default function Feedback() {
   const itemsPerPage = 10;
   const [value, setValue] = useState(dayjs());
   const totalPages = Math.ceil(displayedData?.length / itemsPerPage);
+  const [loading, setLoading] = useState(false);
+
+  const parseDateSafe = (v) => {
+    const d = new Date(v);
+    return isNaN(d.getTime()) ? 0 : d.getTime();
+  };
+
+  const sortByNewest = (arr = []) =>
+    [...arr].sort((a, b) => {
+      const ad = parseDateSafe(a?.createdAt ?? a?.date);
+      const bd = parseDateSafe(b?.createdAt ?? b?.date);
+      return bd - ad; // newest first
+    });
+
 
 
   const goToPage = (pageNumber) => {
@@ -75,20 +89,29 @@ export default function Feedback() {
     "Mavdi": "/mavdi/feedbacks",
     "All": "/all-feedbacks"
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const apiUrl = apiUrlMapping[activeButton];
         const response = await ApiGet(`/api/v1${apiUrl}`);
         const fetchedData = activeButton === "All" ? response.data : response.feedbacks;
-        setDisplayedData(fetchedData);
-        setMainData(fetchedData);
+
+        const sorted = sortByNewest(fetchedData);
+
+        setDisplayedData(sorted);
+        setMainData(sorted);
+        setCurrentPage(1);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
     if (activeButton) fetchData();
   }, [activeButton]);
+
 
   const onChange = (date, dateString) => {
     console.log(date, dateString);
@@ -129,24 +152,24 @@ export default function Feedback() {
       let filteredData = [...mainData];
 
       if (filterActiveButton === "today") {
-        // Show only today's data
         const today = new Date().toISOString().split("T")[0];
         filteredData = filteredData.filter(
-          (item) => item.date.split("T")[0] === today
+          (item) => (item.createdAt ?? item.date)?.split("T")[0] === today
         );
       } else if (filterActiveButton === "till_date") {
-        // Show ALL data (or all data up to today's date, depending on your requirement)
-        // For simply "all data":
-        filteredData = [...mainData];
+        // keep all (already sorted)
       } else if (filterActiveButton === "select_date" && value) {
-        // Show data for the date selected in DatePicker
-        const selectedDate = value.toISOString().split("T")[0];
+        const selectedDate = dayjs(value).format("YYYY-MM-DD");
         filteredData = filteredData.filter(
-          (item) => item.date.split("T")[0] === selectedDate
+          (item) => (item.createdAt ?? item.date)?.split("T")[0] === selectedDate
         );
       }
 
+      // (optional) ensure order if anything mutated externally
+      // filteredData = sortByNewest(filteredData);
+
       setDisplayedData(filteredData);
+      setCurrentPage(1); // optional: reset page when filter changes
     }
   }, [filterActiveButton, value, mainData]);
 
@@ -298,6 +321,34 @@ export default function Feedback() {
                     </div>
                   </div>
                   <div className="w-full h-full mx-auto rounded-[10px] border border-black overflow-x-hidden relative">
+                    {loading && (
+                      <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+                        <div className="flex flex-col items-center gap-3">
+                          {/* Spinner */}
+                          <svg
+                            className="animate-spin h-10 w-10"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="#f28c28"   
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="#f28c28"     
+                              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                            ></path>
+                          </svg>
+                        </div>
+                      </div>
+                    )}
+
+
                     <div className="box-border w-full font-Poppins">
                       <div className="sticky top-0 flex bg-[#F28C28] border-black w-full">
                         <div className="flex !font-Poppins  justify-center text-center py-[6px] items-center border-r border-b border-black gap-[3px] px-3 min-w-[4%] max-w-[4%]">

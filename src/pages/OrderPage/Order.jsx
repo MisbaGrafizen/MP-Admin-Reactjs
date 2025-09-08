@@ -85,6 +85,14 @@ export default function OrderManagement() {
     setSelectedOrder(orderId);
   };
 
+  // pick which payment to show in the receipt modal
+const pay = useMemo(() => {
+  if (activeTab === "self-serving") return payment;
+  if (activeTab === "pre-packaged") return prePayment;
+  return null; // no payment doc for "premvati"
+}, [activeTab, payment, prePayment]);
+
+
 
   const selectedOrderData = useMemo(() => {
     const isArray = (list) => Array.isArray(list) ? list : [];
@@ -989,12 +997,15 @@ export default function OrderManagement() {
 
                       <div className="flex gap-[10px] items-center">
 
-                        <div
-                          className="w-[210px] rounded-[5px] flex font-Montserrat justify-center active:bg-[#006198] active:text-[#fff] cursor-pointer py-[6px] text-[#006198] border-[#006198] font-[500] border-[1.7px]"
-                          onClick={openOrderModal}
-                        >
-                          <p>View Payment Recipt</p>
-                        </div>
+                        {!prePackagePaidOrderList.find((order) => order._id === selectedOrder) && (
+                          <div
+                            className="w-[210px] rounded-[5px] flex font-Montserrat justify-center active:bg-[#006198] active:text-[#fff] cursor-pointer py-[6px] text-[#006198] border-[#006198] font-[500] border-[1.7px]"
+                            onClick={openOrderModal}
+                          >
+                            <p>View Payment Receipt</p>
+                          </div>
+                        )}
+
                         <div
                           className="w-[130px] rounded-[5px] flex justify-center active:bg-[#FF0606] active:text-[#fff] cursor-pointer py-[6px] text-[#FF0606] border-[#FF0606] font-[500] border-[1.7px]"
                           onClick={openRejectModal}
@@ -1592,17 +1603,17 @@ export default function OrderManagement() {
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Cashier name :</p>
                   <p className=" border-b-[1.5px]  overflow-x-auto w-[60%] border-[#000]">
-                    {payment?.cashierName}
+                    {pay?.cashierName}
                   </p>
                 </div>
                 <div className=" w-[95%] px-[20px] mx-auto flex justify-between ">
                   <p className=" font-[600]">Receipt Number :</p>
                   <p className=" border-b-[1.5px] w-[60%] border-[#000]">
-                    {payment?.recieptNo}
+                    {pay?.recieptNo}
                   </p>
                 </div>
                 <div className=" border-[1px] rounded-[10px] border-[#00984B] h-[210px] w-[90%] mx-auto">
-                  {payment?.recieptImage}
+                  {pay?.recieptImage}
                 </div>
 
 
