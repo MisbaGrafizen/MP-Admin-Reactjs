@@ -34,7 +34,7 @@ export default function Header() {
             )}
           </div>
 
-          <Link to="/orders-management">
+          <Link to="/all-orders">
             <div className="relative flex items-center">
               <img className="w-[33px] cursor-pointer" src={orders} alt="" />
               {currentPath === "/orders-management" && (
