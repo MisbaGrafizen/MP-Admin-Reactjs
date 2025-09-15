@@ -11,9 +11,11 @@ import {
     updateOrderRecieptToPaidAction,
     updatePrePackageOrderRecieptToPaidAction,
     updateBulkOrderRecieptToPaidAction,
-     updateOrderRecieptToCancelAction,
-  updatePrePackageOrderRecieptToCancelAction,
-  updateBulkOrderRecieptToCancelAction
+    updateOrderRecieptToCancelAction,
+    updatePrePackageOrderRecieptToCancelAction,
+    updateBulkOrderRecieptToCancelAction,
+    updateOrderRecieptToPendingAction,
+    updatePrePackageOrderRecieptToPendingAction
 } from "../../redux/action/orderListing";
 import { toast } from 'react-toastify';
 
@@ -31,7 +33,7 @@ export default function OrderDeatils({ orderId, onBack }) {
     const [showRejectModal, setShowRejectModal] = useState(false)
     const [showKOTModal, setShowKOTModal] = useState(false)
     const [showPOTModal, setShowPOTModal] = useState(false)
-    const [paymentForm, setPaymentForm] = useState({ cashierName: "", recieptNo: "", notes: "" })
+    const [paymentForm, setPaymentForm] = useState({ cashierName: "", recieptNo: "", amount: 0, receiptImage: "" })
 
     // Sample order data - in real app, this would be fetched based on orderId
     const { state } = useLocation();
@@ -63,6 +65,7 @@ export default function OrderDeatils({ orderId, onBack }) {
                 ? getPrePackagePayment
                 : bulkPayment;
 
+
     console.log('paymentData', paymentData)
 
 
@@ -73,49 +76,82 @@ export default function OrderDeatils({ orderId, onBack }) {
             </div>
         );
     }
+const handlePaymentSubmit = () => {
+  const orderId =
+    order?.orderId?._id || order?.orderId || order?._id;
+  if (!orderId) return;
 
-    const handlePaymentSubmit = () => {
-        if (!order?.orderId) return;
+  const paidAmount = Number(paymentData?.amount || 0);
+  const totalAmount = Number(order.totalPayment || 0);
+  const pendingAmount = Math.max(totalAmount - paidAmount, 0);
 
-        let action;
+  const isFullPayment = paidAmount === totalAmount;
+  const statusKey = isFullPayment ? "paid" : "pending";
 
-        if (order.orderForm === "self-serving") {
-            action = updateOrderRecieptToPaidAction;
-        } else if (order.orderForm === "pre-packaged") {
-            action = updatePrePackageOrderRecieptToPaidAction;
-        } else if (order.orderForm === "premvati") {
-            action = updateBulkOrderRecieptToPaidAction;
-        }
+  const data = {
+    paidAmount,
+    pendingAmount,
+    orderType: statusKey, // 👈 force frontend status
+  };
 
-        if (action) {
-            dispatch(action(order.orderId))
-                .then(() => {
-                    toast.success("Order marked as Paid ✅");
-                    setShowPaymentModal(false);
-                })
-                .catch(() => {
-                    toast.error("Failed to update payment ❌");
-                });
-        }
-    };
+  console.log('data', data)
+
+  const map = {
+    "self-serving": {
+      paid: updateOrderRecieptToPaidAction,
+      pending: updateOrderRecieptToPendingAction,
+    },
+    "pre-packaged": {
+      paid: updatePrePackageOrderRecieptToPaidAction,
+      pending: updatePrePackageOrderRecieptToPendingAction,
+    },
+    "premvati": {
+      paid: updateBulkOrderRecieptToPaidAction,
+    },
+  };
+
+  const formKey = order?.orderForm;
+  const thunkCreator = map[formKey]?.[statusKey];
+  if (!thunkCreator) return;
+
+  const dispatchArgs = statusKey === "pending" ? [orderId, data] : [orderId];
+
+  dispatch(thunkCreator(...dispatchArgs))
+    .then(() => {
+      toast.success(
+        isFullPayment ? "Order marked as Paid ✅" : "Order marked as Pending ⏳"
+      );
+
+      // 👇 force local UI update if backend doesn’t send status
+      order.paymentStatus = statusKey;
+      order.paidAmount = paidAmount;
+      order.pendingAmount = pendingAmount;
+
+      setShowPaymentModal(false);
+    })
+    .catch(() => {
+      toast.error("Failed to update payment ❌");
+    });
+};
+
 
 
     const handleRejectOrder = () => {
-  if (!order?.orderId) return;
+        if (!order?.orderId) return;
 
-  if (order.orderForm === "self-serving") {
-    dispatch(updateOrderRecieptToCancelAction(order.orderId));
-  } else if (order.orderForm === "pre-packaged") {
-    dispatch(updatePrePackageOrderRecieptToCancelAction(order.orderId));
-  } else if (order.orderForm === "premvati") {
-    dispatch(updateBulkOrderRecieptToCancelAction(order.orderId));
-  }
+        if (order.orderForm === "self-serving") {
+            dispatch(updateOrderRecieptToCancelAction(order.orderId));
+        } else if (order.orderForm === "pre-packaged") {
+            dispatch(updatePrePackageOrderRecieptToCancelAction(order.orderId));
+        } else if (order.orderForm === "premvati") {
+            dispatch(updateBulkOrderRecieptToCancelAction(order.orderId));
+        }
 
-  setShowRejectModal(false);
+        setShowRejectModal(false);
 
-  // Optionally navigate back or refresh
-  if (onBack) onBack();
-};
+        // Optionally navigate back or refresh
+        if (onBack) onBack();
+    };
 
     const printReceipt = () => {
         window.print()
@@ -127,7 +163,7 @@ export default function OrderDeatils({ orderId, onBack }) {
                 return "bg-green-100 text-green-800 border-green-200"
             case "unpaid":
                 return "bg-red-100 text-red-800 border-red-200"
-            case "partial":
+            case "pending":
                 return "bg-yellow-100 text-yellow-800 border-yellow-200"
             default:
                 return "bg-gray-100 text-gray-800 border-gray-200"
@@ -258,7 +294,7 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                         >
                                                             {order.paymentStatus === "paid" && "✓ Paid"}
                                                             {order.paymentStatus === "unpaid" && "✗ Unpaid"}
-                                                            {order.paymentStatus === "partial" && "⚠ Partial"}
+                                                            {order.paymentStatus === "pending" && "⚠ pending"}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -323,18 +359,18 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                 </div>
                                                 <div className="text-center p-4 bg-white rounded-lg shadow-sm">
                                                     <p className="text-sm text-gray-600 mb-1">Paid Amount</p>
-                                                    <p className="text-2xl font-bold text-green-600">₹
-                                                        {order.paymentStatus === "paid"
-                                                            ? order.totalPayment?.toFixed(2)
-                                                            : order.paymentStatus === "pending"
-                                                                ? order.paidAmount?.toFixed(2)
-                                                                : 0}</p>
-                                                    {order.paidDate && <p className="text-xs text-gray-500 mt-1">Paid on {order.paidDate}</p>}
+                                                    <p className="text-2xl font-bold text-green-600">
+                                                        ₹{order.paidAmount?.toFixed(2) || 0}
+                                                    </p>
                                                 </div>
+
                                                 <div className="text-center p-4 bg-white rounded-lg shadow-sm">
                                                     <p className="text-sm text-gray-600 mb-1">Pending Amount</p>
-                                                    <p className="text-2xl font-bold text-red-600">₹{order.pendingAmount.toFixed(2) || 0}</p>
+                                                    <p className="text-2xl font-bold text-red-600">
+                                                        ₹{order.pendingAmount?.toFixed(2) || 0}
+                                                    </p>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -392,7 +428,7 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                     value={paymentData?.cashierName}
                                                     // onChange={(e) => setPaymentForm({ ...paymentForm, cashierName: e.target.value })}
                                                     className="w-full px-3 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none transition-colors"
-                                                    placeholder="Enter cashier name"
+                                                // placeholder="Enter cashier name"
                                                 />
                                             </div>
 
@@ -403,17 +439,28 @@ export default function OrderDeatils({ orderId, onBack }) {
                                                     value={paymentData?.recieptNo}
                                                     // onChange={(e) => setPaymentForm({ ...paymentForm, recieptNo: e.target.value })}
                                                     className="w-full px-3 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none transition-colors"
-                                                    placeholder="Enter receipt number"
+                                                // placeholder="Enter receipt number"
                                                 />
                                             </div>
+                                            <div>
+                                                <label className="block text-sm font-semibold mb-2 text-gray-700">Receipt Amount :</label>
+                                                <input
+                                                    type="number"
+                                                    value={paymentData?.amount}
+                                                    // onChange={(e) => setPaymentForm({ ...paymentForm, recieptNo: e.target.value })}
+                                                    className="w-full px-3 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none transition-colors"
+                                                // placeholder="Enter receipt Amount"
+                                                />
+                                            </div>
+
 
                                             <div>
                                                 <label className="block text-sm font-semibold mb-2 text-gray-700">
                                                     Receipt Image :
                                                 </label>
-                                                {paymentForm.receiptImage ? (
+                                                {paymentData.recieptImage ? (
                                                     <img
-                                                        src={paymentForm.receiptImage}
+                                                        src={paymentData.recieptImage}
                                                         alt="Receipt"
                                                         className="w-full h-48 object-contain border-2 border-green-300 rounded-lg"
                                                     />

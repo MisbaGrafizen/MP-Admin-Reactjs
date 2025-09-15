@@ -8,10 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     getAllUnpaidOrderListAction,
     getAllPaidOrderListAction,
-    getAllPrePackageUnpadiOrderListAction,
-    getAllPrePackagePadiOrderListAction,
+    getAllPrePackageUnpaidOrderListAction,
+    getAllPrePackagePaidOrderListAction,
     getAllUnpaidBulkOrderListAction,
     getAllPaidBulkOrderListAction,
+    getAllPendingOrderListAction,
+    getAllPrePackagePendingOrderListAction,
 } from "../../redux/action/orderListing";
 
 
@@ -25,9 +27,9 @@ export default function ViewAllOrders() {
     const rowsPerPage = 8
 
 
-const handleSubmit = (order) => {
-  navigate(`/order-details/${order.id}`, { state: { order } });
-};
+    const handleSubmit = (order) => {
+        navigate(`/order-details/${order.id}`, { state: { order } });
+    };
 
 
     const dispatch = useDispatch();
@@ -38,58 +40,79 @@ const handleSubmit = (order) => {
         getPrePackageUnpaidOrderList,
         getBulkPaidOrderList,
         getBulkUnpaidOrderList,
+        getPendingOrderList,
+        getPrePackagePendingOrderList,
     } = useSelector((state) => state.orderListingState);
-
-    const orders = useMemo(() => {
-  const normalize = (list, form) =>
-    (list || []).map((o) => ({
-      id: o._id,
-      orderId: o?.orderId?._id || o?._id,
-      orderDate: o?.orderId?.createdAt
-        ? new Date(o.orderId.createdAt).toLocaleDateString("en-GB")
-        : "-",
-      deliveryDate: o?.orderDate?.pickupDate
-        ? new Date(o.orderDate.pickupDate).toLocaleDateString("en-GB")
-        : "-",
-      totalPayment: o?.orderId?.totalAmount || 0,
-      paidAmount: o?.paidAmount || 0,
-      pendingAmount: (o?.orderId?.totalAmount || 0) - (o?.paidAmount || 0),
-      paymentStatus: o?.orderType || "unpaid", // "paid", "unpaid", "pending"
-      orderForm: form,
-      customerName: o?.orderId?.userId?.name || "Unknown",
-      deliveryAddress: o?.pickupLocation?.name || "-",
-      items: o?.orderId?.items || [],
-      paidDate: o?.updatedAt
-        ? new Date(o.updatedAt).toLocaleDateString("en-GB")
-        : null,
-    }));
-
-  return [
-    ...normalize(getPaidOrderList, "self-serving"),
-    ...normalize(getUnpaidOrderList, "self-serving"),
-    ...normalize(getPrePackagePaidOrderList, "pre-packaged"),
-    ...normalize(getPrePackageUnpaidOrderList, "pre-packaged"),
-    ...normalize(getBulkPaidOrderList, "premvati"),
-    ...normalize(getBulkUnpaidOrderList, "premvati"),
-  ];
-}, [
-  getPaidOrderList,
-  getUnpaidOrderList,
-  getPrePackagePaidOrderList,
-  getPrePackageUnpaidOrderList,
-  getBulkPaidOrderList,
-  getBulkUnpaidOrderList,
-]);
-
 
     useEffect(() => {
         dispatch(getAllPaidOrderListAction());
         dispatch(getAllUnpaidOrderListAction());
-        dispatch(getAllPrePackagePadiOrderListAction());
-        dispatch(getAllPrePackageUnpadiOrderListAction());
+        dispatch(getAllPrePackagePaidOrderListAction());
+        dispatch(getAllPrePackageUnpaidOrderListAction());
         dispatch(getAllPaidBulkOrderListAction());
         dispatch(getAllUnpaidBulkOrderListAction());
+        dispatch(getAllPendingOrderListAction());
+        dispatch(getAllPrePackagePendingOrderListAction());
     }, [dispatch]);
+
+    const deduplicateOrders = (orders) => {
+        const seen = new Set();
+        return orders.filter((order) => {
+            const id = order.id || order.orderId;
+            if (seen.has(id)) return false;
+            seen.add(id);
+            return true;
+        });
+    };
+
+    const orders = useMemo(() => {
+        const normalize = (list, form) =>
+        (Array.isArray(list) && list.map((o) => ({
+            id: o._id,
+            orderId: o?.orderId?._id || o?._id,
+            orderDate: o?.orderId?.createdAt
+                ? new Date(o.orderId.createdAt).toLocaleDateString("en-GB")
+                : "-",
+            deliveryDate: o?.orderDate?.pickupDate
+                ? new Date(o.orderDate.pickupDate).toLocaleDateString("en-GB")
+                : "-",
+            totalPayment: o?.orderId?.totalAmount || 0,
+            paidAmount: o?.paidAmount || 0,
+            pendingAmount: (o?.orderId?.totalAmount || 0) - (o?.paidAmount || 0),
+            paymentStatus: o?.paymentStatus || o?.orderType || "unpaid",
+            orderForm: form,
+            customerName: o?.orderId?.userId?.name || "Unknown",
+            deliveryAddress: o?.pickupLocation?.name || "-",
+            items: o?.orderId?.items || [],
+            paidDate: o?.updatedAt
+                ? new Date(o.updatedAt).toLocaleDateString("en-GB")
+                : null,
+        })));
+
+        const combined = [
+            ...normalize(getPaidOrderList, "self-serving"),
+            ...normalize(getUnpaidOrderList, "self-serving"),
+            ...normalize(getPendingOrderList, "self-serving"),
+            ...normalize(getPrePackagePaidOrderList, "pre-packaged"),
+            ...normalize(getPrePackageUnpaidOrderList, "pre-packaged"),
+            ...normalize(getPrePackagePendingOrderList, "pre-packaged"),
+            ...normalize(getBulkPaidOrderList, "premvati"),
+            ...normalize(getBulkUnpaidOrderList, "premvati"),
+        ];
+
+        return deduplicateOrders(combined);
+    }, [
+        getPaidOrderList,
+        getUnpaidOrderList,
+        getPendingOrderList,
+        getPrePackagePaidOrderList,
+        getPrePackageUnpaidOrderList,
+        getPrePackagePendingOrderList,
+        getBulkPaidOrderList,
+        getBulkUnpaidOrderList,
+    ]);
+
+    console.log('getPrePackagePendingOrderList', getPrePackagePendingOrderList)
 
 
 
@@ -101,7 +124,7 @@ const handleSubmit = (order) => {
             const today = new Date().toLocaleDateString("en-GB")
             filtered = filtered.filter((order) => order.orderDate === today)
         } else if (statusFilter === "pending") {
-            filtered = filtered.filter((order) => order.paymentStatus === "partial")
+            filtered = filtered.filter((order) => order.paymentStatus === "pending")
         } else if (statusFilter === "unpaid") {
             filtered = filtered.filter((order) => order.paymentStatus === "unpaid")
         } else if (statusFilter === "paid") {
@@ -134,7 +157,7 @@ const handleSubmit = (order) => {
                 return "bg-green-100 border-green-500 text-green-800"
             case "unpaid":
                 return "bg-red-100 border-red-500  text-red-800"
-            case "partial":
+            case "pending":
                 return "bg-yellow-100  border-yellow-500  text-yellow-800"
             default:
                 return "bg-gray-100 border-gray-500  text-gray-800"
@@ -168,14 +191,15 @@ const handleSubmit = (order) => {
     }
 
     const getStatusCounts = () => {
-        const today = new Date().toLocaleDateString("en-GB")
+        const today = new Date().toLocaleDateString("en-GB");
         return {
-            today: orders.filter((order) => order.orderDate === today).length,
-            pending: orders.filter((order) => order.paymentStatus === "partial").length,
-            unpaid: orders.filter((order) => order.paymentStatus === "unpaid").length,
-            paid: orders.filter((order) => order.paymentStatus === "paid").length,
-        }
-    }
+            today: filteredOrders.filter((order) => order.orderDate === today).length,
+            pending: filteredOrders.filter((order) => order.paymentStatus === "pending").length,
+            unpaid: filteredOrders.filter((order) => order.paymentStatus === "unpaid").length,
+            paid: filteredOrders.filter((order) => order.paymentStatus === "paid").length,
+        };
+    };
+
 
     const statusCounts = getStatusCounts()
 
@@ -409,7 +433,7 @@ const handleSubmit = (order) => {
                                                         </td>
                                                         <td className="px-3 py-1 whitespace-nowrap text-center">
                                                             <button
-                                                                 onClick={() => handleSubmit(order)}  
+                                                                onClick={() => handleSubmit(order)}
                                                                 className="text-orange-600 hover:text-orange-800 transition-colors p-2 rounded-full hover:bg-orange-50"
                                                                 title="View Order Details"
                                                             >
@@ -450,7 +474,7 @@ const handleSubmit = (order) => {
                                                 onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                                                 disabled={currentPage === 1}
                                             >
-                                  <i className="fa-solid fa-chevron-left"></i>
+                                                <i className="fa-solid fa-chevron-left"></i>
                                             </button>
                                             <button className="px-3 py-2 min-w-[40px] text-sm bg-orange-500 text-white rounded-lg">   {currentPage}</button>
                                             <button
@@ -462,7 +486,7 @@ const handleSubmit = (order) => {
                                                 }
                                                 disabled={currentPage === Math.ceil(filteredOrders.length / rowsPerPage)}
                                             >
-                                   <i className="fa-solid fa-chevron-right"></i>
+                                                <i className="fa-solid fa-chevron-right"></i>
 
                                             </button>
                                         </div>

@@ -7,8 +7,8 @@ import {
 } from "@nextui-org/react";
 import {
   getAllPaidOrderListAction,
-  getAllPrePackagePadiOrderListAction,
-  getAllPrePackageUnpadiOrderListAction,
+  getAllPrePackagePaidOrderListAction,
+  getAllPrePackageUnpaidOrderListAction,
   getAllUnpaidOrderListAction,
   updateOrderRecieptToCancelAction,
   updateOrderRecieptToPaidAction,
@@ -75,8 +75,8 @@ export default function OrderManagement() {
   useEffect(() => {
     dispatch(getAllPaidOrderListAction());
     dispatch(getAllUnpaidOrderListAction());
-    dispatch(getAllPrePackagePadiOrderListAction());
-    dispatch(getAllPrePackageUnpadiOrderListAction());
+    dispatch(getAllPrePackagePaidOrderListAction());
+    dispatch(getAllPrePackageUnpaidOrderListAction());
     dispatch(getAllPaidBulkOrderListAction());
     dispatch(getAllUnpaidBulkOrderListAction());
   }, [dispatch]);
@@ -257,8 +257,8 @@ const pay = useMemo(() => {
         await Promise.all([
           dispatch(getAllPadiOrderListAction()),
           dispatch(getAllUnpadiOrderListAction()),
-          dispatch(getAllPrePackagePadiOrderListAction()),
-          dispatch(getAllPrePackageUnpadiOrderListAction()),
+          dispatch(getAllPrePackagePaidOrderListAction()),
+          dispatch(getAllPrePackageUnpaidOrderListAction()),
           dispatch(getAllPaidBulkOrderListAction()),
           dispatch(getAllUnpaidBulkOrderListAction()),
         ]);
